@@ -39,7 +39,7 @@ VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags f)
     connect(mediaPlayer, SIGNAL(durationChanged(qint64)), playerControl, SLOT(updateMaxDuration(qint64)));
     connect(mediaPlayer, SIGNAL(positionChanged(qint64)), playerControl, SLOT(updateCursorPosition(qint64)));
 
-    mediaPlayer->setMedia(QUrl::fromLocalFile("/media/thibaut/data/film/Carbone (2017).mkv"));
+    mediaPlayer->setMedia(QUrl::fromLocalFile("test.mkv"));
     mediaPlayer->setVolume(playerControl->getVolume());
 }
 
