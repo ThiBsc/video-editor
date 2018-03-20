@@ -22,13 +22,13 @@ QVariant RushListModel::data(const QModelIndex &index, int role) const
     if (index.isValid()){
         switch (role) {
         case Qt::DisplayRole:
-            ret = rushItems.at(index.row()).fileName();
+            ret = rushItems.at(index.row()).canonicalUrl().fileName();
             break;
         case Qt::DecorationRole:
             ret = QIcon(":/icon/video.png");
             break;
         case Qt::ToolTipRole:
-            ret = rushItems.at(index.row()).fileName();
+            ret = rushItems.at(index.row()).canonicalUrl().fileName();
             break;
         default:
             break;
@@ -64,11 +64,11 @@ bool RushListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     Q_UNUSED(column);
     bool ret = false;
     if (data->hasUrls()){
-        QVector<QUrl> movies = QVector<QUrl>::fromList(data->urls());
-        for (int i=0; i<movies.size(); i++){
-            QString ext = QFileInfo(movies.at(i).path()).completeSuffix();
-            if (!ext.contains(QRegExp("avi|mkv|mp4"))){
-                movies.remove(i--);
+        QList<QMediaContent> movies;
+        for (QUrl url : data->urls()){
+            QString ext = QFileInfo(url.path()).completeSuffix();
+            if (ext.contains(QRegExp("avi|mkv|mp4"))){
+                movies.append(QMediaContent(url));
             }
         }
         int before = rushItems.size();
@@ -76,6 +76,7 @@ bool RushListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         rushItems.append(movies);
         if (before < rushItems.size()){
             ret = true;
+            emit rushAdded(movies);
         }
         endInsertRows();
     }

@@ -2,9 +2,12 @@
 #define RUSHLISTMODEL_H
 
 #include <QAbstractListModel>
+#include <QMediaContent>
 
 class RushListModel : public QAbstractListModel
 {
+    Q_OBJECT
+
 public:
     RushListModel(QObject *parent = Q_NULLPTR);
     ~RushListModel();
@@ -15,8 +18,11 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     int rowCount(const QModelIndex &parent) const override;
 
+signals:
+    void rushAdded(QList<QMediaContent> rush);
+
 private:
-    QVector<QUrl> rushItems;
+    QList<QMediaContent> rushItems;
 
 };
 

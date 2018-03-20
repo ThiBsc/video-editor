@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     gLayout->addWidget(videoPlayer, 0, 1);
     gLayout->addWidget(listRush, 0, 0);
+
+    connect(rushListModel, SIGNAL(rushAdded(QList<QMediaContent>)), videoPlayer, SLOT(addRush(QList<QMediaContent>)));
 }
 
 MainWindow::~MainWindow()
