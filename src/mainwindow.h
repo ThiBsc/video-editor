@@ -12,6 +12,10 @@ class QGridLayout;
 class RushListModel;
 class VideoPlayer;
 
+/**
+ * @brief The MainWindow class
+ * The MainWindow UI
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

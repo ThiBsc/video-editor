@@ -4,6 +4,11 @@
 #include <QAbstractListModel>
 #include <QMediaContent>
 
+/**
+ * @brief The RushListModel class
+ * A list model to manage a list of "rush" movie
+ * http://doc.qt.io/qt-5/qabstractlistmodel.html
+ */
 class RushListModel : public QAbstractListModel
 {
     Q_OBJECT

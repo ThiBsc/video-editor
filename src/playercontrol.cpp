@@ -75,11 +75,20 @@ PlayerControl::~PlayerControl()
     delete mainLayout;
 }
 
+/**
+ * @brief PlayerControl::getVolume
+ * @return The sound volume in %
+ */
 int PlayerControl::getVolume()
 {
     return volumeSlider->value();
 }
 
+/**
+ * @brief PlayerControl::updateMaxDuration
+ * @param duration
+ * Set the max duration value to the positionSlider
+ */
 void PlayerControl::updateMaxDuration(qint64 duration)
 {
     positionSlider->setMaximum(duration);
@@ -92,6 +101,11 @@ void PlayerControl::updateMaxDuration(qint64 duration)
     lblPosition->setText(ctime.toString()+"/"+time.toString());
 }
 
+/**
+ * @brief PlayerControl::updateCursorPosition
+ * @param position
+ * Update the current cursor position to the positionSlider
+ */
 void PlayerControl::updateCursorPosition(qint64 position)
 {
     positionSlider->setValue(position);
@@ -108,27 +122,49 @@ void PlayerControl::updateCursorPosition(qint64 position)
     lblPosition->setText(ctime.toString()+"/"+time.toString());
 }
 
+/**
+ * @brief PlayerControl::emitVolumeChanged
+ * @param vol
+ * Emit the new volume value
+ */
 void PlayerControl::emitVolumeChanged(int vol)
 {
     lblVolume->setText(QString("%1%").arg(vol));
     emit volumeChanged(vol);
 }
 
+/**
+ * @brief PlayerControl::emitPositionChanged
+ * @param pos
+ * Emit the new current cursor position
+ */
 void PlayerControl::emitPositionChanged(int pos)
 {
     emit positionChanged(pos);
 }
 
+/**
+ * @brief PlayerControl::emitPlayClicked
+ * Emit signal "playClicked()"
+ */
 void PlayerControl::emitPlayClicked()
 {
     emit playClicked();
 }
 
+/**
+ * @brief PlayerControl::emitStopClicked
+ * Emit signal "stopClicked()"
+ */
 void PlayerControl::emitStopClicked()
 {
     emit stopClicked();
 }
 
+/**
+ * @brief PlayerControl::emitPauseClicked
+ * Emit signal "pauseClicked()"
+ */
 void PlayerControl::emitPauseClicked()
 {
     emit pauseClicked();

@@ -9,23 +9,26 @@ class QMediaPlaylist;
 class QVideoWidget;
 class QVBoxLayout;
 class PlayerControl;
+class MediaFileInfo;
 
+/**
+ * @brief The VideoPlayer class
+ * A graphic class to connect the mediaPlayer with playerControl
+ */
 class VideoPlayer : public QWidget
 {
     Q_OBJECT
 public:
     VideoPlayer(QWidget *parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
     ~VideoPlayer();
+    int64_t getPlaylistDuration();
 
 public slots:
     void addRush(QList<QMediaContent> rush);
-    void totalDurationIsAboutToBeChanged(qint64 duration);
-    void updateCursorPosition(qint64 position);
 
 private:
-    QList<qint64> contentDuration;
-    qint64 total_duration;
-    int duration_count;
+    std::vector<int64_t> allDuration;
+    MediaFileInfo *mediaInfo;
     QVBoxLayout *vLayout;
 
     QMediaPlayer *mediaPlayer;

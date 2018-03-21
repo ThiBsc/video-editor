@@ -16,6 +16,9 @@ RushListModel::~RushListModel()
 
 }
 
+/**
+ * http://doc.qt.io/qt-5/qabstractitemmodel.html#data
+ */
 QVariant RushListModel::data(const QModelIndex &index, int role) const
 {
     QVariant ret;
@@ -37,6 +40,9 @@ QVariant RushListModel::data(const QModelIndex &index, int role) const
     return ret;
 }
 
+/**
+ * http://doc.qt.io/qt-5/qabstractitemmodel.html#canDropMimeData
+ */
 bool RushListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(action);
@@ -57,6 +63,9 @@ bool RushListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action
     return ret;
 }
 
+/**
+ * http://doc.qt.io/qt-5/qabstractitemmodel.html#dropMimeData
+ */
 bool RushListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
 {
     Q_UNUSED(action);
@@ -83,6 +92,9 @@ bool RushListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     return ret;
 }
 
+/**
+ * http://doc.qt.io/qt-5/qabstractitemmodel.html#flags
+ */
 Qt::ItemFlags RushListModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags ret = QAbstractListModel::flags(index);
@@ -92,6 +104,9 @@ Qt::ItemFlags RushListModel::flags(const QModelIndex &index) const
     return ret;
 }
 
+/**
+ * http://doc.qt.io/qt-5/qabstractitemmodel.html#rowCount
+ */
 int RushListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);

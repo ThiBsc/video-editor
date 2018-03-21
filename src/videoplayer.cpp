@@ -1,15 +1,19 @@
 #include "videoplayer.h"
 #include "playercontrol.h"
+#include "mediafileinfo.h"
 
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QVideoWidget>
 #include <QVBoxLayout>
 #include <QMessageBox>
+#include <QTime>
 
 VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags f)
     : QWidget(parent, f)
 {
+    mediaInfo = new MediaFileInfo();
+
     vLayout = new QVBoxLayout(this);
     vLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(vLayout);
@@ -40,53 +44,45 @@ VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags f)
     connect(playerControl, SIGNAL(pauseClicked()), mediaPlayer, SLOT(pause()));
     connect(playerControl, SIGNAL(volumeChanged(int)), mediaPlayer, SLOT(setVolume(int)));
     connect(playerControl, SIGNAL(positionChanged(qint64)), mediaPlayer, SLOT(setPosition(qint64)));
-    //connect(mediaPlayer, SIGNAL(durationChanged(qint64)), playerControl, SLOT(updateMaxDuration(qint64)));
-    connect(mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(totalDurationIsAboutToBeChanged(qint64)));
-    //connect(mediaPlayer, SIGNAL(positionChanged(qint64)), playerControl, SLOT(updateCursorPosition(qint64)));
-    connect(mediaPlayer, SIGNAL(positionChanged(qint64)), this, SLOT(updateCursorPosition(qint64)));
+    connect(mediaPlayer, SIGNAL(positionChanged(qint64)), playerControl, SLOT(updateCursorPosition(qint64)));
 
     mediaPlayer->setVolume(playerControl->getVolume());
-    total_duration = 0;
-    duration_count = 0;
 }
 
 VideoPlayer::~VideoPlayer()
 {
     delete videoWidget;
+    delete mediaInfo;
     delete mediaPlaylist;
     delete mediaPlayer;
     delete playerControl;
     delete vLayout;
 }
 
+/**
+ * @brief VideoPlayer::getPlaylistDuration
+ * @return The total duration of the playlist in ms
+ */
+int64_t VideoPlayer::getPlaylistDuration()
+{
+    int64_t sum = std::accumulate(allDuration.begin(), allDuration.end(), 0);
+    return sum;
+}
+
+/**
+ * @brief VideoPlayer::addRush
+ * @param rush
+ * Add "rush" movie to the mediaPlaylist
+ */
 void VideoPlayer::addRush(QList<QMediaContent> rush)
 {
     bool added = mediaPlaylist->addMedia(rush);
     if (added){
-        playerControl->blockSignals(true);
-        for (QMediaContent content : rush){
-            mediaPlayer->setMedia(content);
-        }
         mediaPlayer->setPlaylist(mediaPlaylist);
-        playerControl->blockSignals(false);
+        for (QMediaContent content : rush){
+            mediaInfo->find_meta_data(content.canonicalUrl().path().toStdString().c_str());
+            int64_t duration = mediaInfo->getMS();
+            allDuration.push_back(duration);
+        }
     }
-}
-
-void VideoPlayer::totalDurationIsAboutToBeChanged(qint64 duration)
-{
-    if (duration_count != mediaPlaylist->mediaCount()){
-        contentDuration.append(duration);
-        total_duration += duration;
-        playerControl->updateMaxDuration(total_duration);
-        duration_count++;
-    }
-}
-
-void VideoPlayer::updateCursorPosition(qint64 position)
-{
-    int cur_idx = mediaPlaylist->currentIndex();
-    qint64 current_position = 0;
-    for (int i=0; i<cur_idx; i++)
-        current_position += contentDuration.at(i);
-    playerControl->updateCursorPosition(current_position+position);
 }

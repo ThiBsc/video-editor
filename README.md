@@ -7,6 +7,7 @@ Projet annuel d'édition de video linéaire
 - qtmultimedia5-dev
 - libqt5multimedia5
 - libqt5multimedia5-plugins
+- libavformat-dev
 
 ## Compile
 

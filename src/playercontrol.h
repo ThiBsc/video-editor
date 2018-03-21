@@ -9,6 +9,10 @@ class QHBoxLayout;
 class QVBoxLayout;
 class QLabel;
 
+/**
+ * @brief The PlayerControl class
+ * Class to manage the VideoPlayer::mediaPlayer with connection between object
+ */
 class PlayerControl : public QWidget
 {
     Q_OBJECT

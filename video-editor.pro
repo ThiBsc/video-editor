@@ -13,17 +13,20 @@ QMAKE_CXXFLAGS += -std=c++11
 TARGET = video-editor
 TEMPLATE = app
 
+LIBS += -lavformat
 
 SOURCES += main.cpp\
         src/mainwindow.cpp \
     src/rushlistmodel.cpp \
     src/videoplayer.cpp \
-    src/playercontrol.cpp
+    src/playercontrol.cpp \
+    src/mediafileinfo.cpp
 
 HEADERS  += src/mainwindow.h \
     src/rushlistmodel.h \
     src/videoplayer.h \
-    src/playercontrol.h
+    src/playercontrol.h \
+    src/mediafileinfo.h
 
 FORMS    += mainwindow.ui
 
