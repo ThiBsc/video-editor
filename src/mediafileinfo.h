@@ -16,7 +16,7 @@ public:
     MediaFileInfo();
     ~MediaFileInfo();
     void find_meta_data(const char* filename);
-    int getMS();
+    int64_t getMS();
     int getUSecond();
     int getSecond();
     int getMinute();
