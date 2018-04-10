@@ -17,9 +17,14 @@ class Track : public QListView
 public:
     Track(QWidget *parent = Q_NULLPTR);
     ~Track();
+    void addMarker(int64_t ms);
+
+protected:
+    void paintEvent(QPaintEvent *e) override;
 
 private:
     TrackModel *trackModel;
+    QList<int64_t> msMarker;
 
 };
 
