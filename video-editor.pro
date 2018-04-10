@@ -15,18 +15,22 @@ TEMPLATE = app
 
 LIBS += -lavformat
 
-SOURCES += main.cpp\
+SOURCES += src/main.cpp\
         src/mainwindow.cpp \
     src/rushlistmodel.cpp \
     src/videoplayer.cpp \
     src/playercontrol.cpp \
-    src/mediafileinfo.cpp
+    src/mediafileinfo.cpp \
+    src/track.cpp \
+    src/trackmodel.cpp
 
 HEADERS  += src/mainwindow.h \
     src/rushlistmodel.h \
     src/videoplayer.h \
     src/playercontrol.h \
-    src/mediafileinfo.h
+    src/mediafileinfo.h \
+    src/track.h \
+    src/trackmodel.h
 
 FORMS    += mainwindow.ui
 

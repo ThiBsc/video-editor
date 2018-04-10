@@ -11,6 +11,7 @@ class QListView;
 class QGridLayout;
 class RushListModel;
 class VideoPlayer;
+class Track;
 
 /**
  * @brief The MainWindow class
@@ -28,6 +29,7 @@ private:
     Ui::MainWindow *ui;
 
     QGridLayout *gLayout;
+    Track *videoTrack;
     QListView *listRush;
     RushListModel *rushListModel;
 

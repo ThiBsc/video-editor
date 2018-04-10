@@ -1,6 +1,8 @@
 #ifndef MEDIAFILEINFO_H
 #define MEDIAFILEINFO_H
 
+#include <string>
+
 extern "C" {
 #include <libavformat/avformat.h>
 }
@@ -23,6 +25,7 @@ public:
     int getHour();
 
 private:
+    std::string filename;
     AVFormatContext *pFormatCtx;
     int64_t duration;
 

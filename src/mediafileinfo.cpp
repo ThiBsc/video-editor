@@ -20,8 +20,10 @@ MediaFileInfo::~MediaFileInfo()
  */
 void MediaFileInfo::find_meta_data(const char *filename)
 {
+    this->filename = filename;
     avformat_open_input(&pFormatCtx, filename, NULL, NULL);
-    avformat_find_stream_info(pFormatCtx, NULL);
+    if (pFormatCtx->duration == 0)
+        avformat_find_stream_info(pFormatCtx, NULL);
     duration = pFormatCtx->duration;
     avformat_close_input(&pFormatCtx);
 }

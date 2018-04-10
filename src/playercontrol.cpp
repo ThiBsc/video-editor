@@ -31,7 +31,7 @@ PlayerControl::PlayerControl(QWidget *parent)
     btnStop->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
     btnPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 
-    lblPosition = new QLabel("-/-", this);
+    lblPosition = new QLabel(QString("%1/%1").arg(QTime(0, 0, 0).toString()), this);
     lblVolume = new QLabel(QString("%1%").arg(QString::number(volumeSlider->value())), this);
 
     hTopLayout = new QHBoxLayout();
