@@ -21,14 +21,9 @@ class VideoPlayer : public QWidget
 public:
     VideoPlayer(QWidget *parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
     ~VideoPlayer();
-    int64_t getPlaylistDuration();
-
-public slots:
-    void addRush(QList<QMediaContent> rush);
+    PlayerControl *getPlayerControl();
 
 private:
-    std::vector<int64_t> allDuration;
-    MediaFileInfo *mediaInfo;
     QVBoxLayout *vLayout;
 
     QMediaPlayer *mediaPlayer;

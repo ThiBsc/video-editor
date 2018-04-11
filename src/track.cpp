@@ -12,6 +12,9 @@ Track::Track(QWidget *parent)
 
     trackModel = new TrackModel(this);
     setModel(trackModel);
+    setSelectionMode(QAbstractItemView::SingleSelection);
+    setDragEnabled(true);
+    setAcceptDrops(true);
 }
 
 Track::~Track()
@@ -27,6 +30,15 @@ Track::~Track()
 void Track::addMarker(int64_t ms)
 {
     msMarker.append(ms);
+}
+
+/**
+ * @brief Track::getModel
+ * @return The trackModel
+ */
+TrackModel *Track::getModel()
+{
+    return trackModel;
 }
 
 /**

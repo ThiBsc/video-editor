@@ -1,4 +1,8 @@
 #include "trackmodel.h"
+#include "mediafileinfo.h"
+
+#include <QMimeData>
+#include <QDataStream>
 
 TrackModel::TrackModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -20,7 +24,7 @@ QVariant TrackModel::data(const QModelIndex &index, int role) const
     if (index.isValid()){
         switch (role) {
         case Qt::DisplayRole:
-            ret = videos.at(index.row()).canonicalUrl().fileName();
+            ret = videos.at(index.row()).content.canonicalUrl().fileName();
             break;
         default:
             break;
@@ -31,10 +35,23 @@ QVariant TrackModel::data(const QModelIndex &index, int role) const
 
 /**
  * http://doc.qt.io/qt-5/qabstractitemmodel.html#canDropMimeData
+ * Allow drop if it come from RushList or in internal
  */
 bool TrackModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
 {
-    return QAbstractListModel::canDropMimeData(data, action, row, column, parent);
+    Q_UNUSED(action);
+    Q_UNUSED(row);
+    Q_UNUSED(column);
+    Q_UNUSED(parent);
+    bool ret = false;
+    if (data->hasFormat("video-editor/rushUrl")){
+        ret = true;
+    } else if (!data->hasUrls() && data->hasFormat("application/x-qabstractitemmodeldatalist")){
+        if (row != -1 || parent.isValid()){
+            ret = true;
+        }
+    }
+    return ret;
 }
 
 /**
@@ -42,7 +59,45 @@ bool TrackModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, i
  */
 bool TrackModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
 {
-    return QAbstractListModel::dropMimeData(data, action, row, column, parent);
+    Q_UNUSED(action);
+    Q_UNUSED(row);
+    Q_UNUSED(column);
+    Q_UNUSED(parent);
+    bool ret = false;
+    if (data->hasFormat("video-editor/rushUrl")){
+        const QString url = data->text();
+        Media m;
+        MediaFileInfo *mfi = new MediaFileInfo();
+        mfi->find_meta_data(url.toStdString().c_str());
+        m.content = QMediaContent(QUrl(url));
+        m.duration = QTime(mfi->getHour(), mfi->getMinute(), mfi->getSecond(), mfi->getUSecond());
+        delete mfi;
+        beginInsertRows(parent, videos.size(), videos.size());
+        videos.append(m);
+        endInsertRows();
+        ret = true;
+        getTrackDuration();
+        emit totalDurationChanged(trackDuration);
+        emit rushAdded(m.content);
+    } else if (!data->hasUrls() && data->hasFormat("application/x-qabstractitemmodeldatalist")){
+        QByteArray encoded = data->data("application/x-qabstractitemmodeldatalist");
+        QDataStream stream(&encoded, QIODevice::ReadOnly);
+        int row_src;
+        stream >> row_src;
+        QModelIndex src = index(row_src);
+        QModelIndex dest = index(row == -1 ? parent.row() : row);
+        if (src != dest){
+            beginMoveRows(src, src.row(), src.row(), dest, dest.row());
+            Media m = videos.takeAt(src.row());
+            if (row < videos.size())
+                videos.insert(dest.row(), m);
+            else
+                videos.append(m);
+            endMoveRows();
+            ret = true;
+        }
+    }
+    return ret;
 }
 
 /**
@@ -50,7 +105,13 @@ bool TrackModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int 
  */
 Qt::ItemFlags TrackModel::flags(const QModelIndex &index) const
 {
-    return QAbstractListModel::flags(index);
+    Qt::ItemFlags ret = QAbstractListModel::flags(index);
+    if (!index.isValid()){
+        ret |= Qt::ItemIsDropEnabled;
+    } else {
+        ret |= Qt::ItemIsDragEnabled;
+    }
+    return ret;
 }
 
 /**
@@ -60,4 +121,18 @@ int TrackModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return videos.size();
+}
+
+/**
+ * @brief TrackModel::getTrackDuration
+ * @return The total duration of the track in ms
+ */
+qint64 TrackModel::getTrackDuration()
+{
+    std::vector<Media> track = videos.toStdVector();
+    qint64 sum = std::accumulate(track.begin(), track.end(), 0, [](qint64 s, const Media &a) {
+                return s + QTime(0, 0, 0).msecsTo(a.duration);
+            });
+    trackDuration = sum;
+    return trackDuration;
 }

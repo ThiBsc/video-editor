@@ -1,6 +1,5 @@
 #include "videoplayer.h"
 #include "playercontrol.h"
-#include "mediafileinfo.h"
 
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
@@ -12,8 +11,6 @@
 VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags f)
     : QWidget(parent, f)
 {
-    mediaInfo = new MediaFileInfo();
-
     vLayout = new QVBoxLayout(this);
     vLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(vLayout);
@@ -52,7 +49,6 @@ VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags f)
 VideoPlayer::~VideoPlayer()
 {
     delete videoWidget;
-    delete mediaInfo;
     delete mediaPlaylist;
     delete mediaPlayer;
     delete playerControl;
@@ -60,29 +56,11 @@ VideoPlayer::~VideoPlayer()
 }
 
 /**
- * @brief VideoPlayer::getPlaylistDuration
- * @return The total duration of the playlist in ms
+ * @brief VideoPlayer::getPlayerControl
+ * @return playerControl
  */
-int64_t VideoPlayer::getPlaylistDuration()
+PlayerControl *VideoPlayer::getPlayerControl()
 {
-    int64_t sum = std::accumulate(allDuration.begin(), allDuration.end(), 0);
-    return sum;
+    return playerControl;
 }
 
-/**
- * @brief VideoPlayer::addRush
- * @param rush
- * Add "rush" movie to the mediaPlaylist
- */
-void VideoPlayer::addRush(QList<QMediaContent> rush)
-{
-    bool added = mediaPlaylist->addMedia(rush);
-    if (added){
-        mediaPlayer->setPlaylist(mediaPlaylist);
-        for (QMediaContent content : rush){
-            mediaInfo->find_meta_data(content.canonicalUrl().path().toStdString().c_str());
-            int64_t duration = mediaInfo->getMS();
-            allDuration.push_back(duration);
-        }
-    }
-}

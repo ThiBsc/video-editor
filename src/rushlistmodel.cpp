@@ -42,6 +42,7 @@ QVariant RushListModel::data(const QModelIndex &index, int role) const
 
 /**
  * http://doc.qt.io/qt-5/qabstractitemmodel.html#canDropMimeData
+ * Allow drop when it's an internal move
  */
 bool RushListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
 {
@@ -50,15 +51,10 @@ bool RushListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action
     Q_UNUSED(column);
     Q_UNUSED(parent);
     bool ret = false;
-    if (data->hasUrls()){
-        QList<QUrl> urls = data->urls();
-        int idx = 0;
-        bool hasMovie = false;
-        while (idx < urls.size() && !hasMovie){
-            QString ext = QFileInfo(urls.at(idx++).path()).completeSuffix();
-            hasMovie = ext.contains(QRegExp("avi|mkv|mp4"));
+    if (data->hasFormat("video-editor/rushUrl")){
+        if (row != -1 || parent.isValid()){
+            ret = true;
         }
-        ret = hasMovie;
     }
     return ret;
 }
@@ -72,24 +68,53 @@ bool RushListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     Q_UNUSED(row);
     Q_UNUSED(column);
     bool ret = false;
-    if (data->hasUrls()){
-        QList<QMediaContent> movies;
-        for (QUrl url : data->urls()){
-            QString ext = QFileInfo(url.path()).completeSuffix();
-            if (ext.contains(QRegExp("avi|mkv|mp4"))){
-                movies.append(QMediaContent(url));
-            }
-        }
-        int before = rushItems.size();
-        beginInsertRows(parent, parent.row(), parent.row()+movies.size()-1);
-        rushItems.append(movies);
-        if (before < rushItems.size()){
+    if (data->hasFormat("video-editor/rushUrl")){
+        QByteArray encoded = data->data("video-editor/rushUrl");
+        QDataStream stream(&encoded, QIODevice::ReadOnly);
+        int row_src;
+        stream >> row_src;
+        QModelIndex src = index(row_src);
+        QModelIndex dest = index(row == -1 ? parent.row() : row);
+        if (src != dest){
+            beginMoveRows(src, src.row(), src.row(), dest, dest.row());
+            QMediaContent content = rushItems.takeAt(src.row());
+            if (row < rushItems.size())
+                rushItems.insert(dest.row(), content);
+            else
+                rushItems.append(content);
+            endMoveRows();
             ret = true;
-            emit rushAdded(movies);
         }
-        endInsertRows();
     }
     return ret;
+}
+
+/**
+ * http://doc.qt.io/qt-5/qabstractitemmodel.html#mimeData
+ * @brief RushListModel::mimeData
+ * @param indexes
+ * @return mimeData
+ */
+QMimeData *RushListModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *mimeData = QAbstractItemModel::mimeData(indexes);
+    QModelIndex index = indexes.first();
+    if (index.isValid()){
+        mimeData->setText(rushItems.at(index.row()).canonicalUrl().toString());
+    }
+    return mimeData;
+}
+
+/**
+ * http://doc.qt.io/qt-5/qabstractitemmodel.html#mimeTypes
+ * @brief RushListModel::mimeTypes
+ * @return mime_types
+ */
+QStringList RushListModel::mimeTypes() const
+{
+    QStringList mime_types = QAbstractItemModel::mimeTypes();
+    mime_types.prepend("video-editor/rushUrl");
+    return mime_types;
 }
 
 /**
@@ -98,8 +123,8 @@ bool RushListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 Qt::ItemFlags RushListModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags ret = QAbstractListModel::flags(index);
-    if (!index.isValid()){
-        ret |= Qt::ItemIsDropEnabled;
+    if (index.isValid()){
+        ret |= Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
     }
     return ret;
 }
@@ -111,4 +136,18 @@ int RushListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return rushItems.size();
+}
+
+/**
+ * @brief RushListModel::addRushs
+ * @param files to add in the list
+ */
+void RushListModel::addRushs(QStringList files)
+{
+    QModelIndex index;
+    beginInsertRows(index, rushItems.size(), rushItems.size()+files.size());
+    for (const QString file : files){
+        rushItems.append(QMediaContent(QUrl(file)));
+    }
+    endInsertRows();
 }

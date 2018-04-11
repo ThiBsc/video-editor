@@ -3,6 +3,17 @@
 
 #include <QAbstractListModel>
 #include <QMediaContent>
+#include <QTime>
+
+/**
+ * @brief The Media struct
+ * Use to store the content with his duration
+ */
+struct Media
+{
+    QMediaContent content;
+    QTime duration;
+};
 
 /**
  * @brief The TrackModel class
@@ -22,9 +33,15 @@ public:
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     int rowCount(const QModelIndex &parent) const override;
+    qint64 getTrackDuration();
+
+signals:
+    void totalDurationChanged(qint64 duration);
+    void rushAdded(QMediaContent rush);
 
 private:
-    QList<QMediaContent> videos;
+    qint64 trackDuration;
+    QVector<Media> videos;
 
 };
 

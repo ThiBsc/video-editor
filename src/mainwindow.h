@@ -9,6 +9,7 @@ class MainWindow;
 
 class QListView;
 class QGridLayout;
+class MenuFile;
 class RushListModel;
 class VideoPlayer;
 class Track;
@@ -34,6 +35,8 @@ private:
     RushListModel *rushListModel;
 
     VideoPlayer *videoPlayer;
+
+    MenuFile *mnuFile;
 
 };
 
