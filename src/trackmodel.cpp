@@ -5,6 +5,7 @@
 #include <QDataStream>
 #include <QSize>
 #include <iostream>
+#include <QWidget>
 
 TrackModel::TrackModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -25,7 +26,7 @@ QVariant TrackModel::data(const QModelIndex &index, int role) const
     QVariant ret;
     qint64 taille;
     qint64 prorata;
-    qint64 listWidth = 750;
+    qint64 listWidth = dynamic_cast<QWidget*>(parent())->width();
     if (index.isValid()){
         switch (role) {
             case Qt::DisplayRole:
