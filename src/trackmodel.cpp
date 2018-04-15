@@ -3,6 +3,8 @@
 
 #include <QMimeData>
 #include <QDataStream>
+#include <QSize>
+#include <iostream>
 
 TrackModel::TrackModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -21,14 +23,22 @@ TrackModel::~TrackModel()
 QVariant TrackModel::data(const QModelIndex &index, int role) const
 {
     QVariant ret;
+    qint64 taille;
+    qint64 prorata;
+    qint64 listWidth = 750;
     if (index.isValid()){
         switch (role) {
-        case Qt::DisplayRole:
-            ret = videos.at(index.row()).content.canonicalUrl().fileName();
-            break;
-        default:
-            break;
-        }
+            case Qt::DisplayRole:
+                ret = videos.at(index.row()).content.canonicalUrl().fileName();
+                break;
+            case Qt::SizeHintRole:
+                prorata =  (QTime(0, 0, 0).msecsTo(videos.at(index.row()).duration)*(quint64)100)/getTrackDuration();
+                taille = (prorata*listWidth)/100;
+                ret = QSize(taille,40);
+                break;
+            default:
+                break;
+        } 
     }
     return ret;
 }
@@ -76,7 +86,7 @@ bool TrackModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int 
         videos.append(m);
         endInsertRows();
         ret = true;
-        getTrackDuration();
+        calculTrackDuration();
         emit totalDurationChanged(trackDuration);
         emit rushAdded(m.content);
     } else if (!data->hasUrls() && data->hasFormat("application/x-qabstractitemmodeldatalist")){
@@ -127,12 +137,21 @@ int TrackModel::rowCount(const QModelIndex &parent) const
  * @brief TrackModel::getTrackDuration
  * @return The total duration of the track in ms
  */
-qint64 TrackModel::getTrackDuration()
+qint64 TrackModel::getTrackDuration() const
 {
+    return trackDuration;
+}
+
+/**
+ * @brief TrackModel::calculTrackDuration
+ * @return The total duration of the track in ms
+ */
+qint64 TrackModel::calculTrackDuration()
+{   
     std::vector<Media> track = videos.toStdVector();
     qint64 sum = std::accumulate(track.begin(), track.end(), 0, [](qint64 s, const Media &a) {
-                return s + QTime(0, 0, 0).msecsTo(a.duration);
-            });
+        return s + QTime(0, 0, 0).msecsTo(a.duration);
+    });
     trackDuration = sum;
     return trackDuration;
 }

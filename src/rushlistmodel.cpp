@@ -22,19 +22,19 @@ RushListModel::~RushListModel()
 QVariant RushListModel::data(const QModelIndex &index, int role) const
 {
     QVariant ret;
-    if (index.isValid()){
+    if (index.isValid()) {
         switch (role) {
-        case Qt::DisplayRole:
-            ret = rushItems.at(index.row()).canonicalUrl().fileName();
-            break;
-        case Qt::DecorationRole:
-            ret = QIcon(":/icon/video.png");
-            break;
-        case Qt::ToolTipRole:
-            ret = rushItems.at(index.row()).canonicalUrl().fileName();
-            break;
-        default:
-            break;
+            case Qt::DisplayRole:
+                ret = rushItems.at(index.row()).canonicalUrl().fileName();
+                break;
+            case Qt::DecorationRole:
+                ret = QIcon(":/icon/video.png");
+                break;
+            case Qt::ToolTipRole:
+                ret = rushItems.at(index.row()).canonicalUrl().fileName();
+                break;
+            default:
+                break;
         }
     }
     return ret;
