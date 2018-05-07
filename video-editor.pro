@@ -23,7 +23,8 @@ SOURCES += src/main.cpp\
     src/mediafileinfo.cpp \
     src/track.cpp \
     src/trackmodel.cpp \
-    src/menufile.cpp
+    src/menufile.cpp \
+    src/ffmpeg.cpp
 
 HEADERS  += src/mainwindow.h \
     src/rushlistmodel.h \
@@ -32,7 +33,8 @@ HEADERS  += src/mainwindow.h \
     src/mediafileinfo.h \
     src/track.h \
     src/trackmodel.h \
-    src/menufile.h
+    src/menufile.h \
+    src/ffmpeg.h
 
 FORMS    += mainwindow.ui
 
