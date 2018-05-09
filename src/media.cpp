@@ -4,12 +4,30 @@
  * @brief Media::getContent
  * @return The content of the media
  */
+Media::Media()
+{
+}
+
+/**
+ * @brief Media::getContent
+ * @return The content of the media
+ */
 Media::Media(QMediaContent content)
 {
     this->content= content;
 }
 
-QMediaContent Media::getContent()
+/**
+ * @brief Media::getContent
+ * @return The content of the media
+ */
+Media::Media(Media const& media)
+{
+    this->content= media.getContent();
+    this->duration= media.getDuration();
+}
+
+QMediaContent Media::getContent() const
 {
     return this->content;
 }
@@ -18,7 +36,7 @@ QMediaContent Media::getContent()
  * @brief Media::getDuration
  * @return The duration of the media
  */
-QTime Media::getDuration()
+QTime Media::getDuration() const
 {
     return this->duration;
 }

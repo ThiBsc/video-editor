@@ -10,9 +10,11 @@
 class Media
 {
     public:
+        Media();    
         Media(QMediaContent content);
-        QMediaContent getContent();
-        QTime getDuration();
+        Media(Media const& media);
+        QMediaContent getContent() const;
+        QTime getDuration() const;
         void setDuration(QTime duration);
 
     private:
