@@ -2,7 +2,8 @@
 #define FFMPEG_H
 #include <QProcess>
 #include <QTime>
-#include "trackmodel.h"
+#include <QVector>
+#include "media.h"
 
 class Ffmpeg : public QProcess
 {

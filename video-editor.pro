@@ -23,7 +23,6 @@ SOURCES += src/main.cpp\
     src/playercontrol.cpp \
     src/mediafileinfo.cpp \
     src/track.cpp \
-    src/trackmodel.cpp \
     src/menufile.cpp \
     src/ffmpeg.cpp
 
@@ -34,7 +33,6 @@ HEADERS  += src/mainwindow.h \
     src/playercontrol.h \
     src/mediafileinfo.h \
     src/track.h \
-    src/trackmodel.h \
     src/menufile.h \
     src/ffmpeg.h
 

@@ -1,9 +1,14 @@
 #include "rushlistmodel.h"
+#include "mediafileinfo.h"
 
 #include <QUrl>
 #include <QMimeData>
 #include <QFileInfo>
 #include <QIcon>
+#include <QDataStream>
+#include <QSize>
+#include <iostream>
+#include <QWidget>
 
 RushListModel::RushListModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -25,13 +30,13 @@ QVariant RushListModel::data(const QModelIndex &index, int role) const
     if (index.isValid()) {
         switch (role) {
             case Qt::DisplayRole:
-                ret = rushItems.at(index.row()).canonicalUrl().fileName();
+                ret = rushItems.at(index.row()).getContent().canonicalUrl().fileName();
                 break;
             case Qt::DecorationRole:
                 ret = QIcon(":/icon/video.png");
                 break;
             case Qt::ToolTipRole:
-                ret = rushItems.at(index.row()).canonicalUrl().fileName();
+                ret = rushItems.at(index.row()).getContent().canonicalUrl().fileName();
                 break;
             default:
                 break;
@@ -55,6 +60,10 @@ bool RushListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action
         if (row != -1 || parent.isValid()){
             ret = true;
         }
+    } else if (!data->hasUrls() && data->hasFormat("application/x-qabstractitemmodeldatalist")){
+        if (row != -1 || parent.isValid()){
+            ret = true;
+        }
     }
     return ret;
 }
@@ -67,21 +76,23 @@ bool RushListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     Q_UNUSED(action);
     Q_UNUSED(row);
     Q_UNUSED(column);
+    Q_UNUSED(parent);
     bool ret = false;
-    if (data->hasFormat("video-editor/rushUrl")){
-        QByteArray encoded = data->data("video-editor/rushUrl");
+    if (data->hasFormat("video-editor/rushUrl")) {
+        QByteArray encoded = data->data("application/x-qabstractitemmodeldatalist");
         QDataStream stream(&encoded, QIODevice::ReadOnly);
         int row_src;
         stream >> row_src;
         QModelIndex src = index(row_src);
         QModelIndex dest = index(row == -1 ? parent.row() : row);
-        if (src != dest){
+        if (src != dest) {
             beginMoveRows(src, src.row(), src.row(), dest, dest.row());
-            QMediaContent content = rushItems.takeAt(src.row());
-            if (row < rushItems.size())
-                rushItems.insert(dest.row(), content);
-            else
-                rushItems.append(content);
+            Media m = rushItems.takeAt(src.row());
+            if (row < rushItems.size()) {
+                rushItems.insert(dest.row(), m);
+            } else {
+                rushItems.append(m);
+            }
             endMoveRows();
             ret = true;
         }
@@ -100,7 +111,7 @@ QMimeData *RushListModel::mimeData(const QModelIndexList &indexes) const
     QMimeData *mimeData = QAbstractItemModel::mimeData(indexes);
     QModelIndex index = indexes.first();
     if (index.isValid()){
-        mimeData->setText(rushItems.at(index.row()).canonicalUrl().toString());
+        mimeData->setText(rushItems.at(index.row()).getContent().canonicalUrl().toString());
     }
     return mimeData;
 }
@@ -145,9 +156,43 @@ int RushListModel::rowCount(const QModelIndex &parent) const
 void RushListModel::addRushs(QStringList files)
 {
     QModelIndex index;
-    beginInsertRows(index, rushItems.size(), rushItems.size()+files.size());
+    MediaFileInfo *mfi = new MediaFileInfo();
     for (const QString file : files){
-        rushItems.append(QMediaContent(QUrl(file)));
+        QUrl monurl(file);
+        QMediaContent content(monurl);
+        Media m(content);
+        mfi->find_meta_data(file.toStdString().c_str());
+        m.setDuration(QTime(mfi->getHour(), mfi->getMinute(), mfi->getSecond(), mfi->getUSecond()));
+        beginInsertRows(index, rushItems.size(), rushItems.size()+files.size());        
+        rushItems.append(m);
+        endInsertRows();
+        emit rushAdded(m);
     }
-    endInsertRows();
+    delete mfi;
+    qint64 duration = calculAllDuration();
+    emit totalDurationChanged(duration);
+    
+}
+
+/**
+ * @brief RushListModel::getTrackDuration
+ * @return The total duration of the track in ms
+ */
+qint64 RushListModel::getTrackDuration() const
+{
+    return rushsDuration;
+}
+
+/**
+ * @brief RushListModel::calculAllDuration
+ * @return The total duration of the track in ms
+ */
+qint64 RushListModel::calculAllDuration()
+{   
+    std::vector<Media> track = rushItems.toStdVector();
+    qint64 sum = std::accumulate(track.begin(), track.end(), 0, [](qint64 s, const Media &a) {
+        return s + QTime(0, 0, 0).msecsTo(a.getDuration());
+    });
+    rushsDuration = sum;
+    return rushsDuration;
 }

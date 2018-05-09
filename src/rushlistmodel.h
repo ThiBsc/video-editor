@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 #include <QMediaContent>
+#include <QTime>
+#include "media.h"
 
 /**
  * @brief The RushListModel class
@@ -24,12 +26,19 @@ public:
     QStringList mimeTypes() const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     int rowCount(const QModelIndex &parent) const override;
+    qint64 getTrackDuration() const;
+    qint64 calculAllDuration();
 
 public slots:
     void addRushs(QStringList files);
+    
+signals:
+    void totalDurationChanged(qint64 duration);
+    void rushAdded(Media rush);
 
 private:
-    QVector<QMediaContent> rushItems;
+    qint64 rushsDuration;
+    QVector<Media> rushItems;
 
 };
 

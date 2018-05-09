@@ -1,5 +1,4 @@
 #include "track.h"
-#include "trackmodel.h"
 
 #include <QPaintEvent>
 #include <QPainter>
@@ -10,8 +9,7 @@ Track::Track(QWidget *parent)
     setFlow(QListView::LeftToRight);
     setMaximumHeight(50);
 
-    trackModel = new TrackModel(this);
-    setModel(trackModel);
+    setModel(nullptr);
     setSelectionMode(QAbstractItemView::SingleSelection);
     setDragEnabled(true);
     setAcceptDrops(true);
@@ -19,7 +17,7 @@ Track::Track(QWidget *parent)
 
 Track::~Track()
 {
-    delete trackModel;
+    
 }
 
 /**
@@ -30,15 +28,6 @@ Track::~Track()
 void Track::addMarker(int64_t ms)
 {
     msMarker.append(ms);
-}
-
-/**
- * @brief Track::getModel
- * @return The trackModel
- */
-TrackModel *Track::getModel()
-{
-    return trackModel;
 }
 
 /**
