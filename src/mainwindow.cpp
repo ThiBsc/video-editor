@@ -4,7 +4,7 @@
 #include "rushlistmodel.h"
 #include "videoplayer.h"
 #include "playercontrol.h"
-#include "track.h"
+#include "tracktool.h"
 
 #include <QListView>
 #include <QGridLayout>
