@@ -18,6 +18,7 @@ LIBS += -lavformat
 SOURCES += src/main.cpp\
         src/mainwindow.cpp \
     src/rushlistmodel.cpp \
+    src/media.cpp \
     src/videoplayer.cpp \
     src/playercontrol.cpp \
     src/mediafileinfo.cpp \
@@ -27,6 +28,7 @@ SOURCES += src/main.cpp\
     src/ffmpeg.cpp
 
 HEADERS  += src/mainwindow.h \
+    src/media.h \
     src/rushlistmodel.h \
     src/videoplayer.h \
     src/playercontrol.h \
