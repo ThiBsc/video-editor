@@ -4,16 +4,7 @@
 #include <QAbstractListModel>
 #include <QMediaContent>
 #include <QTime>
-
-/**
- * @brief The Media struct
- * Use to store the content with his duration
- */
-struct Media
-{
-    QMediaContent content;
-    QTime duration;
-};
+#include "media.h"
 
 /**
  * @brief The TrackModel class

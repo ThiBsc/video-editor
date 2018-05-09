@@ -37,7 +37,7 @@ void Ffmpeg::fusionVideos(QVector<Media> videos)
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream flux(&file);
     for (Media video : videos) {
-        flux << video.content.canonicalUrl().toString();
+        flux << video.getContent().canonicalUrl().toString();
     }
     file.close();
     // Commande concaténant les vidéos du fichier
