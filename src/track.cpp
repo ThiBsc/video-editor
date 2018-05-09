@@ -1,44 +1,24 @@
 #include "track.h"
-#include "trackmodel.h"
 
 #include <QPaintEvent>
 #include <QPainter>
 
-Track::Track(QWidget *parent)
-    : QListView(parent)
+Track::Track(Track::TrackType type, QWidget *parent)
+    : QWidget(parent)
 {
-    setFlow(QListView::LeftToRight);
-    setMaximumHeight(50);
+    this->type = type;
 
-    trackModel = new TrackModel(this);
-    setModel(trackModel);
-    setSelectionMode(QAbstractItemView::SingleSelection);
-    setDragEnabled(true);
-    setAcceptDrops(true);
+    setMinimumHeight(50);
 }
 
 Track::~Track()
 {
-    delete trackModel;
+
 }
 
-/**
- * @brief Track::addMarker
- * @param ms
- * Add a time marker at ms on the track
- */
 void Track::addMarker(int64_t ms)
 {
-    msMarker.append(ms);
-}
-
-/**
- * @brief Track::getModel
- * @return The trackModel
- */
-TrackModel *Track::getModel()
-{
-    return trackModel;
+    markers.insert(ms);
 }
 
 /**
@@ -48,7 +28,18 @@ TrackModel *Track::getModel()
  */
 void Track::paintEvent(QPaintEvent *e)
 {
-    QListView::paintEvent(e);
+    QWidget::paintEvent(e);
+
+    int w = width(), h = height();
+    QBrush backgroundBrush(Qt::white);
+    QPainter painter(this);
+    painter.fillRect(0, 0, w, h, backgroundBrush);
+
+    if (type == SOUND){
+
+    } else {
+        // MOVIE
+    }
 
     /*int w = width(), h = height();
     QBrush markerBrush(Qt::red);

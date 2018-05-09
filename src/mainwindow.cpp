@@ -4,7 +4,7 @@
 #include "rushlistmodel.h"
 #include "videoplayer.h"
 #include "playercontrol.h"
-#include "track.h"
+#include "tracktool.h"
 #include "trackmodel.h"
 
 #include <QListView>
@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     gLayout = new QGridLayout();
     ui->centralWidget->setLayout(gLayout);
 
-    videoTrack = new Track(this);
+    trackTool = new TrackTool(this);
 
     listRush = new QListView(this);
     rushListModel = new RushListModel(listRush);
@@ -35,13 +35,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     videoPlayer = new VideoPlayer(this);
 
-    gLayout->addWidget(listRush, 0, 0, 2, 1);
-    gLayout->addWidget(videoTrack, 0, 1);
-    gLayout->addWidget(videoPlayer, 1, 1);
+    gLayout->addWidget(listRush, 0, 0);
+    gLayout->addWidget(videoPlayer, 0, 1);
+    gLayout->addWidget(trackTool, 1, 0, 1, 2);
 
-    connect(videoTrack->getModel(), SIGNAL(totalDurationChanged(qint64)), videoPlayer->getPlayerControl(), SLOT(updateMaxDuration(qint64)));
     connect(mnuFile, SIGNAL(filesImported(QStringList)), rushListModel, SLOT(addRushs(QStringList)));
     connect(mnuFile, SIGNAL(quit()), this, SLOT(close()));
+    resize(600, 500);
 }
 
 MainWindow::~MainWindow()
@@ -52,6 +52,6 @@ MainWindow::~MainWindow()
     delete rushListModel;
     delete listRush;
     delete videoPlayer;
-    delete videoTrack;
+    delete trackTool;
     delete gLayout;
 }

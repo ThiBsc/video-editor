@@ -12,7 +12,7 @@ class QGridLayout;
 class MenuFile;
 class RushListModel;
 class VideoPlayer;
-class Track;
+class TrackTool;
 
 /**
  * @brief The MainWindow class
@@ -30,7 +30,7 @@ private:
     Ui::MainWindow *ui;
 
     QGridLayout *gLayout;
-    Track *videoTrack;
+    TrackTool *trackTool;
     QListView *listRush;
     RushListModel *rushListModel;
 

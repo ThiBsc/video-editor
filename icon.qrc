@@ -1,5 +1,13 @@
 <RCC>
     <qresource prefix="/">
         <file>icon/video.png</file>
+        <file>icon/cut.svg</file>
+        <file>icon/edit.svg</file>
+        <file>icon/link.svg</file>
+        <file>icon/merge.svg</file>
+        <file>icon/trash.svg</file>
+        <file>icon/volume-off.svg</file>
+        <file>icon/zoom-in.svg</file>
+        <file>icon/zoom-out.svg</file>
     </qresource>
 </RCC>
