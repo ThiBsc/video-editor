@@ -16,14 +16,14 @@ TEMPLATE = app
 LIBS += -lavformat
 
 SOURCES += src/main.cpp\
-        src/mainwindow.cpp \
+    src/mainwindow.cpp \
     src/rushlistmodel.cpp \
     src/media.cpp \
     src/videoplayer.cpp \
     src/playercontrol.cpp \
     src/mediafileinfo.cpp \
     src/menufile.cpp \
-    src/ffmpeg.cpp \
+    src/actions.cpp \
     src/tracktool.cpp \
     src/track.cpp
 
@@ -34,7 +34,7 @@ HEADERS  += src/mainwindow.h \
     src/playercontrol.h \
     src/mediafileinfo.h \
     src/menufile.h \
-    src/ffmpeg.h \
+    src/actions.h \
     src/tracktool.h \
     src/track.h
 
