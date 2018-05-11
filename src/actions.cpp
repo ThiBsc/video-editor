@@ -19,6 +19,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
     QString videoName("preview/"+name);
     QString nameStart;
     QString nameEnd;
+    QString nameMid;
     QString nameVideos;
     switch(action) {
         case Actions::enumActions::DELETE_ZONE:
@@ -54,8 +55,35 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += " -c copy "+videoName+";";
             break;
         case Actions::enumActions::MUT:
+            // Récupération du début
+            nameStart += "preview/start_"+name;
+            str += "ffmpeg -i "+videoName;
+            str += " -ss 00:00:00";
+            str += " -to "+start.toString();
+            str += " -c copy "+nameStart+";";
+            // Récupération de la zone
+            nameMid += "preview/mid_"+name;
+            str += "ffmpeg -i "+videoName;
+            str += " -ss "+start.toString();
+            str += " -to "+end.toString();
+            str += " -c copy "+nameEnd+";";
+            // Récupération de la fin
+            nameEnd += "preview/end_"+name;
+            str += "ffmpeg -i "+videoName;
+            str += " -ss "+end.toString();
+            str += " -c copy "+nameEnd+";";
+            // Suppression du son sur la zone du milieu
+            str += "ffmpeg -i "+nameMid;
+            str += " -an -y ";
+            str += " -c copy "+nameMid+";";
+            // Concaténation des deux parties
+            nameVideos += nameStart+"|"+nameEnd;
+            str += fusionVideos(videoName,nameVideos.split("|"));
+            // Suppression des vidéos temporaires
+            str += "DELETE:"+nameStart+"|"+nameMid+"|"+nameEnd;
             break;
         case Actions::enumActions::SPLIT:
+            //
             break;
         default: 
             return "";
