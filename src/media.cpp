@@ -1,35 +1,88 @@
 #include "media.h"
+#include "mediafileinfo.h"
 
 /**
  * @brief Media::getContent
  * @return The content of the media
  */
-Media::Media()
+Media::Media() {}
+
+/**
+ * @brief Media::getContent
+ * @return The content of the media
+ */
+Media::Media(QUrl url)
 {
+    this->path = url.path();
+    this->originalName = url.fileName();
+    this->name = url.fileName();
+    updateDuration();
 }
 
 /**
  * @brief Media::getContent
  * @return The content of the media
  */
-Media::Media(QMediaContent content)
+Media::Media(Media const& m): QObject()
 {
-    this->content= content;
+    path = m.getPath();
+    originalName = m.getOriginalName();
+    name = m.getName();
+    duration = m.getDuration();
+    for (QString action : m.getActions()) {
+       // actions.add(action);
+    }
+}
+
+Media Media::operator=(Media const& m)
+{
+    path = m.getPath();
+    originalName = m.getOriginalName();
+    name = m.getName();
+    duration = m.getDuration();
+    for (QString action : m.getActions()) {
+       // actions.add(action);
+    }
+    return *this;
 }
 
 /**
- * @brief Media::getContent
- * @return The content of the media
+ * @brief Media::updateDuration
+ * @return Calcul of the duration of the media
  */
-Media::Media(Media const& media)
+void Media::updateDuration()
 {
-    this->content= media.getContent();
-    this->duration= media.getDuration();
+    MediaFileInfo *mfi = new MediaFileInfo();
+    mfi->find_meta_data(path.toStdString().c_str());
+    this->duration = QTime(mfi->getHour(), mfi->getMinute(), mfi->getSecond(), mfi->getUSecond());
+    delete mfi;
 }
 
-QMediaContent Media::getContent() const
+/**
+ * @brief Media::getPath
+ * @return The path of the media
+ */
+QString Media::getPath() const
 {
-    return this->content;
+    return this->path;
+}
+
+/**
+ * @brief Media::getOriginalName
+ * @return The original name of the media
+ */
+QString Media::getOriginalName() const
+{
+    return this->originalName;
+}
+
+/**
+ * @brief Media::getName
+ * @return The name of the media
+ */
+QString Media::getName() const
+{
+    return this->name;
 }
 
 /**
@@ -42,10 +95,10 @@ QTime Media::getDuration() const
 }
 
 /**
- * @brief Media::getDuration
- * Set the duration of the media
+ * @brief Media::getActions
+ * @return All actions of the media
  */
-void Media::setDuration(QTime duration)
+QMap<int,QString> Media::getActions() const
 {
-    this->duration = duration;
+    return this->actions;
 }

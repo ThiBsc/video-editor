@@ -87,13 +87,12 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             break;
         case Actions::enumActions::SPLIT:
             // Récupération du la première partie
-            nameStart += "preview/part1_"+name;
             str += "ffmpeg -i "+videoName;
             str += " -ss 00:00:00";
             str += " -to "+start.toString();
-            str += " -c copy "+nameStart+";";
+            str += " -c copy "+videoName+";";
             // Récupération de la deuxième partie
-            nameEnd += "preview/part2_"+name;
+            nameEnd += "preview/part_"+name;
             str += "ffmpeg -i "+videoName;
             str += " -ss "+start.toString();
             str += " -c copy "+nameEnd+";";
