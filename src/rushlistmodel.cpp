@@ -171,7 +171,7 @@ void RushListModel::addRushs(QStringList files)
 
 void RushListModel::currentItemChanged(QModelIndex idx)
 {
-    emit emitSelection(rushItems.at(idx.row()).getContent().canonicalUrl().toString());
+    emit emitSelection(rushItems.at(idx.row()).getPath());
 }
 
 /**
