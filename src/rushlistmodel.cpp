@@ -30,13 +30,13 @@ QVariant RushListModel::data(const QModelIndex &index, int role) const
     if (index.isValid()) {
         switch (role) {
             case Qt::DisplayRole:
-                ret = rushItems.at(index.row()).getContent().canonicalUrl().fileName();
+                ret = rushItems.at(index.row()).getName();
                 break;
             case Qt::DecorationRole:
                 ret = QIcon(":/icon/video.png");
                 break;
             case Qt::ToolTipRole:
-                ret = rushItems.at(index.row()).getContent().canonicalUrl().fileName();
+                ret = rushItems.at(index.row()).getName();
                 break;
             default:
                 break;
@@ -87,7 +87,7 @@ bool RushListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         QModelIndex dest = index(row == -1 ? parent.row() : row);
         if (src != dest) {
             beginMoveRows(src, src.row(), src.row(), dest, dest.row());
-            Media m = rushItems.takeAt(src.row());
+            Media m(rushItems.takeAt(src.row()));
             if (row < rushItems.size()) {
                 rushItems.insert(dest.row(), m);
             } else {
@@ -111,7 +111,7 @@ QMimeData *RushListModel::mimeData(const QModelIndexList &indexes) const
     QMimeData *mimeData = QAbstractItemModel::mimeData(indexes);
     QModelIndex index = indexes.first();
     if (index.isValid()){
-        mimeData->setText(rushItems.at(index.row()).getContent().canonicalUrl().toString());
+        mimeData->setText(rushItems.at(index.row()).getPath());
     }
     return mimeData;
 }
@@ -156,19 +156,14 @@ int RushListModel::rowCount(const QModelIndex &parent) const
 void RushListModel::addRushs(QStringList files)
 {
     QModelIndex index;
-    MediaFileInfo *mfi = new MediaFileInfo();
     for (const QString file : files){
         QUrl monurl(file);
-        QMediaContent content(monurl);
-        Media m(content);
-        mfi->find_meta_data(file.toStdString().c_str());
-        m.setDuration(QTime(mfi->getHour(), mfi->getMinute(), mfi->getSecond(), mfi->getUSecond()));
+        Media m(monurl);
         beginInsertRows(index, rushItems.size(), rushItems.size()+files.size());        
         rushItems.append(m);
         endInsertRows();
         emit rushAdded(m);
     }
-    delete mfi;
     qint64 duration = calculAllDuration();
     emit totalDurationChanged(duration);
     
