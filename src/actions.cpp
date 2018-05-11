@@ -55,6 +55,9 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += " -c copy "+videoName+";";
             break;
         case Actions::enumActions::MUT:
+            if (end.isNull()) {
+                return "";
+            }
             // Récupération du début
             nameStart += "preview/start_"+name;
             str += "ffmpeg -i "+videoName;
@@ -83,7 +86,17 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += "DELETE:"+nameStart+"|"+nameMid+"|"+nameEnd;
             break;
         case Actions::enumActions::SPLIT:
-            //
+            // Récupération du la première partie
+            nameStart += "preview/part1_"+name;
+            str += "ffmpeg -i "+videoName;
+            str += " -ss 00:00:00";
+            str += " -to "+start.toString();
+            str += " -c copy "+nameStart+";";
+            // Récupération de la deuxième partie
+            nameEnd += "preview/part2_"+name;
+            str += "ffmpeg -i "+videoName;
+            str += " -ss "+start.toString();
+            str += " -c copy "+nameEnd+";";
             break;
         default: 
             return "";
