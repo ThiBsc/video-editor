@@ -2,6 +2,7 @@
 #define TRACKTOOL_H
 
 #include <QWidget>
+#include "media.h"
 
 class QToolBar;
 class QAction;
@@ -24,6 +25,9 @@ public:
     ~TrackTool();
     void addMarker(int64_t ms, MarkerType marker_type);
 
+public slots:
+    void setMedia(const QString file);
+
 private:
     QVBoxLayout *vLayout;
 
@@ -39,7 +43,6 @@ private:
     QAction *actZoomOut;
 
     Track *soundTrack;
-    Track *movieTrack;
 
 };
 

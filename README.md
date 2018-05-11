@@ -9,6 +9,9 @@ Projet annuel d'édition de video linéaire
 - libqt5multimedia5-plugins
 - libavformat-dev
 
+### Used libraries
+[![QCustomPlot](http://www.qcustomplot.com/qcp-logo.png)](http://www.qcustomplot.com/)
+
 ## Compile
 
 ```shell

@@ -29,11 +29,11 @@ TrackTool::TrackTool(QWidget *parent)
     actZoomIn = toolbarActions->addAction(QIcon("://icon/zoom-in.svg"), "Zoom-In");
 
     soundTrack = new Track(Track::SOUND, this);
-    movieTrack = new Track(Track::MOVIE, this);
+    //movieTrack = new Track(Track::MOVIE, this);
 
     vLayout->addWidget(toolbarActions);
     vLayout->addWidget(soundTrack);
-    vLayout->addWidget(movieTrack);
+    //vLayout->addWidget(movieTrack);
 }
 
 TrackTool::~TrackTool()
@@ -50,7 +50,7 @@ TrackTool::~TrackTool()
     delete toolbarActions;
 
     delete soundTrack;
-    delete movieTrack;
+    //delete movieTrack;
 
     delete vLayout;
 }
@@ -65,10 +65,15 @@ void TrackTool::addMarker(int64_t ms, MarkerType marker_type)
     if (marker_type == SOUND){
         soundTrack->addMarker(ms);
     } else if (marker_type == MOVIE) {
-        movieTrack->addMarker(ms);
+        //movieTrack->addMarker(ms);
     } else {
         // BOTH
         soundTrack->addMarker(ms);
-        movieTrack->addMarker(ms);
+        //movieTrack->addMarker(ms);
     }
+}
+
+void TrackTool::setMedia(const QString file)
+{
+    soundTrack->setSource(file);
 }

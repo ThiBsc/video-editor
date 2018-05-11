@@ -1,10 +1,12 @@
 #ifndef TRACK_H
 #define TRACK_H
 
-#include <QWidget>
-#include <QSet>
+#include "qcustomplot.h"
+#include <QAudioBuffer>
 
-class Track : public QWidget
+class QAudioDecoder;
+
+class Track : public QCustomPlot
 {
     Q_OBJECT
 
@@ -13,14 +15,22 @@ public:
     Track(TrackType type, QWidget *parent = Q_NULLPTR);
     ~Track();
     void addMarker(int64_t ms);
+    void setSource(const QString &fileName);
 
-protected:
-    void paintEvent(QPaintEvent *e) override;
+public slots:
+    void setBuffer();
+    void plot();
 
 private:
+    qreal getPeakValue(const QAudioFormat& format);
     TrackType type;
 
     QSet<int64_t> markers;
+
+    QAudioDecoder *decoder;
+    QAudioBuffer buffer;
+    QVector<double> samples;
+    QCPGraph *wavePlot;
 
 };
 

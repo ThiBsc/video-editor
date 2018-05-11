@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui multimedia multimediawidgets
+QT       += core gui multimedia multimediawidgets printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,7 +25,8 @@ SOURCES += src/main.cpp\
     src/menufile.cpp \
     src/ffmpeg.cpp \
     src/tracktool.cpp \
-    src/track.cpp
+    src/track.cpp \
+    src/qcustomplot.cpp
 
 HEADERS  += src/mainwindow.h \
     src/media.h \
@@ -36,7 +37,8 @@ HEADERS  += src/mainwindow.h \
     src/menufile.h \
     src/ffmpeg.h \
     src/tracktool.h \
-    src/track.h
+    src/track.h \
+    src/qcustomplot.h
 
 FORMS    += mainwindow.ui
 

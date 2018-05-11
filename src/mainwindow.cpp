@@ -38,7 +38,9 @@ MainWindow::MainWindow(QWidget *parent) :
     gLayout->addWidget(videoPlayer, 0, 1);
     gLayout->addWidget(trackTool, 1, 0, 1, 2);
 
-    connect(listRush->model(), SIGNAL(totalDurationChanged(qint64)), videoPlayer->getPlayerControl(), SLOT(updateMaxDuration(qint64)));
+    connect(listRush, SIGNAL(clicked(QModelIndex)), rushListModel, SLOT(currentItemChanged(QModelIndex)));
+    connect(rushListModel, SIGNAL(emitSelection(QString)), trackTool, SLOT(setMedia(QString)));
+    connect(rushListModel, SIGNAL(totalDurationChanged(qint64)), videoPlayer->getPlayerControl(), SLOT(updateMaxDuration(qint64)));
     connect(mnuFile, SIGNAL(filesImported(QStringList)), rushListModel, SLOT(addRushs(QStringList)));
     connect(mnuFile, SIGNAL(quit()), this, SLOT(close()));
     resize(600, 500);

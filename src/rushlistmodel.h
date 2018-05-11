@@ -31,10 +31,12 @@ public:
 
 public slots:
     void addRushs(QStringList files);
+    void currentItemChanged(QModelIndex idx);
     
 signals:
     void totalDurationChanged(qint64 duration);
     void rushAdded(Media rush);
+    void emitSelection(const QString file);
 
 private:
     qint64 rushsDuration;
