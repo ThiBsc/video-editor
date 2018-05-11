@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(listRush, SIGNAL(clicked(QModelIndex)), rushListModel, SLOT(currentItemChanged(QModelIndex)));
     connect(rushListModel, SIGNAL(emitSelection(QString)), trackTool, SLOT(setMedia(QString)));
+    connect(rushListModel, SIGNAL(emitSelection(QString)), videoPlayer, SLOT(setCurrentMedia(QString)));
     connect(rushListModel, SIGNAL(totalDurationChanged(qint64)), videoPlayer->getPlayerControl(), SLOT(updateMaxDuration(qint64)));
     connect(mnuFile, SIGNAL(filesImported(QStringList)), rushListModel, SLOT(addRushs(QStringList)));
     connect(mnuFile, SIGNAL(quit()), this, SLOT(close()));

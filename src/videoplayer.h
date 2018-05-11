@@ -23,6 +23,9 @@ public:
     ~VideoPlayer();
     PlayerControl *getPlayerControl();
 
+public slots:
+    void setCurrentMedia(const QString file);
+
 private:
     QVBoxLayout *vLayout;
 
