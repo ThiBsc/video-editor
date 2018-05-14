@@ -102,3 +102,8 @@ QMap<int,QString> Media::getActions() const
 {
     return this->actions;
 }
+
+void Media::addAction(QPair<int,QString> command)
+{
+    this->actions.insert(command.first,command.second);
+}

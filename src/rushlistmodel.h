@@ -5,6 +5,7 @@
 #include <QMediaContent>
 #include <QTime>
 #include "media.h"
+#include "actions.h"
 
 /**
  * @brief The RushListModel class
@@ -32,6 +33,7 @@ public:
 public slots:
     void addRushs(QStringList files);
     void currentItemChanged(QModelIndex idx);
+    void updateMedia(Actions::enumActions,QVector<QTime>);
     
 signals:
     void totalDurationChanged(qint64 duration);
@@ -40,6 +42,7 @@ signals:
 
 private:
     qint64 rushsDuration;
+    QModelIndex curentIndex;
     QVector<Media> rushItems;
 
 };

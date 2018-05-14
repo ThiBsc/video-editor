@@ -26,6 +26,7 @@ class Media : public QObject
         QTime getDuration() const;
 
         void updateDuration();
+        void addAction(QPair<int,QString> command);
         QMap<int,QString> getActions() const;
 
     private:
