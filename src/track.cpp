@@ -38,12 +38,22 @@ void Track::setSource(const QString &fileName)
 void Track::setBuffer()
 {
     buffer = decoder->read();
-    qreal peak = getPeakValue(buffer.format());
-    const qint16 *data = buffer.constData<qint16>();
-    int count = buffer.sampleCount() / 2;
-    for (int i=0; i<count; i++){
-        double val = data[i]/peak;
-        samples.append(val);
+    QAudioFormat format = buffer.format();
+    if (format.isValid()){
+        int count = buffer.sampleCount() / 2;
+        QAudioFormat::SampleType sampletype = format.sampleType();
+        if (sampletype == QAudioFormat::Float){
+            const QAudioBuffer::S32F *data = buffer.constData<QAudioBuffer::S32F>();
+            for (int i=0; i<count; i++)
+                samples.append(data[i].average());
+        } else {
+            qreal peak = getPeakValue(format);
+            const qint16 *data = buffer.constData<qint16>();
+            for (int i=0; i<count; i++){
+                double val = data[i]/peak;
+                samples.append(val);
+            }
+        }
     }
 }
 
