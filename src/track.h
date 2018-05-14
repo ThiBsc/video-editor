@@ -21,7 +21,17 @@ public slots:
     void setBuffer();
     void plot();
 
+protected:
+    void mouseMoveEvent(QMouseEvent *evt) override;
+    void mousePressEvent(QMouseEvent *evt) override;
+    void paintEvent(QPaintEvent *evt) override;
+
 private:
+    struct Selection
+    {
+        int x1, x2;
+    } curSelection;
+
     qreal getPeakValue(const QAudioFormat& format);
     TrackType type;
 

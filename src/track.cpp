@@ -1,6 +1,7 @@
 #include "track.h"
 
 #include <QAudioDecoder>
+#include <numeric>
 
 Track::Track(Track::TrackType type, QWidget *parent)
     : QCustomPlot(parent)
@@ -8,10 +9,13 @@ Track::Track(Track::TrackType type, QWidget *parent)
 {
     this->type = type;
 
+    curSelection.x1 = curSelection.x2 = -1;
+
     wavePlot = addGraph();
     yAxis->setRange(QCPRange(-1, 1));
 
     setMinimumHeight(100);
+    setMouseTracking(false);
 
     connect(decoder, SIGNAL(bufferReady()), this, SLOT(setBuffer()));
     connect(decoder, SIGNAL(finished()), this, SLOT(plot()));
@@ -60,11 +64,46 @@ void Track::setBuffer()
 void Track::plot()
 {
     QVector<double> x(samples.size());
-    for (int i=0; i<x.size(); i++)
-        x[i] = i;
-    wavePlot->addData(x, samples);
+    std::iota(x.begin(), x.end(), 0.0);
+    wavePlot->setData(x, samples, true);
     xAxis->setRange(QCPRange(0, samples.size()));
     replot();
+}
+
+void Track::mouseMoveEvent(QMouseEvent *evt)
+{
+    int x = evt->x();
+    curSelection.x2 = x;
+    update();
+}
+
+void Track::mousePressEvent(QMouseEvent *evt)
+{
+    if (evt->button() == Qt::RightButton){
+        curSelection.x1 = -1;
+        curSelection.x2 = -1;
+    } else {
+        int x = evt->x();
+        curSelection.x1 = x;
+        curSelection.x2 = -1;
+    }
+    update();
+}
+
+void Track::paintEvent(QPaintEvent *evt)
+{
+    QCustomPlot::paintEvent(evt);
+
+    if (curSelection.x1 != -1){
+        QPainter painter(this);
+        painter.setPen(QColor(Qt::gray));
+        painter.drawLine(curSelection.x1, 0, curSelection.x1, height());
+        if (curSelection.x2 != -1){
+            int rectWidth = curSelection.x2 - curSelection.x1;
+            painter.fillRect(curSelection.x1, 0, rectWidth, height(), QColor(20, 20, 20, 50));
+            painter.drawLine(curSelection.x2, 0, curSelection.x2, height());
+        }
+    }
 }
 
 /**
