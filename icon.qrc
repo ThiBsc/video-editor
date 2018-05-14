@@ -9,5 +9,7 @@
         <file>icon/volume-off.svg</file>
         <file>icon/zoom-in.svg</file>
         <file>icon/zoom-out.svg</file>
+        <file>icon/trashBegin.svg</file>
+        <file>icon/trashEnd.svg</file>
     </qresource>
 </RCC>

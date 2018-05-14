@@ -45,9 +45,9 @@ TrackTool::~TrackTool()
     delete actTrashEnd;
     delete actMute;
     delete actCut;
-    delete actMerge;
-    delete actEdit;
-    delete actLink;
+    //delete actMerge;
+    //delete actEdit;
+    //delete actLink;
     delete actZoomIn;
     delete sliderZoom;
     delete actZoomOut;
@@ -75,6 +75,11 @@ void TrackTool::addMarker(int64_t ms, MarkerType marker_type)
         soundTrack->addMarker(ms);
         //movieTrack->addMarker(ms);
     }
+}
+
+QToolBar *TrackTool::getToolbar()
+{
+    return toolbarActions;
 }
 
 void TrackTool::setMedia(const QString file)

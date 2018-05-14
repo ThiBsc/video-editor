@@ -25,6 +25,7 @@ public:
     TrackTool(QWidget *parent = Q_NULLPTR);
     ~TrackTool();
     void addMarker(int64_t ms, MarkerType marker_type);
+    QToolBar *getToolbar();
 
 public slots:
     void setMedia(const QString file);
