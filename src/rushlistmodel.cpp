@@ -7,6 +7,7 @@
 #include <QIcon>
 #include <QDataStream>
 #include <QSize>
+#include <QMap>
 #include <iostream>
 #include <QWidget>
 
@@ -165,12 +166,26 @@ void RushListModel::addRushs(QStringList files)
         emit rushAdded(m);
     }
     qint64 duration = calculAllDuration();
-    emit totalDurationChanged(duration);
-    
+    emit totalDurationChanged(duration); 
+}
+
+void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> selected)
+{
+    // Récupération du média courant
+    Media m = rushItems.at(curentIndex.row());    
+    // Création de la commande
+    QString command = Actions::getCommandOnVideo(action, m.getName(), selected.value(0), selected.value(1));
+    // Ajout de la commande
+    QPair<int,QString> actionCommand(static_cast<int>(action),command);
+    m.addAction(actionCommand);
+    // Exécution de l'action
+    Actions myAction;
+    myAction.executeCommand(command);
 }
 
 void RushListModel::currentItemChanged(QModelIndex idx)
 {
+    curentIndex = idx;
     emit emitSelection(rushItems.at(idx.row()).getPath());
 }
 

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "media.h"
+#include "actions.h"
 
 class QToolBar;
 class QAction;
@@ -27,12 +28,18 @@ public:
 
 public slots:
     void setMedia(const QString file);
+    void emitActionClick(QAction *button);
+
+signals:
+    void actionClick(Actions::enumActions action,QVector<QTime> selected);
 
 private:
     QVBoxLayout *vLayout;
 
     QToolBar *toolbarActions;
     QAction *actTrash;
+    QAction *actTrashBegin;
+    QAction *actTrashEnd;
     QAction *actMute;
     QAction *actCut;
     QAction *actMerge;

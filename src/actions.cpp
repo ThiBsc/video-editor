@@ -39,7 +39,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += " -c copy "+nameEnd+";";
             // Concaténation des deux parties
             nameVideos += nameStart+"|"+nameEnd;
-            str += fusionVideos(videoName,nameVideos.split("|"));
+            str += Actions::fusionVideos(videoName,nameVideos.split("|"));
             // Suppression des vidéos temporaires
             str += "DELETE:"+nameStart+"|"+nameEnd;
             break;
@@ -81,7 +81,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += " -c copy "+nameMid+";";
             // Concaténation des deux parties
             nameVideos += nameStart+"|"+nameEnd;
-            str += fusionVideos(videoName,nameVideos.split("|"));
+            str += Actions::fusionVideos(videoName,nameVideos.split("|"));
             // Suppression des vidéos temporaires
             str += "DELETE:"+nameStart+"|"+nameMid+"|"+nameEnd;
             break;
