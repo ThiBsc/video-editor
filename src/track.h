@@ -20,17 +20,22 @@ public:
 public slots:
     void setBuffer();
     void plot();
+    void defaultScale();
 
 protected:
     void mouseMoveEvent(QMouseEvent *evt) override;
     void mousePressEvent(QMouseEvent *evt) override;
     void paintEvent(QPaintEvent *evt) override;
+    void keyPressEvent(QKeyEvent *evt) override;
+    void keyReleaseEvent(QKeyEvent *evt) override;
 
 private:
     struct Selection
     {
         int x1, x2;
     } curSelection;
+
+    bool ctrlPressed;
 
     qreal getPeakValue(const QAudioFormat& format);
     TrackType type;

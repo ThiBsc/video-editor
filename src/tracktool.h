@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "media.h"
 #include "actions.h"
+#include "qcustomplot.h"
 
 class QToolBar;
 class QAction;
@@ -46,9 +47,7 @@ private:
     QAction *actMerge;
     QAction *actEdit;
     QAction *actLink;
-    QAction *actZoomIn;
-    QSlider *sliderZoom;
-    QAction *actZoomOut;
+    QAction *actDefaultTrack;
 
     Track *soundTrack;
 
