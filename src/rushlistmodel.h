@@ -29,6 +29,7 @@ public:
     int rowCount(const QModelIndex &parent) const override;
     qint64 getTrackDuration() const;
     qint64 calculAllDuration();
+    static bool copyFile(Media m);
 
 public slots:
     void addRushs(QStringList files);
