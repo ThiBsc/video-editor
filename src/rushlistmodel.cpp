@@ -4,6 +4,8 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QFileInfo>
+#include <QFile>
+#include <QDir>
 #include <QIcon>
 #include <QDataStream>
 #include <QSize>
@@ -160,13 +162,27 @@ void RushListModel::addRushs(QStringList files)
     for (const QString file : files){
         QUrl monurl(file);
         Media m(monurl);
-        beginInsertRows(index, rushItems.size(), rushItems.size()+files.size());        
-        rushItems.append(m);
-        endInsertRows();
-        emit rushAdded(m);
+        bool copy = RushListModel::copyFile(m);
+        if (copy) {
+            beginInsertRows(index, rushItems.size(), rushItems.size()+files.size());        
+            rushItems.append(m);
+            endInsertRows();
+            emit rushAdded(m);
+        }        
     }
     qint64 duration = calculAllDuration();
     emit totalDurationChanged(duration); 
+}
+
+bool RushListModel::copyFile(Media m)
+{
+    QString src = "../preview";
+    QDir dir(src);
+    if(!dir.exists()){
+        return false;
+    }
+    QFile::copy(m.getPath(), src+"/"+m.getName());
+    return true;
 }
 
 void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> selected)
