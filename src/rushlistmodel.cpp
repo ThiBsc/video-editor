@@ -202,7 +202,8 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
 void RushListModel::currentItemChanged(QModelIndex idx)
 {
     curentIndex = idx;
-    emit emitSelection(rushItems.at(idx.row()).getPath());
+    QString path = QDir::currentPath()+"/../preview/";
+    emit emitSelection(path+rushItems.at(idx.row()).getName());
 }
 
 /**
