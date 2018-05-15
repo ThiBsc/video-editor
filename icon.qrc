@@ -11,5 +11,6 @@
         <file>icon/zoom-out.svg</file>
         <file>icon/trashBegin.svg</file>
         <file>icon/trashEnd.svg</file>
+        <file>icon/default_track.svg</file>
     </qresource>
 </RCC>

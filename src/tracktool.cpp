@@ -11,11 +11,10 @@ TrackTool::TrackTool(QWidget *parent)
     : QWidget(parent)
 {
     vLayout = new QVBoxLayout();
+    vLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(vLayout);
 
     toolbarActions = new QToolBar("Track action", this);
-    sliderZoom = new QSlider(Qt::Horizontal, this);
-    sliderZoom->setRange(0, 100);
 
     actTrash = toolbarActions->addAction(QIcon("://icon/trash.svg"), "Trash");
     actTrashBegin = toolbarActions->addAction(QIcon("://icon/trashBegin.svg"), "TrashBegin");
@@ -26,9 +25,7 @@ TrackTool::TrackTool(QWidget *parent)
     //actEdit = toolbarActions->addAction(QIcon("://icon/edit.svg"), "Edit");
     //actLink = toolbarActions->addAction(QIcon("://icon/link.svg"), "Link");
     toolbarActions->addSeparator();
-    actZoomOut = toolbarActions->addAction(QIcon("://icon/zoom-out.svg"), "Zoom-Out");
-    toolbarActions->addWidget(sliderZoom);
-    actZoomIn = toolbarActions->addAction(QIcon("://icon/zoom-in.svg"), "Zoom-In");
+    actDefaultTrack = toolbarActions->addAction(QIcon("://icon/default_track.svg"), "Default track zoom");
 
     soundTrack = new Track(Track::SOUND, this);
     //movieTrack = new Track(Track::MOVIE, this);
@@ -36,6 +33,8 @@ TrackTool::TrackTool(QWidget *parent)
     vLayout->addWidget(toolbarActions);
     vLayout->addWidget(soundTrack);
     //vLayout->addWidget(movieTrack);
+
+    connect(actDefaultTrack, SIGNAL(triggered(bool)), soundTrack, SLOT(defaultScale()));
 }
 
 TrackTool::~TrackTool()
@@ -48,9 +47,7 @@ TrackTool::~TrackTool()
     //delete actMerge;
     //delete actEdit;
     //delete actLink;
-    delete actZoomIn;
-    delete sliderZoom;
-    delete actZoomOut;
+    delete actDefaultTrack;
     delete toolbarActions;
 
     delete soundTrack;

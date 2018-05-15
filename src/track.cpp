@@ -10,12 +10,20 @@ Track::Track(Track::TrackType type, QWidget *parent)
     this->type = type;
 
     curSelection.x1 = curSelection.x2 = -1;
+    ctrlPressed = false;
+    setMouseTracking(ctrlPressed);
 
     wavePlot = addGraph();
     yAxis->setRange(QCPRange(-1, 1));
 
+    setMinimumWidth(500);
     setMinimumHeight(100);
-    setMouseTracking(false);
+    setInteraction(QCP::iRangeDrag, true);
+    setInteraction(QCP::iRangeZoom, true);
+    axisRect()->setRangeDragAxes(xAxis, yAxis);
+    axisRect()->setRangeZoomAxes(xAxis, yAxis);
+    axisRect()->setRangeDrag(Qt::Horizontal);
+    axisRect()->setRangeZoom(Qt::Horizontal);
 
     connect(decoder, SIGNAL(bufferReady()), this, SLOT(setBuffer()));
     connect(decoder, SIGNAL(finished()), this, SLOT(plot()));
@@ -67,27 +75,41 @@ void Track::plot()
     std::iota(x.begin(), x.end(), 0.0);
     wavePlot->setData(x, samples, true);
     xAxis->setRange(QCPRange(0, samples.size()));
+    //xAxis->scaleRange(0.5);
+    replot();
+}
+
+void Track::defaultScale()
+{
+    xAxis->rescale();
     replot();
 }
 
 void Track::mouseMoveEvent(QMouseEvent *evt)
 {
-    int x = evt->x();
-    curSelection.x2 = x;
-    update();
+    if (ctrlPressed){
+        QCustomPlot::mouseMoveEvent(evt);
+    } else {
+        int x = evt->x();
+        curSelection.x2 = x;
+        update();
+    }
 }
 
 void Track::mousePressEvent(QMouseEvent *evt)
 {
-    if (evt->button() == Qt::RightButton){
-        curSelection.x1 = -1;
-        curSelection.x2 = -1;
+    if (ctrlPressed){
+        QCustomPlot::mousePressEvent(evt);
     } else {
-        int x = evt->x();
-        curSelection.x1 = x;
-        curSelection.x2 = -1;
+        if (evt->button() == Qt::RightButton){
+            curSelection.x1 = curSelection.x2 = -1;
+        } else {
+            int x = evt->x();
+            curSelection.x1 = x;
+            curSelection.x2 = -1;
+        }
+        update();
     }
-    update();
 }
 
 void Track::paintEvent(QPaintEvent *evt)
@@ -103,6 +125,26 @@ void Track::paintEvent(QPaintEvent *evt)
             painter.fillRect(curSelection.x1, 0, rectWidth, height(), QColor(20, 20, 20, 50));
             painter.drawLine(curSelection.x2, 0, curSelection.x2, height());
         }
+    }
+}
+
+void Track::keyPressEvent(QKeyEvent *evt)
+{
+    QCustomPlot::keyPressEvent(evt);
+    int key = evt->key();
+    if (key == Qt::Key_Control){
+        ctrlPressed = true;
+        setMouseTracking(ctrlPressed);
+    }
+}
+
+void Track::keyReleaseEvent(QKeyEvent *evt)
+{
+    QCustomPlot::keyReleaseEvent(evt);
+    int key = evt->key();
+    if (key == Qt::Key_Control){
+        ctrlPressed = false;
+        setMouseTracking(ctrlPressed);
     }
 }
 
