@@ -174,6 +174,10 @@ void RushListModel::addRushs(QStringList files)
     emit totalDurationChanged(duration); 
 }
 
+/**
+ * @brief RushListModel::copyFile
+ * Copy the media in preview directory 
+ */
 bool RushListModel::copyFile(Media m)
 {
     QString src = "../preview";
@@ -185,6 +189,10 @@ bool RushListModel::copyFile(Media m)
     return true;
 }
 
+/**
+ * @brief RushListModel::updateMedia
+ * Update the preview media with action of user
+ */
 void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> selected)
 {
     // Récupération du média courant
@@ -196,9 +204,15 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
     m.addAction(actionCommand);
     // Exécution de l'action
     Actions myAction;
-    myAction.executeCommand(command);
+    bool cmdSuccess = myAction.executeCommand(command);
+    if (cmdSuccess) {
+
+    }
 }
 
+/**
+ * @brief RushListModel::currentItemChanged
+ */
 void RushListModel::currentItemChanged(QModelIndex idx)
 {
     curentIndex = idx;

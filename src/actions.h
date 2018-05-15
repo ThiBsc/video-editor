@@ -1,13 +1,13 @@
 #ifndef ACTIONS_H
 #define ACTIONS_H
 
-#include <QProcess>
+#include <QObject>
 #include <QTime>
 #include <QString>
 #include <QVector>
 #include "media.h"
 
-class Actions : public QProcess
+class Actions : public QObject
 {
 public:
     enum enumActions {NONE, DELETE_ZONE, DELETE_BEGIN, DELETE_END, MUT, SPLIT, FUSION};
@@ -16,7 +16,7 @@ public:
     static QString getCommandOnVideo(Actions::enumActions action, QString nameVideo, QTime start, QTime end=QTime());
     static QString fusionVideos(QString finalName, QStringList nameOfVideos);
     bool removeFile(QStringList nameOfVideos);
-    void executeCommand(QString command);
+    bool executeCommand(QString command);
     ~Actions();
 };
 
