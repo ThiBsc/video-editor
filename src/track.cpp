@@ -11,6 +11,8 @@ Track::Track(Track::TrackType type, QWidget *parent)
 
     curSelection.x1 = curSelection.x2 = -1;
     ctrlPressed = false;
+    updateSelection = false;
+    timePerBytes = 0.0;
     setMouseTracking(ctrlPressed);
 
     wavePlot = addGraph();
@@ -27,6 +29,8 @@ Track::Track(Track::TrackType type, QWidget *parent)
 
     connect(decoder, SIGNAL(bufferReady()), this, SLOT(setBuffer()));
     connect(decoder, SIGNAL(finished()), this, SLOT(plot()));
+    connect(xAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(onXRangeChange(QCPRange)));
+    connect(this, SIGNAL(afterReplot()), this, SLOT(onReplotIsFinished()));
 }
 
 Track::~Track()
@@ -45,6 +49,12 @@ void Track::setSource(const QString &fileName)
     samples.clear();
     decoder->setSourceFilename(fileName);
     decoder->start();
+}
+
+double Track::getMicrosecFromX(int x)
+{
+    // *2 parce que /2 à l'insert
+    return x != -1 ? (xAxis->pixelToCoord(x)*timePerBytes)*2 : -1.0;
 }
 
 void Track::setBuffer()
@@ -71,20 +81,96 @@ void Track::setBuffer()
 
 void Track::plot()
 {
+    double bytesCount = buffer.byteCount() / buffer.format().bytesPerFrame();
+    double duration = buffer.duration();
+    timePerBytes = duration / bytesCount;
     QVector<double> x(samples.size());
     std::iota(x.begin(), x.end(), 0.0);
     wavePlot->setData(x, samples, true);
     xAxis->setRange(QCPRange(0, samples.size()));
-    //xAxis->scaleRange(0.5);
     replot();
 }
 
+/**
+ * @brief Track::defaultScale
+ * Reset the scale to default
+ */
 void Track::defaultScale()
 {
     xAxis->rescale();
     replot();
 }
 
+/**
+ * @brief Track::onXRangeChange
+ * @param range
+ * To avoid drag outside the range
+ */
+void Track::onXRangeChange(const QCPRange &range)
+{
+    if (!samples.isEmpty()){
+        curSelection.x1 = curSelection.x2 = -1;
+        if (range.size() < samples.size()){
+            bool replace = false;
+            QCPRange r = range;
+            if (range.lower < 0){
+                r.lower = 0;
+                r.upper = 0 + range.size();
+                replace = true;
+            } else if (range.upper > samples.size()){
+                r.upper = samples.size();
+                r.lower = r.upper - range.size();
+                replace = true;
+            }
+            if (replace){
+                xAxis->setRange(r);
+            }
+        } else {
+            xAxis->setRange(0, samples.size());
+        }
+    }
+}
+
+void Track::onReplotIsFinished()
+{
+    if (updateSelection){
+        updateSelection = false;
+        if (restoreSelectionCoordToPX())
+            update();
+    }
+}
+
+bool Track::restoreSelectionCoordToPX()
+{
+    bool needUpdate = false;
+    if (curSelection.x1 != -1){
+        curSelection.x1 = xAxis->coordToPixel(curSelection.x1);
+        needUpdate = true;
+    }
+    if (curSelection.x2 != -1){
+        curSelection.x2 = xAxis->coordToPixel(curSelection.x2);
+        needUpdate = true;
+    }
+    return needUpdate;
+}
+
+void Track::saveSelectionCoordToRestore()
+{
+    if (curSelection.x1 != -1){
+        curSelection.x1 = xAxis->pixelToCoord(curSelection.x1);
+        updateSelection = true;
+    }
+    if (curSelection.x2 != -1){
+        curSelection.x2 = xAxis->pixelToCoord(curSelection.x2);
+        updateSelection = true;
+    }
+}
+
+/**
+ * @brief Track::mouseMoveEvent
+ * @param evt
+ * To manage drag and zone selection
+ */
 void Track::mouseMoveEvent(QMouseEvent *evt)
 {
     if (ctrlPressed){
@@ -96,6 +182,11 @@ void Track::mouseMoveEvent(QMouseEvent *evt)
     }
 }
 
+/**
+ * @brief Track::mousePressEvent
+ * @param evt
+ * To manage drag and single selection
+ */
 void Track::mousePressEvent(QMouseEvent *evt)
 {
     if (ctrlPressed){
@@ -112,6 +203,11 @@ void Track::mousePressEvent(QMouseEvent *evt)
     }
 }
 
+/**
+ * @brief Track::paintEvent
+ * @param evt
+ * To draw selection
+ */
 void Track::paintEvent(QPaintEvent *evt)
 {
     QCustomPlot::paintEvent(evt);
@@ -128,6 +224,11 @@ void Track::paintEvent(QPaintEvent *evt)
     }
 }
 
+/**
+ * @brief Track::keyPressEvent
+ * @param evt
+ * To use both QCustomPlot and our control
+ */
 void Track::keyPressEvent(QKeyEvent *evt)
 {
     QCustomPlot::keyPressEvent(evt);
@@ -146,6 +247,12 @@ void Track::keyReleaseEvent(QKeyEvent *evt)
         ctrlPressed = false;
         setMouseTracking(ctrlPressed);
     }
+}
+
+void Track::resizeEvent(QResizeEvent *evt)
+{
+    saveSelectionCoordToRestore();
+    QCustomPlot::resizeEvent(evt);
 }
 
 /**
