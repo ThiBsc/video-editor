@@ -2,12 +2,13 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
-#include <iostream>
 #include <QDebug>
 #include <QDir>
 #include <QProcess>
 #include <QTextStream>
 #include <QMediaContent>
+#include <iostream>
+#include <fstream>
 
 Actions::Actions()
 {
@@ -36,7 +37,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             // Récupération du début
             nameStart += path+"start_"+name;
             str += "ffmpeg -i "+videoName;
-            str += " -ss 00:00:00";
+            str += " -ss 00:00:00.00";
             str += " -to "+start.toString();
             str += " -c copy "+nameStart+" && ";
             // Récupération de la fin
@@ -57,7 +58,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             break;
         case Actions::enumActions::DELETE_END:
             str += "ffmpeg -i "+videoName;
-            str += " -ss 00:00:00";
+            str += " -ss 00:00:00.00";
             str += " -to "+start.toString();
             str += " -c copy "+videoName;
             break;
@@ -68,7 +69,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             // Récupération du début
             nameStart += path+"start_"+name;
             str += "ffmpeg -i "+videoName;
-            str += " -ss 00:00:00";
+            str += " -ss 00:00:00.00";
             str += " -to "+start.toString();
             str += " -c copy "+nameStart+" && ";
             // Récupération de la zone
@@ -95,7 +96,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
         case Actions::enumActions::SPLIT:
             // Récupération du la première partie
             str += "ffmpeg -i "+videoName;
-            str += " -ss 00:00:00";
+            str += " -ss 00:00:00.00";
             str += " -to "+start.toString();
             str += " -c copy "+videoName+" && ";
             // Récupération de la deuxième partie
@@ -115,7 +116,7 @@ QString Actions::fusionVideos(QString finalName, QStringList nameOfVideos)
     QString liste = QDir::currentPath()+"/../preview/liste.txt";
     QString str;
     for (QString name : nameOfVideos) {
-        str += "&& echo \"file '"+name+"'\" >> "+liste;
+        str += "&& \"file '"+name+"'\" >> "+liste;
     }
     str += "&& ffmpeg -f concat -i "+liste+" -c copy "+finalName;
     return str;
@@ -145,19 +146,25 @@ bool Actions::executeCommand(QString command)
 
     // Lancement des commandes
     QProcess cmd;
+    QString output;
     QStringList allCommand = command.split("&&");
     for (auto command : allCommand) {
-        if (int index = command.indexOf("<<")) {
-            std::cout << command.mid(index+1).toStdString() << std::endl;
-            cmd.setStandardOutputFile(command.mid(index+1));
+        int index = command.indexOf(">>");
+        std::cout << index << std::endl;
+        if (index != -1) {
+            output = command.mid(index+1);
+            std::cout << output.toStdString() << std::endl;
             command = command.left(index);
+            std::cout << command.toStdString() << std::endl;
+            std::ofstream myfile;
+            myfile.open(output.toStdString());
+            myfile << command.toStdString()+"\n";
+            myfile.close();
         } else {
-            cmd.setStandardOutputFile(QProcess::nullDevice());
-        }
-        int returnStat = cmd.execute(command);
-        std::cout << command.toStdString() << " : " << returnStat << std::endl;
-        if (returnStat != QProcess::NormalExit) {
-            success = false;
+            int returnStat = cmd.execute(command);
+            if (returnStat != QProcess::NormalExit) {
+                success = false;
+            }
         }
     }    
     // Suppression des fichiers si besoin
