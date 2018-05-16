@@ -23,12 +23,12 @@ Actions::~Actions()
 QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QTime start, QTime end)
 {
     QString path = QDir::currentPath()+"/../preview/";
-    QString str;
-    QString videoName(path+name);
+    QString videoName(path+name);    
     QString nameStart;
     QString nameEnd;
     QString nameMid;
     QString nameVideos;
+    QString str;
     switch(action) {
         case Actions::enumActions::DELETE_ZONE:
             if (end.isNull()) {
@@ -38,12 +38,12 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             nameStart += path+"start_"+name;
             str += "ffmpeg -y -i "+videoName;
             str += " -ss 00:00:00.00";
-            str += " -to "+start.toString();
+            str += " -t "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+nameStart+" && ";
             // Récupération de la fin
             nameEnd += path+"end_"+name;
             str += "ffmpeg -y -i "+videoName;
-            str += " -ss "+end.toString();
+            str += " -ss "+end.toString("hh:mm:ss.zz");
             str += " -c copy "+nameEnd+" && ";
             // Concaténation des deux parties
             nameVideos += nameStart+"|"+nameEnd;
@@ -53,13 +53,13 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             break;
         case Actions::enumActions::DELETE_BEGIN:
             str += "ffmpeg -y -i "+videoName;
-            str += " -ss "+start.toString();
+            str += " -ss "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+videoName;
             break;
         case Actions::enumActions::DELETE_END:
             str += "ffmpeg -y -i "+videoName;
             str += " -ss 00:00:00.00";
-            str += " -to "+start.toString();
+            str += " -t "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+videoName;
             break;
         case Actions::enumActions::MUT:
@@ -70,23 +70,19 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             nameStart += path+"start_"+name;
             str += "ffmpeg -y -i "+videoName;
             str += " -ss 00:00:00.00";
-            str += " -to "+start.toString();
+            str += " -t "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+nameStart+" && ";
-            // Récupération de la zone
+            // Récupération de la zone sans son
             nameMid += path+"mid_"+name;
             str += "ffmpeg -y -i "+videoName;
-            str += " -ss "+start.toString();
-            str += " -to "+end.toString();
-            str += " -c copy "+nameMid+" && ";
+            str += " -ss "+start.toString("hh:mm:ss.zz");
+            str += " -to "+end.toString("hh:mm:ss.zz");
+            str += " -an -c copy "+nameMid+" && ";
             // Récupération de la fin
             nameEnd += path+"end_"+name;
             str += "ffmpeg -y -i "+videoName;
-            str += " -ss "+end.toString();
+            str += " -ss "+end.toString("hh:mm:ss.zz");
             str += " -c copy "+nameEnd+" && ";
-            // Suppression du son sur la zone du milieu
-            str += "ffmpeg -y -i "+nameMid;
-            str += " -an -y ";
-            str += " -c copy "+nameMid+" && ";
             // Concaténation des parties
             nameVideos += nameStart+"|"+nameMid+"|"+nameEnd;
             str += Actions::fusionVideos(videoName,nameVideos.split("|"));
@@ -97,12 +93,12 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             // Récupération du la première partie
             str += "ffmpeg -y -i "+videoName;
             str += " -ss 00:00:00.00";
-            str += " -to "+start.toString();
+            str += " -t "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+videoName+" && ";
             // Récupération de la deuxième partie
             nameEnd += path+"part_"+name;
             str += "ffmpeg -y -i "+videoName;
-            str += " -ss "+start.toString();
+            str += " -ss "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+nameEnd;
             break;
         default: 
@@ -151,6 +147,9 @@ bool Actions::executeCommand(QString command)
     int returnStat;
     QString nameFile;
     QStringList allCommand = command.split("&&");
+    for (auto com : allCommand) {
+        std::cout << com.toStdString() << std::endl;
+    }
     for (auto command : allCommand) {
         index = command.indexOf(">>");
         if (index != -1) {
