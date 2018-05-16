@@ -13,6 +13,7 @@ Track::Track(Track::TrackType type, QWidget *parent)
     ctrlPressed = false;
     updateSelection = false;
     timePerBytes = 0.0;
+    bytesPerFrame = channelCount = 0;
     setMouseTracking(ctrlPressed);
 
     wavePlot = addGraph();
@@ -51,10 +52,23 @@ void Track::setSource(const QString &fileName)
     decoder->start();
 }
 
-double Track::getMicrosecFromX(int x)
+QTime Track::getSelectionTime(SelectionX x)
 {
-    // *2 parce que /2 à l'insert
-    return x != -1 ? (xAxis->pixelToCoord(x)*timePerBytes)*2 : -1.0;
+    QTime ret;
+    int64_t micros_x = getMicrosecFromX(x == X1 ? curSelection.x1 : curSelection.x2);
+    if (micros_x != -1){
+        long ms   = (long) (micros_x / 1000) % 1000;
+        long sec  = (((long) (micros_x / 1000) - ms)/1000)%60 ;
+        long min  = (((((long) (micros_x / 1000) - ms)/1000) - sec)/60) %60 ;
+        long hour = ((((((long) (micros_x / 1000) - ms)/1000) - sec)/60) - min)/60;
+        ret = QTime(hour, min, sec, ms);
+    }
+    return ret;
+}
+
+int64_t Track::getMicrosecFromX(int x)
+{
+    return x != -1 ? ((xAxis->pixelToCoord(x)*timePerBytes) * (bytesPerFrame/channelCount)) : -1.0;
 }
 
 void Track::setBuffer()
@@ -62,7 +76,7 @@ void Track::setBuffer()
     buffer = decoder->read();
     QAudioFormat format = buffer.format();
     if (format.isValid()){
-        int count = buffer.sampleCount() / 2;
+        int count = buffer.sampleCount() / buffer.format().bytesPerFrame();
         QAudioFormat::SampleType sampletype = format.sampleType();
         if (sampletype == QAudioFormat::Float){
             const QAudioBuffer::S32F *data = buffer.constData<QAudioBuffer::S32F>();
@@ -81,9 +95,10 @@ void Track::setBuffer()
 
 void Track::plot()
 {
-    double bytesCount = buffer.byteCount() / buffer.format().bytesPerFrame();
     double duration = buffer.duration();
-    timePerBytes = duration / bytesCount;
+    timePerBytes = duration / buffer.frameCount();
+    bytesPerFrame = buffer.format().bytesPerFrame();
+    channelCount = buffer.format().channelCount();
     QVector<double> x(samples.size());
     std::iota(x.begin(), x.end(), 0.0);
     wavePlot->setData(x, samples, true);

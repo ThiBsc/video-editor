@@ -12,11 +12,12 @@ class Track : public QCustomPlot
 
 public:
     enum TrackType { SOUND=0, MOVIE };
+    enum SelectionX { X1=0, X2 };
     Track(TrackType type, QWidget *parent = Q_NULLPTR);
     ~Track();
     void addMarker(int64_t ms);
     void setSource(const QString &fileName);
-    double getMicrosecFromX(int x);
+    QTime getSelectionTime(SelectionX x);
 
 public slots:
     void setBuffer();
@@ -36,6 +37,7 @@ protected:
     void resizeEvent(QResizeEvent *evt) override;
 
 private:
+    int64_t getMicrosecFromX(int x);
     struct Selection
     {
         double x1, x2;
@@ -44,6 +46,8 @@ private:
     bool ctrlPressed;
     bool updateSelection;
     double timePerBytes;
+    int bytesPerFrame;
+    int channelCount;
 
     qreal getPeakValue(const QAudioFormat& format);
     TrackType type;
