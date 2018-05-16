@@ -36,13 +36,13 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             }
             // Récupération du début
             nameStart += path+"start_"+name;
-            str += "ffmpeg -i "+videoName;
+            str += "ffmpeg -y -i "+videoName;
             str += " -ss 00:00:00.00";
             str += " -to "+start.toString();
             str += " -c copy "+nameStart+" && ";
             // Récupération de la fin
             nameEnd += path+"end_"+name;
-            str += "ffmpeg -i "+videoName;
+            str += "ffmpeg -y -i "+videoName;
             str += " -ss "+end.toString();
             str += " -c copy "+nameEnd+" && ";
             // Concaténation des deux parties
@@ -52,12 +52,12 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += "DELETE:"+nameStart+"|"+nameEnd;
             break;
         case Actions::enumActions::DELETE_BEGIN:
-            str += "ffmpeg -i "+videoName;
+            str += "ffmpeg -y -i "+videoName;
             str += " -ss "+start.toString();
             str += " -c copy "+videoName;
             break;
         case Actions::enumActions::DELETE_END:
-            str += "ffmpeg -i "+videoName;
+            str += "ffmpeg -y -i "+videoName;
             str += " -ss 00:00:00.00";
             str += " -to "+start.toString();
             str += " -c copy "+videoName;
@@ -68,40 +68,40 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             }
             // Récupération du début
             nameStart += path+"start_"+name;
-            str += "ffmpeg -i "+videoName;
+            str += "ffmpeg -y -i "+videoName;
             str += " -ss 00:00:00.00";
             str += " -to "+start.toString();
             str += " -c copy "+nameStart+" && ";
             // Récupération de la zone
             nameMid += path+"mid_"+name;
-            str += "ffmpeg -i "+videoName;
+            str += "ffmpeg -y -i "+videoName;
             str += " -ss "+start.toString();
             str += " -to "+end.toString();
             str += " -c copy "+nameMid+" && ";
             // Récupération de la fin
             nameEnd += path+"end_"+name;
-            str += "ffmpeg -i "+videoName;
+            str += "ffmpeg -y -i "+videoName;
             str += " -ss "+end.toString();
             str += " -c copy "+nameEnd+" && ";
             // Suppression du son sur la zone du milieu
-            str += "ffmpeg -i "+nameMid;
+            str += "ffmpeg -y -i "+nameMid;
             str += " -an -y ";
             str += " -c copy "+nameMid+" && ";
-            // Concaténation des deux parties
-            nameVideos += nameStart+"|"+nameEnd;
-            str += Actions::fusionVideos(path+"Alice.mkv",nameVideos.split("|"));
+            // Concaténation des parties
+            nameVideos += nameStart+"|"+nameMid+"|"+nameEnd;
+            str += Actions::fusionVideos(videoName,nameVideos.split("|"));
             // Suppression des vidéos temporaires
             str += "DELETE:"+nameStart+"|"+nameMid+"|"+nameEnd;
             break;
         case Actions::enumActions::SPLIT:
             // Récupération du la première partie
-            str += "ffmpeg -i "+videoName;
+            str += "ffmpeg -y -i "+videoName;
             str += " -ss 00:00:00.00";
             str += " -to "+start.toString();
             str += " -c copy "+videoName+" && ";
             // Récupération de la deuxième partie
             nameEnd += path+"part_"+name;
-            str += "ffmpeg -i "+videoName;
+            str += "ffmpeg -y -i "+videoName;
             str += " -ss "+start.toString();
             str += " -c copy "+nameEnd;
             break;
@@ -114,11 +114,13 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
 QString Actions::fusionVideos(QString finalName, QStringList nameOfVideos)
 {
     QString liste = QDir::currentPath()+"/../preview/liste.txt";
+    QFileInfo infoOutput(liste);
     QString str;
     for (QString name : nameOfVideos) {
-        str += "&& \"file '"+name+"'\" >> "+liste;
+        QFileInfo info(name);
+        str += "&& file "+info.absoluteFilePath()+" >> "+infoOutput.absoluteFilePath();
     }
-    str += "&& ffmpeg -f concat -i "+liste+" -c copy "+finalName;
+    str += "&& ffmpeg -y -f concat -safe 0 -i "+infoOutput.absoluteFilePath()+" -c copy "+finalName;
     return str;
 }
 
@@ -152,14 +154,14 @@ bool Actions::executeCommand(QString command)
         int index = command.indexOf(">>");
         std::cout << index << std::endl;
         if (index != -1) {
-            output = command.mid(index+1);
-            std::cout << output.toStdString() << std::endl;
+            output = command.mid(index+3);
             command = command.left(index);
-            std::cout << command.toStdString() << std::endl;
-            std::ofstream myfile;
-            myfile.open(output.toStdString());
-            myfile << command.toStdString()+"\n";
-            myfile.close();
+            QFile file(output.toStdString().c_str());
+            if (!file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
+                std::cout << "Erreur" << std::endl;
+            QTextStream out(&file);
+            out << command.toStdString().c_str();
+            out << "\n";
         } else {
             int returnStat = cmd.execute(command);
             if (returnStat != QProcess::NormalExit) {
