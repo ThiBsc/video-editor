@@ -113,8 +113,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
 
 QString Actions::fusionVideos(QString finalName, QStringList nameOfVideos)
 {
-    QString liste = QDir::currentPath()+"/../preview/liste.txt";
-    QFileInfo infoOutput(liste);
+    QFileInfo infoOutput(QDir::currentPath()+"/../preview/liste.txt");
     QString str;
     for (QString name : nameOfVideos) {
         QFileInfo info(name);
@@ -141,37 +140,37 @@ bool Actions::executeCommand(QString command)
 
     // Découpage de la commande si présence du mot DELETE
     QStringList nameVideosDelete;
-    if (int index = command.indexOf("DELETE:")) {
-        QStringList nameVideos = command.mid(index+6).split("|");
+    int index = command.indexOf("DELETE:");
+    if (index != -1) {
+        nameVideosDelete = command.mid(index+7).split("|");
         command = command.left(index);
     }
 
     // Lancement des commandes
     QProcess cmd;
-    QString output;
+    int returnStat;
+    QString nameFile;
     QStringList allCommand = command.split("&&");
     for (auto command : allCommand) {
-        int index = command.indexOf(">>");
-        std::cout << index << std::endl;
+        index = command.indexOf(">>");
         if (index != -1) {
-            output = command.mid(index+3);
-            command = command.left(index);
-            QFile file(output.toStdString().c_str());
-            if (!file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
+            nameFile = command.mid(index+3);
+            QFile file(nameFile.toStdString().c_str());
+            if (!file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
                 std::cout << "Erreur" << std::endl;
-            QTextStream out(&file);
-            out << command.toStdString().c_str();
-            out << "\n";
+            } else {
+                nameVideosDelete.append(nameFile);
+                QTextStream out(&file);
+                out << command.left(index).toStdString().c_str() << "\n";
+            }
         } else {
-            int returnStat = cmd.execute(command);
+            returnStat = cmd.execute(command);
             if (returnStat != QProcess::NormalExit) {
                 success = false;
             }
         }
     }    
-    // Suppression des fichiers si besoin
-    if (!nameVideosDelete.isEmpty()) {
-        removeFile(nameVideosDelete);
-    }
+    // Suppression des fichiers
+    removeFile(nameVideosDelete);
     return success;    
 }
