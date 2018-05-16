@@ -201,7 +201,13 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
     // Exécution de l'action
     Actions myAction;
     bool cmdSuccess = myAction.executeCommand(command);
-    if (cmdSuccess) {
+    QString path = QDir::currentPath()+"/../preview/";
+    emit emitSelection(path+m.getName());
+    if (!cmdSuccess) {
+        std::cout << "Erreur dans les commandes" << std::endl;
+        // emit actionError();
+    } else if (action == Actions::enumActions::SPLIT) {
+        // Ajout du split aux rushs + stockage dans dossier spécifique
 
     }
 }

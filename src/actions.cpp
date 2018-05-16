@@ -157,24 +157,20 @@ bool Actions::executeCommand(QString command)
     int returnStat;
     QString nameFile;
     QStringList allCommand = command.split("&&");
-    for (auto com : allCommand) {
-        std::cout << com.toStdString() << std::endl;
-    }
     for (auto command : allCommand) {
         index = command.indexOf(">>");
         if (index != -1) {
             nameFile = command.mid(index+3);
             QFile file(nameFile.toStdString().c_str());
-            if (!file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
-                std::cout << "Erreur" << std::endl;
-            } else {
+            if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
                 nameVideosDelete.append(nameFile);
                 QTextStream out(&file);
                 out << command.left(index).toStdString().c_str() << "\n";
             }
         } else {
             returnStat = cmd.execute(command);
-            if (returnStat != QProcess::NormalExit) {
+            if (returnStat == -1) {
+                std::cout << "RETOUR STAT " << returnStat << std::endl;
                 success = false;
             }
         }

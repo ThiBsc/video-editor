@@ -29,9 +29,6 @@ Media::Media(Media const& m): QObject()
     originalName = m.getOriginalName();
     name = m.getName();
     duration = m.getDuration();
-    for (QString action : m.getActions()) {
-       // actions.add(action);
-    }
 }
 
 Media Media::operator=(Media const& m)
@@ -40,9 +37,7 @@ Media Media::operator=(Media const& m)
     originalName = m.getOriginalName();
     name = m.getName();
     duration = m.getDuration();
-    for (QString action : m.getActions()) {
-       // actions.add(action);
-    }
+    actions = m.getActions();
     return *this;
 }
 
