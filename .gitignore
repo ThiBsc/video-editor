@@ -6,3 +6,5 @@ src/videos/
 video-editor\.pro\.user
 
 \.vscode/
+
+preview/
