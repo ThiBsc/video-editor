@@ -24,11 +24,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
 {
     QString path = QDir::currentPath()+"/../preview/";
     QString videoName(path+name);    
-    QString nameStart;
-    QString nameEnd;
-    QString nameMid;
-    QString nameVideos;
-    QString str;
+    QString str, nameStart, nameEnd, nameMid, nameTmp, nameVideos;
     switch(action) {
         case Actions::enumActions::DELETE_ZONE:
             if (end.isNull()) {
@@ -37,7 +33,6 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             // Récupération du début
             nameStart += path+"start_"+name;
             str += "ffmpeg -y -i "+videoName;
-            str += " -ss 00:00:00.00";
             str += " -t "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+nameStart+" && ";
             // Récupération de la fin
@@ -52,15 +47,26 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += "DELETE:"+nameStart+"|"+nameEnd;
             break;
         case Actions::enumActions::DELETE_BEGIN:
+            nameTmp += path+"tmp_"+name;
             str += "ffmpeg -y -i "+videoName;
             str += " -ss "+start.toString("hh:mm:ss.zz");
-            str += " -c copy "+videoName;
+            str += " -c copy "+nameTmp+" && ";
+            // Renommage
+            str += "ffmpeg -y -i "+nameTmp;
+            str += " -c copy "+videoName+" && ";
+            // Suppression les vidéos temporaires
+            str += "DELETE:"+nameTmp;
             break;
         case Actions::enumActions::DELETE_END:
+            nameTmp += path+"tmp_"+name;
             str += "ffmpeg -y -i "+videoName;
-            str += " -ss 00:00:00.00";
             str += " -t "+start.toString("hh:mm:ss.zz");
-            str += " -c copy "+videoName;
+            str += " -c copy "+nameTmp+" && ";
+            // Renommage
+            str += "ffmpeg -y -i "+nameTmp;
+            str += " -c copy "+videoName+" && ";
+            // Suppression les vidéos temporaires
+            str += "DELETE:"+nameTmp;
             break;
         case Actions::enumActions::MUT:
             if (end.isNull()) {
@@ -69,7 +75,6 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             // Récupération du début
             nameStart += path+"start_"+name;
             str += "ffmpeg -y -i "+videoName;
-            str += " -ss 00:00:00.00";
             str += " -t "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+nameStart+" && ";
             // Récupération de la zone sans son
@@ -91,15 +96,20 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             break;
         case Actions::enumActions::SPLIT:
             // Récupération du la première partie
+            nameTmp += path+"tmp_"+name;
             str += "ffmpeg -y -i "+videoName;
-            str += " -ss 00:00:00.00";
             str += " -t "+start.toString("hh:mm:ss.zz");
+            str += " -c copy "+nameTmp+" && ";
+            // Renommage
+            str += "ffmpeg -y -i "+nameTmp;
             str += " -c copy "+videoName+" && ";
             // Récupération de la deuxième partie
             nameEnd += path+"part_"+name;
             str += "ffmpeg -y -i "+videoName;
             str += " -ss "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+nameEnd;
+            // Suppression les vidéos temporaires
+            str += "DELETE:"+nameTmp;
             break;
         default: 
             return "";
