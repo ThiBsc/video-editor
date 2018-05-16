@@ -67,7 +67,6 @@ bool RushListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action
     return ret;
 }
 
-#include <QDebug>
 /**
  * http://doc.qt.io/qt-5/qabstractitemmodel.html#dropMimeData
  */
