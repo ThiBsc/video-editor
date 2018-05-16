@@ -63,14 +63,11 @@ bool RushListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action
         if (row != -1 || parent.isValid()){
             ret = true;
         }
-    } else if (!data->hasUrls() && data->hasFormat("application/x-qabstractitemmodeldatalist")){
-        if (row != -1 || parent.isValid()){
-            ret = true;
-        }
     }
     return ret;
 }
 
+#include <QDebug>
 /**
  * http://doc.qt.io/qt-5/qabstractitemmodel.html#dropMimeData
  */
@@ -82,7 +79,7 @@ bool RushListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     Q_UNUSED(parent);
     bool ret = false;
     if (data->hasFormat("video-editor/rushUrl")) {
-        QByteArray encoded = data->data("application/x-qabstractitemmodeldatalist");
+        QByteArray encoded = data->data("video-editor/rushUrl");
         QDataStream stream(&encoded, QIODevice::ReadOnly);
         int row_src;
         stream >> row_src;
