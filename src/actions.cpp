@@ -77,11 +77,19 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += " -t "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+nameStart+" && ";
             // Récupération de la zone sans son
+            /*
             nameMid += path+"mid_"+name;
-            str += "ffmpeg -f lavfi -y -i "+videoName;
+            str += "ffmpeg -y -i "+videoName;
+            str += " -f lavfi -i anullsrc ";
             str += " -ss "+start.toString("hh:mm:ss.zz");
             str += " -to "+end.toString("hh:mm:ss.zz");
-            str += " -i anullsrc -c copy "+nameMid+" && ";
+            str += " -strict experimental -c:a aac -c:v copy -shortest "+nameMid+" && ";
+            */
+            nameMid += path+"mid_"+name;
+            str += "ffmpeg -y -i "+videoName;
+            str += " -ss "+start.toString("hh:mm:ss.zz");
+            str += " -to "+end.toString("hh:mm:ss.zz");
+            str += " -an -c copy "+nameMid+" && ";
             // Récupération de la fin
             nameEnd += path+"end_"+name;
             str += "ffmpeg -y -i "+videoName;
@@ -150,7 +158,11 @@ bool Actions::copyFile(QString src, QString dest)
         return false;
     }
     QUrl origin(src);
-    return QFile::copy(src, dest+"/"+origin.fileName());
+    QString fileDest(dest+"/"+origin.fileName());
+    if (QFile::exists(fileDest)) {
+        QFile::remove(fileDest);
+    }
+    return QFile::copy(src, fileDest);
 }
 
 bool Actions::executeCommand(QString command)
