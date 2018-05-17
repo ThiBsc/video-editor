@@ -5,7 +5,6 @@
 #include <QObject>
 #include <QMap>
 #include <QUrl>
-#include "actions.h"
 
 /**
  * @brief The Media class
@@ -21,6 +20,8 @@ class Media : public QObject
         Media operator=(Media const& media);
 
         QString getPath() const;
+        QString currentPath() const;
+        QString getPreviewPath() const;
         QString getOriginalName() const;
         QString getName() const;
         QTime getDuration() const;
@@ -31,6 +32,7 @@ class Media : public QObject
 
     private:
         QString path;
+        QString previewPath;
         QString originalName;
         QString name;
         QTime duration;

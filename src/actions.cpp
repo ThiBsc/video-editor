@@ -10,15 +10,9 @@
 #include <iostream>
 #include <fstream>
 
-Actions::Actions()
-{
-    
-}
+Actions::Actions(){}
 
-Actions::~Actions()
-{
-
-}
+Actions::~Actions(){}
 
 QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QTime start, QTime end)
 {
@@ -140,6 +134,21 @@ bool Actions::removeFile(QStringList nameOfVideos)
     return success;
 }
 
+/**
+ * @brief Actions::copyFile
+ * Copy the media in dest directory 
+ */
+bool Actions::copyFile(QString src, QString dest)
+{
+    QDir dir(dest);
+    if(!dir.exists()){
+        return false;
+    }
+    QUrl origin(src);
+    QFile::copy(src, dest+"/"+origin.fileName());
+    return true;
+}
+
 bool Actions::executeCommand(QString command)
 {
     bool success = true;
@@ -176,6 +185,6 @@ bool Actions::executeCommand(QString command)
         }
     }    
     // Suppression des fichiers
-    removeFile(nameVideosDelete);
+    Actions::removeFile(nameVideosDelete);
     return success;    
 }

@@ -22,7 +22,7 @@ RushListModel::RushListModel(QAbstractItemView *parent)
 RushListModel::~RushListModel()
 {
 
-}
+RushListModel::~RushListModel(){}
 
 /**
  * http://doc.qt.io/qt-5/qabstractitemmodel.html#data
@@ -158,31 +158,16 @@ void RushListModel::addRushs(QStringList files)
     for (const QString file : files){
         QUrl monurl(file);
         Media m(monurl);
-        bool copy = RushListModel::copyFile(m);
+        bool copy = Actions::copyFile(m.getPath(),"../preview");
         if (copy) {
-            beginInsertRows(index, rushItems.size(), rushItems.size()+files.size());        
+            beginInsertRows(index, rushItems.size(), rushItems.size()+files.size());
             rushItems.append(m);
             endInsertRows();
             emit rushAdded(m);
-        }        
+        }
     }
     qint64 duration = calculAllDuration();
-    emit totalDurationChanged(duration); 
-}
-
-/**
- * @brief RushListModel::copyFile
- * Copy the media in preview directory 
- */
-bool RushListModel::copyFile(Media m)
-{
-    QString src = "../preview";
-    QDir dir(src);
-    if(!dir.exists()){
-        return false;
-    }
-    QFile::copy(m.getPath(), src+"/"+m.getName());
-    return true;
+    emit totalDurationChanged(duration);
 }
 
 /**
@@ -192,7 +177,7 @@ bool RushListModel::copyFile(Media m)
 void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> selected)
 {
     // Récupération du média courant
-    Media m = rushItems.at(curentIndex.row());    
+    Media m = rushItems.at(curentIndex.row());
     // Création de la commande
     QString command = Actions::getCommandOnVideo(action, m.getName(), selected.value(0), selected.value(1));
     // Ajout de la commande
@@ -201,15 +186,32 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
     // Exécution de l'action
     Actions myAction;
     bool cmdSuccess = myAction.executeCommand(command);
-    QString path = QDir::currentPath()+"/../preview/";
-    emit emitSelection(path+m.getName(), QTime(0, 0, 0).msecsTo(m.getDuration()));
+    m.updateDuration();
+    emit emitSelection(m.currentPath(), QTime(0, 0, 0).msecsTo(m.getDuration()));
     if (!cmdSuccess) {
         std::cout << "Erreur dans les commandes" << std::endl;
         // emit actionError();
     } else if (action == Actions::enumActions::SPLIT) {
-        // Ajout du split aux rushs + stockage dans dossier spécifique
+        QString path = QDir::currentPath()+"/../preview/";
+        managePartSplit(path+"part_"+m.getName());
+    }
+}
+
+void RushListModel::managePartSplit(QString url)
+{
+    QUrl origin(url);
+    // Déplace le fichier dans un dossier
+    bool copy = Actions::copyFile(origin.path(),"../originalSplit");
+    if (!copy) {
+        // Gestion erreur
 
     }
+    // Suppression du fichier de preview
+    Actions::removeFile(QStringList(origin.path()));
+    // Ajout aux rushs le nouveau fichier
+    QFileInfo info(QDir::currentPath()+"/../originalSplit/"+origin.fileName());
+    QStringList newFile(info.absoluteFilePath());
+    addRushs(newFile);
 }
 
 /**
@@ -228,7 +230,7 @@ void RushListModel::currentSelectionChanged(const QItemSelection &selected, cons
         QModelIndex idx = parentView->selectionModel()->selectedIndexes().first();
         Media cur = rushItems.at(idx.row());
         QString path = QDir::currentPath()+"/../preview/";
-        emit emitSelection(path+cur.getName(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
+        emit emitSelection(cur.currentPath(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
     } else {
         // Aucune selection
     }
@@ -248,7 +250,7 @@ qint64 RushListModel::getTrackDuration() const
  * @return The total duration of the track in ms
  */
 qint64 RushListModel::calculAllDuration()
-{   
+{
     std::vector<Media> track = rushItems.toStdVector();
     qint64 sum = std::accumulate(track.begin(), track.end(), 0, [](qint64 s, const Media &a) {
         return s + QTime(0, 0, 0).msecsTo(a.getDuration());
