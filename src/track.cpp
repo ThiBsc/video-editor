@@ -61,6 +61,7 @@ QTime Track::getSelectionTime(SelectionX x)
     } else {
         micros_x = curSelection.x1 < curSelection.x2 ? curSelection.x2 : curSelection.x1;
     }
+    micros_x = getMicrosecFromX(micros_x);
     if (micros_x != -1){
         long ms   = (long) (micros_x / 1000) % 1000;
         long sec  = (((long) (micros_x / 1000) - ms)/1000)%60 ;
