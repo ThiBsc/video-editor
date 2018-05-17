@@ -22,7 +22,7 @@ RushListModel::RushListModel(QAbstractItemView *parent)
 RushListModel::~RushListModel()
 {
 
-RushListModel::~RushListModel(){}
+}
 
 /**
  * http://doc.qt.io/qt-5/qabstractitemmodel.html#data
