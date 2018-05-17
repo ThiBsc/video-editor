@@ -179,6 +179,7 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
     // Exécution de l'action
     Actions myAction;
     bool cmdSuccess = myAction.executeCommand(command);
+    emit emitSelection(path+m.getName(), QTime(0, 0, 0).msecsTo(m.getDuration()));
     m.updateDuration();
     emit emitSelection(m.currentPath());
     if (!cmdSuccess) {
@@ -214,6 +215,8 @@ void RushListModel::currentItemChanged(QModelIndex idx)
 {
     curentIndex = idx;
     emit emitSelection(rushItems.at(idx.row()).currentPath());
+    Media cur = rushItems.at(idx.row());
+    emit emitSelection(path+cur.getName(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
 }
 
 /**

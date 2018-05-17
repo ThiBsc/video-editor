@@ -85,11 +85,11 @@ int PlayerControl::getVolume()
 }
 
 /**
- * @brief PlayerControl::updateMaxDuration
+ * @brief PlayerControl::updateDuration
  * @param duration
  * Set the max duration value to the positionSlider
  */
-void PlayerControl::updateMaxDuration(qint64 duration)
+void PlayerControl::updateDuration(qint64 duration)
 {
     positionSlider->setMaximum(duration);
 

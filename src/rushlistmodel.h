@@ -39,7 +39,7 @@ public slots:
 signals:
     void totalDurationChanged(qint64 duration);
     void rushAdded(Media rush);
-    void emitSelection(const QString file);
+    void emitSelection(const QString file, const qint64 duration);
 
 private:
     qint64 rushsDuration;
