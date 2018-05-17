@@ -55,7 +55,12 @@ void Track::setSource(const QString &fileName)
 QTime Track::getSelectionTime(SelectionX x)
 {
     QTime ret;
-    int64_t micros_x = getMicrosecFromX(x == X1 ? curSelection.x1 : curSelection.x2);
+    int64_t micros_x = -1;
+    if (x == X1){
+        micros_x = curSelection.x1 < curSelection.x2 ? curSelection.x1 : curSelection.x2;
+    } else {
+        micros_x = curSelection.x1 < curSelection.x2 ? curSelection.x2 : curSelection.x1;
+    }
     if (micros_x != -1){
         long ms   = (long) (micros_x / 1000) % 1000;
         long sec  = (((long) (micros_x / 1000) - ms)/1000)%60 ;
