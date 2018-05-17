@@ -27,12 +27,10 @@ TrackTool::TrackTool(QWidget *parent)
     toolbarActions->addSeparator();
     actDefaultTrack = toolbarActions->addAction(QIcon("://icon/default_track.svg"), "Default track zoom");
 
-    soundTrack = new Track(Track::SOUND, this);
-    //movieTrack = new Track(Track::MOVIE, this);
+    soundTrack = new Track(this);
 
     vLayout->addWidget(toolbarActions);
     vLayout->addWidget(soundTrack);
-    //vLayout->addWidget(movieTrack);
 
     connect(actDefaultTrack, SIGNAL(triggered(bool)), soundTrack, SLOT(defaultScale()));
 }
@@ -51,7 +49,6 @@ TrackTool::~TrackTool()
     delete toolbarActions;
 
     delete soundTrack;
-    //delete movieTrack;
 
     delete vLayout;
 }
@@ -61,17 +58,9 @@ TrackTool::~TrackTool()
  * @param ms
  * Add a time marker at ms on the track
  */
-void TrackTool::addMarker(int64_t ms, MarkerType marker_type)
+void TrackTool::addMarker(int64_t ms)
 {
-    if (marker_type == SOUND){
-        soundTrack->addMarker(ms);
-    } else if (marker_type == MOVIE) {
-        //movieTrack->addMarker(ms);
-    } else {
-        // BOTH
-        soundTrack->addMarker(ms);
-        //movieTrack->addMarker(ms);
-    }
+    soundTrack->addMarker(ms);
 }
 
 QToolBar *TrackTool::getToolbar()

@@ -22,10 +22,9 @@ class TrackTool : public QWidget
     Q_OBJECT
 
 public:
-    enum MarkerType { BOTH=0, SOUND, MOVIE };
     TrackTool(QWidget *parent = Q_NULLPTR);
     ~TrackTool();
-    void addMarker(int64_t ms, MarkerType marker_type);
+    void addMarker(int64_t ms);
     QToolBar *getToolbar();
 
 public slots:

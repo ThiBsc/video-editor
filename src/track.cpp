@@ -3,12 +3,10 @@
 #include <QAudioDecoder>
 #include <numeric>
 
-Track::Track(Track::TrackType type, QWidget *parent)
+Track::Track(QWidget *parent)
     : QCustomPlot(parent)
     , decoder(new QAudioDecoder(this))
 {
-    this->type = type;
-
     curSelection.x1 = curSelection.x2 = -1;
     ctrlPressed = false;
     updateSelection = false;
@@ -70,11 +68,6 @@ QTime Track::getSelectionTime(SelectionX x)
         ret = QTime(hour, min, sec, ms);
     }
     return ret;
-}
-
-int64_t Track::getMicrosecFromX(int x)
-{
-    return x != -1 ? ((xAxis->pixelToCoord(x)*timePerBytes) * (bytesPerFrame/channelCount)) : -1.0;
 }
 
 void Track::setBuffer()
@@ -233,14 +226,26 @@ void Track::paintEvent(QPaintEvent *evt)
 {
     QCustomPlot::paintEvent(evt);
 
+    QPainter painter(this);
     if (curSelection.x1 != -1){
-        QPainter painter(this);
         painter.setPen(QColor(Qt::gray));
         painter.drawLine(curSelection.x1, 0, curSelection.x1, height());
         if (curSelection.x2 != -1){
             int rectWidth = curSelection.x2 - curSelection.x1;
             painter.fillRect(curSelection.x1, 0, rectWidth, height(), QColor(20, 20, 20, 50));
             painter.drawLine(curSelection.x2, 0, curSelection.x2, height());
+        }
+    }
+
+    if (!samples.isEmpty()){
+        painter.setPen(QColor(Qt::red));
+        QCPAxisRect *rect = xAxis->axisRect();
+        for (int64_t marker : markers){
+            double x_value = getXFromMS(marker);
+            int x_pixel = xAxis->coordToPixel(x_value);
+            if (xAxis->range().contains(x_value)){
+                painter.drawLine(x_pixel, rect->top(), x_pixel, rect->bottom());
+            }
         }
     }
 }
@@ -274,6 +279,16 @@ void Track::resizeEvent(QResizeEvent *evt)
 {
     saveSelectionCoordToRestore();
     QCustomPlot::resizeEvent(evt);
+}
+
+double Track::getXFromMS(int64_t ms)
+{
+    return (ms*1000) / (timePerBytes*(bytesPerFrame/channelCount));
+}
+
+int64_t Track::getMicrosecFromX(int x)
+{
+    return x != -1 ? ((xAxis->pixelToCoord(x)*timePerBytes) * (bytesPerFrame/channelCount)) : -1.0;
 }
 
 /**
