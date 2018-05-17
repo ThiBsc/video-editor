@@ -100,14 +100,14 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += "ffmpeg -y -i "+videoName;
             str += " -t "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+nameTmp+" && ";
-            // Renommage
-            str += "ffmpeg -y -i "+nameTmp;
-            str += " -c copy "+videoName+" && ";
             // Récupération de la deuxième partie
             nameEnd += path+"part_"+name;
             str += "ffmpeg -y -i "+videoName;
             str += " -ss "+start.toString("hh:mm:ss.zz");
-            str += " -c copy "+nameEnd;
+            str += " -c copy "+nameEnd+" && ";
+            // Renommage
+            str += "ffmpeg -y -i "+nameTmp;
+            str += " -c copy "+videoName+" && ";
             // Suppression les vidéos temporaires
             str += "DELETE:"+nameTmp;
             break;
