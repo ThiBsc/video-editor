@@ -21,7 +21,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
         return "";
     }
 
-    QString path = MainWindow::settings->value("dir_preview").toString()+"/";
+    QString path = MainWindow::settings->value("general/dir_preview").toString()+"/";
     QString videoName(path+name);
     QString str, nameStart, nameEnd, nameMid, nameTmp, nameVideos;
     switch(action) {
@@ -118,7 +118,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
 
 QString Actions::fusionVideos(QString finalName, QStringList nameOfVideos)
 {
-    QFileInfo infoOutput(MainWindow::settings->value("dir_preview").toString()+"/liste.txt");
+    QFileInfo infoOutput(MainWindow::settings->value("general/dir_preview").toString()+"/liste.txt");
     QString str;
     for (QString name : nameOfVideos) {
         QFileInfo info(name);

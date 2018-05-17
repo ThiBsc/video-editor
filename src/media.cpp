@@ -16,7 +16,7 @@ Media::Media() {}
 Media::Media(QUrl url)
 {
     this->path = url.path();
-    this->previewPath = MainWindow::settings->value("dir_preview").toString()+"/";
+    this->previewPath = MainWindow::settings->value("general/dir_preview").toString()+"/";
     this->originalName = url.fileName();
     this->name = url.fileName();
     updateDuration();

@@ -159,7 +159,7 @@ void RushListModel::addRushs(QStringList files)
     for (const QString file : files){
         QUrl monurl(file);
         Media m(monurl);
-        bool copy = Actions::copyFile(m.getPath(), MainWindow::settings->value("dir_preview").toString());
+        bool copy = Actions::copyFile(m.getPath(), MainWindow::settings->value("general/dir_preview").toString());
         if (copy) {
             beginInsertRows(index, rushItems.size(), rushItems.size()+files.size());
             rushItems.append(m);
@@ -198,7 +198,7 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
             std::cout << "Erreur dans les commandes" << std::endl;
             // emit actionError();
         } else if (action == Actions::enumActions::SPLIT) {
-            QString path = MainWindow::settings->value("dir_preview").toString()+"/";
+            QString path = MainWindow::settings->value("general/dir_preview").toString()+"/";
             managePartSplit(path+"part_"+m.getName());
         }
     }    
@@ -208,7 +208,7 @@ void RushListModel::managePartSplit(QString url)
 {
     QUrl origin(url);
     // Déplace le fichier dans un dossier
-    bool copy = Actions::copyFile(origin.path(), MainWindow::settings->value("dir_orignalsplit").toString());
+    bool copy = Actions::copyFile(origin.path(), MainWindow::settings->value("general/dir_orignalsplit").toString());
     if (!copy) {
         // Gestion erreur
 
@@ -216,7 +216,7 @@ void RushListModel::managePartSplit(QString url)
     // Suppression du fichier de preview
     Actions::removeFile(QStringList(origin.path()));
     // Ajout aux rushs le nouveau fichier
-    QFileInfo info(MainWindow::settings->value("dir_orignalsplit").toString()+"/"+origin.fileName());
+    QFileInfo info(MainWindow::settings->value("general/dir_orignalsplit").toString()+"/"+origin.fileName());
     QStringList newFile(info.absoluteFilePath());
     addRushs(newFile);
 }
@@ -239,7 +239,7 @@ void RushListModel::currentSelectionChanged(const QItemSelection &selected, cons
         QModelIndex idx = parentView->selectionModel()->selectedIndexes().first();
         curentIndex = idx;
         Media cur = rushItems.at(idx.row());
-        QString path = MainWindow::settings->value("dir_preview").toString()+"/";
+        QString path = MainWindow::settings->value("general/dir_preview").toString()+"/";
         emit emitSelection(cur.currentPath(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
         emit disableTrackTool(false);
     } else {
