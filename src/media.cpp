@@ -31,7 +31,7 @@ Media::Media(Media const& m): QObject()
     previewPath = m.getPreviewPath();
     originalName = m.getOriginalName();
     name = m.getName();
-    duration = m.getDuration();
+    updateDuration();
 }
 
 Media Media::operator=(Media const& m)
@@ -40,7 +40,7 @@ Media Media::operator=(Media const& m)
     previewPath = m.getPreviewPath();
     originalName = m.getOriginalName();
     name = m.getName();
-    duration = m.getDuration();
+    updateDuration();
     actions = m.getActions();
     return *this;
 }
@@ -52,7 +52,11 @@ Media Media::operator=(Media const& m)
 void Media::updateDuration()
 {
     MediaFileInfo *mfi = new MediaFileInfo();
-    mfi->find_meta_data(path.toStdString().c_str());
+    QString goodPath = this->path;
+    if (QFile(currentPath()).exists()) {
+        goodPath = currentPath();
+    }
+    mfi->find_meta_data(goodPath.toStdString().c_str());
     this->duration = QTime(mfi->getHour(), mfi->getMinute(), mfi->getSecond(), mfi->getUSecond());
     delete mfi;
 }

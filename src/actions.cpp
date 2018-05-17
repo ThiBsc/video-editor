@@ -16,6 +16,10 @@ Actions::~Actions(){}
 
 QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QTime start, QTime end)
 {
+    if (start.isNull()) {
+        return "";
+    }
+    
     QString path = QDir::currentPath()+"/../preview/";
     QString videoName(path+name);    
     QString str, nameStart, nameEnd, nameMid, nameTmp, nameVideos;

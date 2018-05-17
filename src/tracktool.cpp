@@ -89,8 +89,8 @@ void TrackTool::emitActionClick(QAction *button)
 {
     // Récupération de la zone ou marqueur de selection
     QVector<QTime> selected;
-    selected.append(QTime(0,0,15,0));
-    selected.append(QTime(0,0,30,0));
+    selected.append(soundTrack->getSelectionTime(Track::SelectionX::X1));
+    selected.append(soundTrack->getSelectionTime(Track::SelectionX::X2));
 
     // Récupération de l'enum correspondant à l'action
     Actions::enumActions action = Actions::enumActions::NONE;
