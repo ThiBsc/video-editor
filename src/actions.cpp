@@ -77,19 +77,16 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += " -t "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+nameStart+" && ";
             // Récupération de la zone sans son
-            /*
-            nameMid += path+"mid_"+name;
-            str += "ffmpeg -y -i "+videoName;
-            str += " -f lavfi -i anullsrc ";
-            str += " -ss "+start.toString("hh:mm:ss.zz");
-            str += " -to "+end.toString("hh:mm:ss.zz");
-            str += " -strict experimental -c:a aac -c:v copy -shortest "+nameMid+" && ";
-            */
             nameMid += path+"mid_"+name;
             str += "ffmpeg -y -i "+videoName;
             str += " -ss "+start.toString("hh:mm:ss.zz");
             str += " -to "+end.toString("hh:mm:ss.zz");
-            str += " -an -c copy "+nameMid+" && ";
+            str += " -c copy "+nameMid+" && ";
+            nameTmp += path+"tmp_"+name;
+            str += "ffmpeg -y -i "+nameMid;
+            str += " -filter:a \"volume=0\" -c:a aac -strict -2 "+nameTmp+" && ";
+            str += "ffmpeg -y -i "+nameTmp;
+            str += " -c copy "+nameMid+" && ";
             // Récupération de la fin
             nameEnd += path+"end_"+name;
             str += "ffmpeg -y -i "+videoName;
