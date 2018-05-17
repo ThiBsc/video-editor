@@ -78,10 +78,10 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += " -c copy "+nameStart+" && ";
             // Récupération de la zone sans son
             nameMid += path+"mid_"+name;
-            str += "ffmpeg -y -i "+videoName;
+            str += "ffmpeg -f lavfi -y -i "+videoName;
             str += " -ss "+start.toString("hh:mm:ss.zz");
             str += " -to "+end.toString("hh:mm:ss.zz");
-            str += " -an -c copy "+nameMid+" && ";
+            str += " -i anullsrc -c copy "+nameMid+" && ";
             // Récupération de la fin
             nameEnd += path+"end_"+name;
             str += "ffmpeg -y -i "+videoName;
