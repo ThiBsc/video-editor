@@ -1,5 +1,6 @@
 #include "media.h"
 #include "mediafileinfo.h"
+#include <QDir>
 
 /**
  * @brief Media::getContent
@@ -14,6 +15,7 @@ Media::Media() {}
 Media::Media(QUrl url)
 {
     this->path = url.path();
+    this->previewPath = QDir::currentPath()+"/../preview/";
     this->originalName = url.fileName();
     this->name = url.fileName();
     updateDuration();
@@ -26,6 +28,7 @@ Media::Media(QUrl url)
 Media::Media(Media const& m): QObject()
 {
     path = m.getPath();
+    previewPath = m.getPreviewPath();
     originalName = m.getOriginalName();
     name = m.getName();
     duration = m.getDuration();
@@ -34,6 +37,7 @@ Media::Media(Media const& m): QObject()
 Media Media::operator=(Media const& m)
 {
     path = m.getPath();
+    previewPath = m.getPreviewPath();
     originalName = m.getOriginalName();
     name = m.getName();
     duration = m.getDuration();
@@ -60,6 +64,24 @@ void Media::updateDuration()
 QString Media::getPath() const
 {
     return this->path;
+}
+
+/**
+ * @brief Media::getPreviewPath
+ * @return The preview path of the media
+ */
+QString Media::getPreviewPath() const
+{
+    return this->previewPath;
+}
+
+/**
+ * @brief Media::currentPath
+ * @return The preview path of the media
+ */
+QString Media::currentPath() const
+{
+    return this->previewPath+this->name;
 }
 
 /**

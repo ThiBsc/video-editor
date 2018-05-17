@@ -5,6 +5,7 @@
 #include <QTime>
 #include <QString>
 #include <QVector>
+
 #include "media.h"
 
 class Actions : public QObject
@@ -15,7 +16,8 @@ public:
     Actions();
     static QString getCommandOnVideo(Actions::enumActions action, QString nameVideo, QTime start, QTime end=QTime());
     static QString fusionVideos(QString finalName, QStringList nameOfVideos);
-    bool removeFile(QStringList nameOfVideos);
+    static bool removeFile(QStringList nameOfVideos);
+    static bool copyFile(QString src, QString dest);
     bool executeCommand(QString command);
     ~Actions();
 };

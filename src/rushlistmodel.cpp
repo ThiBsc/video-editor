@@ -13,16 +13,9 @@
 #include <iostream>
 #include <QWidget>
 
-RushListModel::RushListModel(QObject *parent)
-    : QAbstractListModel(parent)
-{
+RushListModel::RushListModel(QObject *parent): QAbstractListModel(parent){}
 
-}
-
-RushListModel::~RushListModel()
-{
-
-}
+RushListModel::~RushListModel(){}
 
 /**
  * http://doc.qt.io/qt-5/qabstractitemmodel.html#data
@@ -158,7 +151,7 @@ void RushListModel::addRushs(QStringList files)
     for (const QString file : files){
         QUrl monurl(file);
         Media m(monurl);
-        bool copy = RushListModel::copyFile(m);
+        bool copy = Actions::copyFile(m.getPath(),"../preview");
         if (copy) {
             beginInsertRows(index, rushItems.size(), rushItems.size()+files.size());        
             rushItems.append(m);
@@ -168,21 +161,6 @@ void RushListModel::addRushs(QStringList files)
     }
     qint64 duration = calculAllDuration();
     emit totalDurationChanged(duration); 
-}
-
-/**
- * @brief RushListModel::copyFile
- * Copy the media in preview directory 
- */
-bool RushListModel::copyFile(Media m)
-{
-    QString src = "../preview";
-    QDir dir(src);
-    if(!dir.exists()){
-        return false;
-    }
-    QFile::copy(m.getPath(), src+"/"+m.getName());
-    return true;
 }
 
 /**
@@ -201,15 +179,32 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
     // Exécution de l'action
     Actions myAction;
     bool cmdSuccess = myAction.executeCommand(command);
-    QString path = QDir::currentPath()+"/../preview/";
-    emit emitSelection(path+m.getName());
+    m.updateDuration();
+    emit emitSelection(m.currentPath());
     if (!cmdSuccess) {
         std::cout << "Erreur dans les commandes" << std::endl;
         // emit actionError();
     } else if (action == Actions::enumActions::SPLIT) {
-        // Ajout du split aux rushs + stockage dans dossier spécifique
+        QString path = QDir::currentPath()+"/../preview/";
+        managePartSplit(path+"part_"+m.getName());
+    }
+}
+
+void RushListModel::managePartSplit(QString url)
+{
+    QUrl origin(url);
+    // Déplace le fichier dans un dossier
+    bool copy = Actions::copyFile(origin.path(),"../originalSplit");
+    if (!copy) {
+        // Gestion erreur
 
     }
+    // Suppression du fichier de preview
+    Actions::removeFile(QStringList(origin.path()));
+    // Ajout aux rushs le nouveau fichier
+    QFileInfo info(QDir::currentPath()+"/../originalSplit/"+origin.fileName());
+    QStringList newFile(info.absoluteFilePath());
+    addRushs(newFile);
 }
 
 /**
@@ -218,8 +213,7 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
 void RushListModel::currentItemChanged(QModelIndex idx)
 {
     curentIndex = idx;
-    QString path = QDir::currentPath()+"/../preview/";
-    emit emitSelection(path+rushItems.at(idx.row()).getName());
+    emit emitSelection(rushItems.at(idx.row()).currentPath());
 }
 
 /**
