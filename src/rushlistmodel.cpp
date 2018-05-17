@@ -228,6 +228,7 @@ void RushListModel::currentSelectionChanged(const QItemSelection &selected, cons
     curentIndex = QModelIndex();
     if (parentView->selectionModel()->selectedRows().size() > 1){
         // Selection multiple
+        emit disableTrackTool(true);
     } else if (parentView->selectionModel()->selectedRows().size() == 1){
         // Selection simple
         QModelIndex idx = parentView->selectionModel()->selectedIndexes().first();
@@ -235,8 +236,10 @@ void RushListModel::currentSelectionChanged(const QItemSelection &selected, cons
         Media cur = rushItems.at(idx.row());
         QString path = QDir::currentPath()+"/../preview/";
         emit emitSelection(cur.currentPath(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
+        emit disableTrackTool(false);
     } else {
         // Aucune selection
+        emit disableTrackTool(true);
     }
 }
 
