@@ -150,8 +150,7 @@ bool Actions::copyFile(QString src, QString dest)
         return false;
     }
     QUrl origin(src);
-    QFile::copy(src, dest+"/"+origin.fileName());
-    return true;
+    return QFile::copy(src, dest+"/"+origin.fileName());
 }
 
 bool Actions::executeCommand(QString command)
