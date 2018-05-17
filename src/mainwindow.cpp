@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     listRush = new QListView(this);
     rushListModel = new RushListModel(listRush);
     listRush->setModel(rushListModel);
-    listRush->setSelectionMode(QAbstractItemView::SingleSelection);
+    listRush->setSelectionMode(QAbstractItemView::ExtendedSelection);
     listRush->setDragEnabled(true);
     listRush->setAcceptDrops(true);
     listRush->setMaximumWidth(200);
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     gLayout->addWidget(videoPlayer, 0, 1);
     gLayout->addWidget(trackTool, 1, 0, 1, 2);
 
-    connect(listRush, SIGNAL(clicked(QModelIndex)), rushListModel, SLOT(currentItemChanged(QModelIndex)));
+    connect(listRush->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), rushListModel, SLOT(currentSelectionChanged(QItemSelection,QItemSelection)));
     connect(rushListModel, SIGNAL(emitSelection(QString,qint64)), trackTool, SLOT(setMedia(QString,qint64)));
     connect(rushListModel, SIGNAL(emitSelection(QString,qint64)), videoPlayer, SLOT(setCurrentMedia(QString,qint64)));
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));

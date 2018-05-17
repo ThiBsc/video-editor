@@ -4,8 +4,11 @@
 #include <QAbstractListModel>
 #include <QMediaContent>
 #include <QTime>
+#include <QItemSelection>
 #include "media.h"
 #include "actions.h"
+
+class QAbstractItemView;
 
 /**
  * @brief The RushListModel class
@@ -17,7 +20,7 @@ class RushListModel : public QAbstractListModel
     Q_OBJECT
 
 public:
-    RushListModel(QObject *parent = Q_NULLPTR);
+    RushListModel(QAbstractItemView *parent);
     ~RushListModel();
 
     QVariant data(const QModelIndex &index, int role) const override;
@@ -33,7 +36,7 @@ public:
 
 public slots:
     void addRushs(QStringList files);
-    void currentItemChanged(QModelIndex idx);
+    void currentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void updateMedia(Actions::enumActions,QVector<QTime>);
     
 signals:
@@ -42,6 +45,7 @@ signals:
     void emitSelection(const QString file, const qint64 duration);
 
 private:
+    QAbstractItemView *parentView;
     qint64 rushsDuration;
     QModelIndex curentIndex;
     QVector<Media> rushItems;

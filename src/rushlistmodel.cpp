@@ -11,12 +11,12 @@
 #include <QSize>
 #include <QMap>
 #include <iostream>
-#include <QWidget>
+#include <QAbstractItemView>
 
-RushListModel::RushListModel(QObject *parent)
+RushListModel::RushListModel(QAbstractItemView *parent)
     : QAbstractListModel(parent)
 {
-
+    parentView = parent;
 }
 
 RushListModel::~RushListModel()
@@ -213,13 +213,25 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
 }
 
 /**
- * @brief RushListModel::currentItemChanged
+ * @brief RushListModel::currentSelectionChanged
+ * @param selected
+ * @param deselected
  */
-void RushListModel::currentItemChanged(QModelIndex idx)
+void RushListModel::currentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
-    Media cur = rushItems.at(idx.row());
-    QString path = QDir::currentPath()+"/../preview/";
-    emit emitSelection(path+cur.getName(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
+    Q_UNUSED(selected);
+    Q_UNUSED(deselected);
+    if (parentView->selectionModel()->selectedRows().size() > 1){
+        // Selection multiple
+    } else if (parentView->selectionModel()->selectedRows().size() == 1){
+        // Selection simple
+        QModelIndex idx = parentView->selectionModel()->selectedIndexes().first();
+        Media cur = rushItems.at(idx.row());
+        QString path = QDir::currentPath()+"/../preview/";
+        emit emitSelection(path+cur.getName(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
+    } else {
+        // Aucune selection
+    }
 }
 
 /**
