@@ -171,6 +171,13 @@ void RushListModel::addRushs(QStringList files)
     emit totalDurationChanged(duration);
 }
 
+void RushListModel::removeRush(int i)
+{
+    beginRemoveRows(QModelIndex(), i, i);
+    rushItems.remove(i);
+    endRemoveRows();
+}
+
 /**
  * @brief RushListModel::updateMedia
  * Update the preview media with action of user

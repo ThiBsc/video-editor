@@ -36,6 +36,7 @@ public:
 
 public slots:
     void addRushs(QStringList files);
+    void removeRush(int i);
     void currentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void updateMedia(Actions::enumActions,QVector<QTime>);
     
