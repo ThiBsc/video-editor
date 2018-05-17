@@ -177,19 +177,23 @@ void RushListModel::addRushs(QStringList files)
  */
 void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> selected)
 {
-    // Récupération du média courant
-    if (curentIndex.isValid()) {
+    if (curentIndex.isValid() && !selected.value(0).isNull()) {
+        // Récupération du média courant
         Media m = rushItems.at(curentIndex.row());
         // Création de la commande
         QString command = Actions::getCommandOnVideo(action, m.getName(), selected.value(0), selected.value(1));
-        // Ajout de la commande
-        QPair<int,QString> actionCommand(static_cast<int>(action),command);
-        m.addAction(actionCommand);
-        // Exécution de l'action
-        Actions myAction;
-        bool cmdSuccess = myAction.executeCommand(command);
-        m.updateDuration();
-        emit emitSelection(m.currentPath(), QTime(0, 0, 0).msecsTo(m.getDuration()));
+        bool cmdSuccess = false;
+        if (command.size() != 0) {
+            // Ajout de la commande
+            QPair<int,QString> actionCommand(static_cast<int>(action),command);
+            m.addAction(actionCommand);
+            // Exécution de l'action
+            Actions myAction;
+            cmdSuccess = myAction.executeCommand(command);
+            m.updateDuration();
+            emit emitSelection(m.currentPath(), QTime(0, 0, 0).msecsTo(m.getDuration()));
+        }
+        // Gestion des erreurs et cas particuliers
         if (!cmdSuccess) {
             std::cout << "Erreur dans les commandes" << std::endl;
             // emit actionError();

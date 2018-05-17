@@ -17,8 +17,12 @@ Actions::~Actions(){}
 
 QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QTime start, QTime end)
 {
-    QString path = MainWindow::settings->value("dir_preview").toString();
-    QString videoName(path+name);    
+    if (start.isNull()) {
+        return "";
+    }
+
+    QString path = MainWindow::settings->value("dir_preview").toString()+"/";
+    QString videoName(path+name);
     QString str, nameStart, nameEnd, nameMid, nameTmp, nameVideos;
     switch(action) {
         case Actions::enumActions::DELETE_ZONE:
@@ -106,7 +110,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             // Suppression les vidéos temporaires
             str += "DELETE:"+nameTmp;
             break;
-        default: 
+        default:
             return "";
     }
     return str;
@@ -127,7 +131,7 @@ QString Actions::fusionVideos(QString finalName, QStringList nameOfVideos)
 bool Actions::removeFile(QStringList nameOfVideos)
 {
     bool success = true;
-    for (QString name : nameOfVideos) {        
+    for (QString name : nameOfVideos) {
         if (!QFile::remove(name)) {
             success = false;
         }
@@ -137,7 +141,7 @@ bool Actions::removeFile(QStringList nameOfVideos)
 
 /**
  * @brief Actions::copyFile
- * Copy the media in dest directory 
+ * Copy the media in dest directory
  */
 bool Actions::copyFile(QString src, QString dest)
 {
@@ -184,8 +188,8 @@ bool Actions::executeCommand(QString command)
                 success = false;
             }
         }
-    }    
+    }
     // Suppression des fichiers
     Actions::removeFile(nameVideosDelete);
-    return success;    
+    return success;
 }
