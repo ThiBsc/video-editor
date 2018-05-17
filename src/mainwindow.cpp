@@ -10,12 +10,15 @@
 #include <QListView>
 #include <QGridLayout>
 
+QSettings* MainWindow::settings = new QSettings(QSettings::NativeFormat, QSettings::UserScope, "ua-bbm", "video-editor");
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     setWindowTitle("Video editor");
+    initSettings();
 
     mnuFile = new MenuFile(this);
     ui->menuBar->addMenu(mnuFile);
@@ -60,4 +63,24 @@ MainWindow::~MainWindow()
     delete videoPlayer;
     delete trackTool;
     delete gLayout;
+
+    settings->sync();
+    delete settings;
+}
+
+void MainWindow::initSettings()
+{
+    // Si première utilisation
+    if (settings->allKeys().isEmpty()){
+        settings->beginGroup("general");
+        QString preview_path = QString(QDir::homePath()+"/."+settings->applicationName()+"/preview");
+        QDir dir;
+        if (dir.mkpath(preview_path))
+            settings->setValue("dir_preview", preview_path);
+        QString originalsplit_path = QString(QDir::homePath()+"/."+settings->applicationName()+"/originalsplit");
+        if (dir.mkpath(originalsplit_path))
+            settings->setValue("dir_originalsplit", originalsplit_path);
+        settings->endGroup();
+        settings->sync();
+    }
 }

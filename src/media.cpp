@@ -1,5 +1,6 @@
 #include "media.h"
 #include "mediafileinfo.h"
+#include "mainwindow.h"
 #include <QDir>
 
 /**
@@ -15,7 +16,7 @@ Media::Media() {}
 Media::Media(QUrl url)
 {
     this->path = url.path();
-    this->previewPath = QDir::currentPath()+"/../preview/";
+    this->previewPath = MainWindow::settings->value("dir_preview").toString()+"/";
     this->originalName = url.fileName();
     this->name = url.fileName();
     updateDuration();
