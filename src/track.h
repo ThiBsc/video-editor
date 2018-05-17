@@ -24,6 +24,7 @@ public slots:
     void defaultScale();
     void onXRangeChange(const QCPRange& range);
     void onReplotIsFinished();
+    void updateCursorVideo(qint64 ms);
 
 protected:
     bool restoreSelectionCoordToPX();
@@ -50,6 +51,7 @@ private:
     double timePerBytes;
     int bytesPerFrame;
     int channelCount;
+    int64_t cursorVideo;
 
     QSet<int64_t> markers;
 

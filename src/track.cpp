@@ -12,6 +12,7 @@ Track::Track(QWidget *parent)
     updateSelection = false;
     timePerBytes = 0.0;
     bytesPerFrame = channelCount = 0;
+    cursorVideo = 0;
     setMouseTracking(ctrlPressed);
 
     wavePlot = addGraph();
@@ -155,6 +156,12 @@ void Track::onReplotIsFinished()
     }
 }
 
+void Track::updateCursorVideo(qint64 ms)
+{
+    cursorVideo = ms;
+    update();
+}
+
 bool Track::restoreSelectionCoordToPX()
 {
     bool needUpdate = false;
@@ -238,15 +245,24 @@ void Track::paintEvent(QPaintEvent *evt)
         }
     }
 
+    QCPAxisRect *rect = xAxis->axisRect();
     if (!samples.isEmpty()){
         painter.setPen(QColor(Qt::red));
-        QCPAxisRect *rect = xAxis->axisRect();
         for (int64_t marker : markers){
             double x_value = getXFromMS(marker);
             int x_pixel = xAxis->coordToPixel(x_value);
             if (xAxis->range().contains(x_value)){
                 painter.drawLine(x_pixel, rect->top(), x_pixel, rect->bottom());
             }
+        }
+    }
+
+    if (cursorVideo != 0){
+        painter.setPen(QColor(Qt::darkGreen));
+        double x_value = getXFromMS(cursorVideo);
+        int x_pixel = xAxis->coordToPixel(x_value);
+        if (xAxis->range().contains(x_value)){
+            painter.drawLine(x_pixel, rect->top(), x_pixel, rect->bottom());
         }
     }
 }

@@ -26,6 +26,7 @@ public:
     ~TrackTool();
     void addMarker(int64_t ms);
     QToolBar *getToolbar();
+    Track *getTrack();
 
 public slots:
     void setMedia(const QString file, qint64 duration);

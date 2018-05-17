@@ -68,6 +68,11 @@ QToolBar *TrackTool::getToolbar()
     return toolbarActions;
 }
 
+Track *TrackTool::getTrack()
+{
+    return soundTrack;
+}
+
 void TrackTool::setMedia(const QString file, qint64 duration)
 {
     Q_UNUSED(duration);

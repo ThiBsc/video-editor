@@ -5,10 +5,12 @@
 #include "videoplayer.h"
 #include "playercontrol.h"
 #include "tracktool.h"
+#include "track.h"
 #include "actions.h"
 
 #include <QListView>
 #include <QGridLayout>
+#include <QMediaPlayer>
 
 QSettings* MainWindow::settings = new QSettings(QSettings::NativeFormat, QSettings::UserScope, "ua-bbm", "video-editor");
 
@@ -47,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(rushListModel, SIGNAL(emitSelection(QString,qint64)), videoPlayer, SLOT(setCurrentMedia(QString,qint64)));
     connect(rushListModel, SIGNAL(disableTrackTool(bool)), trackTool, SLOT(setDisabled(bool)));
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
+    connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));
     connect(trackTool->getToolbar(), SIGNAL(actionTriggered(QAction *)), trackTool, SLOT(emitActionClick(QAction *)));
     connect(mnuFile, SIGNAL(filesImported(QStringList)), rushListModel, SLOT(addRushs(QStringList)));
     connect(mnuFile, SIGNAL(quit()), this, SLOT(close()));

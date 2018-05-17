@@ -22,6 +22,7 @@ public:
     VideoPlayer(QWidget *parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
     ~VideoPlayer();
     PlayerControl *getPlayerControl();
+    QMediaPlayer *getMediaPlayer();
 
 public slots:
     void setCurrentMedia(const QString file, qint64 duration);
