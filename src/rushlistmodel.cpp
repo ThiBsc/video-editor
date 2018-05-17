@@ -177,24 +177,26 @@ void RushListModel::addRushs(QStringList files)
 void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> selected)
 {
     // Récupération du média courant
-    Media m = rushItems.at(curentIndex.row());
-    // Création de la commande
-    QString command = Actions::getCommandOnVideo(action, m.getName(), selected.value(0), selected.value(1));
-    // Ajout de la commande
-    QPair<int,QString> actionCommand(static_cast<int>(action),command);
-    m.addAction(actionCommand);
-    // Exécution de l'action
-    Actions myAction;
-    bool cmdSuccess = myAction.executeCommand(command);
-    m.updateDuration();
-    emit emitSelection(m.currentPath(), QTime(0, 0, 0).msecsTo(m.getDuration()));
-    if (!cmdSuccess) {
-        std::cout << "Erreur dans les commandes" << std::endl;
-        // emit actionError();
-    } else if (action == Actions::enumActions::SPLIT) {
-        QString path = QDir::currentPath()+"/../preview/";
-        managePartSplit(path+"part_"+m.getName());
-    }
+    if (curentIndex.isValid()) {
+        Media m = rushItems.at(curentIndex.row());
+        // Création de la commande
+        QString command = Actions::getCommandOnVideo(action, m.getName(), selected.value(0), selected.value(1));
+        // Ajout de la commande
+        QPair<int,QString> actionCommand(static_cast<int>(action),command);
+        m.addAction(actionCommand);
+        // Exécution de l'action
+        Actions myAction;
+        bool cmdSuccess = myAction.executeCommand(command);
+        m.updateDuration();
+        emit emitSelection(m.currentPath(), QTime(0, 0, 0).msecsTo(m.getDuration()));
+        if (!cmdSuccess) {
+            std::cout << "Erreur dans les commandes" << std::endl;
+            // emit actionError();
+        } else if (action == Actions::enumActions::SPLIT) {
+            QString path = QDir::currentPath()+"/../preview/";
+            managePartSplit(path+"part_"+m.getName());
+        }
+    }    
 }
 
 void RushListModel::managePartSplit(QString url)
@@ -223,11 +225,13 @@ void RushListModel::currentSelectionChanged(const QItemSelection &selected, cons
 {
     Q_UNUSED(selected);
     Q_UNUSED(deselected);
+    curentIndex = QModelIndex();
     if (parentView->selectionModel()->selectedRows().size() > 1){
         // Selection multiple
     } else if (parentView->selectionModel()->selectedRows().size() == 1){
         // Selection simple
         QModelIndex idx = parentView->selectionModel()->selectedIndexes().first();
+        curentIndex = idx;
         Media cur = rushItems.at(idx.row());
         QString path = QDir::currentPath()+"/../preview/";
         emit emitSelection(cur.currentPath(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
