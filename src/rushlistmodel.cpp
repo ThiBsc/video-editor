@@ -179,9 +179,8 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
     // Exécution de l'action
     Actions myAction;
     bool cmdSuccess = myAction.executeCommand(command);
-    emit emitSelection(path+m.getName(), QTime(0, 0, 0).msecsTo(m.getDuration()));
     m.updateDuration();
-    emit emitSelection(m.currentPath());
+    emit emitSelection(m.currentPath(), QTime(0, 0, 0).msecsTo(m.getDuration()));
     if (!cmdSuccess) {
         std::cout << "Erreur dans les commandes" << std::endl;
         // emit actionError();
@@ -213,10 +212,8 @@ void RushListModel::managePartSplit(QString url)
  */
 void RushListModel::currentItemChanged(QModelIndex idx)
 {
-    curentIndex = idx;
-    emit emitSelection(rushItems.at(idx.row()).currentPath());
     Media cur = rushItems.at(idx.row());
-    emit emitSelection(path+cur.getName(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
+    emit emitSelection(cur.currentPath(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
 }
 
 /**
