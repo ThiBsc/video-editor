@@ -64,8 +64,9 @@ PlayerControl *VideoPlayer::getPlayerControl()
     return playerControl;
 }
 
-void VideoPlayer::setCurrentMedia(const QString file)
+void VideoPlayer::setCurrentMedia(const QString file, qint64 duration)
 {
     mediaPlayer->setMedia(QMediaContent(QUrl::fromLocalFile(file)));
+    playerControl->updateDuration(duration);
 }
 

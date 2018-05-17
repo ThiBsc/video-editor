@@ -202,7 +202,7 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
     Actions myAction;
     bool cmdSuccess = myAction.executeCommand(command);
     QString path = QDir::currentPath()+"/../preview/";
-    emit emitSelection(path+m.getName());
+    emit emitSelection(path+m.getName(), QTime(0, 0, 0).msecsTo(m.getDuration()));
     if (!cmdSuccess) {
         std::cout << "Erreur dans les commandes" << std::endl;
         // emit actionError();
@@ -217,9 +217,9 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
  */
 void RushListModel::currentItemChanged(QModelIndex idx)
 {
-    curentIndex = idx;
+    Media cur = rushItems.at(idx.row());
     QString path = QDir::currentPath()+"/../preview/";
-    emit emitSelection(path+rushItems.at(idx.row()).getName());
+    emit emitSelection(path+cur.getName(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
 }
 
 /**

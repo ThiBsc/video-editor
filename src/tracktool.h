@@ -29,7 +29,7 @@ public:
     QToolBar *getToolbar();
 
 public slots:
-    void setMedia(const QString file);
+    void setMedia(const QString file, qint64 duration);
     void emitActionClick(QAction *button);
 
 signals:

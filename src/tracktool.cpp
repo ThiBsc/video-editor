@@ -79,8 +79,9 @@ QToolBar *TrackTool::getToolbar()
     return toolbarActions;
 }
 
-void TrackTool::setMedia(const QString file)
+void TrackTool::setMedia(const QString file, qint64 duration)
 {
+    Q_UNUSED(duration);
     soundTrack->setSource(file);
 }
 

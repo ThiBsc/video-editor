@@ -29,7 +29,7 @@ signals:
     void pauseClicked();
 
 public slots:
-    void updateMaxDuration(qint64 duration);
+    void updateDuration(qint64 duration);
     void updateCursorPosition(qint64 position);
     void emitVolumeChanged(int vol);
     void emitPositionChanged(int pos);

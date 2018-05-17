@@ -24,7 +24,7 @@ public:
     PlayerControl *getPlayerControl();
 
 public slots:
-    void setCurrentMedia(const QString file);
+    void setCurrentMedia(const QString file, qint64 duration);
 
 private:
     QVBoxLayout *vLayout;
