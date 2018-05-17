@@ -72,7 +72,7 @@ void MainWindow::initSettings()
 {
     // Si première utilisation
     if (settings->allKeys().isEmpty()){
-        settings->beginGroup("general");
+        settings->beginGroup("General");
         QString preview_path = QString(QDir::homePath()+"/."+settings->applicationName()+"/preview");
         QDir dir;
         if (dir.mkpath(preview_path))
