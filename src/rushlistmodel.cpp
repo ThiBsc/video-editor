@@ -189,7 +189,7 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
             // Exécution de l'action
             Actions myAction;
             cmdSuccess = myAction.executeCommand(command);
-            //m.updateDuration();
+            m.updateDuration();
             emit emitSelection(m.currentPath(), QTime(0, 0, 0).msecsTo(m.getDuration()));
         }
         // Gestion des erreurs et cas particuliers
