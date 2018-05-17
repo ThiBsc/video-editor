@@ -215,7 +215,7 @@ void RushListModel::managePartSplit(QString url)
 {
     QUrl origin(url);
     // Déplace le fichier dans un dossier
-    bool copy = Actions::copyFile(origin.path(), MainWindow::settings->value("General/dir_orignalsplit").toString());
+    bool copy = Actions::copyFile(origin.path(), MainWindow::settings->value("General/dir_originalsplit").toString());
     if (!copy) {
         // Gestion erreur
 
@@ -223,7 +223,7 @@ void RushListModel::managePartSplit(QString url)
     // Suppression du fichier de preview
     Actions::removeFile(QStringList(origin.path()));
     // Ajout aux rushs le nouveau fichier
-    QFileInfo info(MainWindow::settings->value("General/dir_orignalsplit").toString()+"/"+origin.fileName());
+    QFileInfo info(MainWindow::settings->value("General/dir_originalsplit").toString()+"/"+origin.fileName());
     QStringList newFile(info.absoluteFilePath());
     addRushs(newFile);
 }
