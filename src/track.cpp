@@ -45,6 +45,7 @@ void Track::addMarker(int64_t ms)
 
 void Track::setSource(const QString &fileName)
 {
+    markers.clear();
     samples.clear();
     decoder->setSourceFilename(fileName);
     decoder->start();
