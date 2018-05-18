@@ -70,6 +70,12 @@ MainWindow::~MainWindow()
     delete trackTool;
     delete gLayout;
 
+    // Suppression des fichiers vidéos des dossiers de gestion (originalSplit, preview)
+    QString nameDir = MainWindow::settings->value("General/dir_originalsplit").toString();
+    Actions::removeAllFileDir(nameDir);
+    nameDir = MainWindow::settings->value("General/dir_preview").toString();
+    Actions::removeAllFileDir(nameDir);
+
     settings->sync();
     delete settings;
 }

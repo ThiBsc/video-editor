@@ -16,6 +16,7 @@ public:
     Actions();
     static QString getCommandOnVideo(Actions::enumActions action, QString nameVideo, QTime start, QTime end=QTime());
     static QString fusionVideos(QString finalName, QStringList nameOfVideos);
+    static bool removeAllFileDir(const QString &dirName);
     static bool removeFile(QStringList nameOfVideos);
     static bool copyFile(QString src, QString dest);
     bool executeCommand(QString command);

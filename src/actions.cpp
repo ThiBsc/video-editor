@@ -155,6 +155,27 @@ bool Actions::removeFile(QStringList nameOfVideos)
 }
 
 /**
+ *  Delete a directory along with all of its contents.
+ *
+ *  param dirName Path of directory to remove.
+ *  return true on success; false on error.
+ */
+bool Actions::removeAllFileDir(const QString &dirName)
+{
+    bool result = true;
+    QDir dir(dirName);
+    if (dir.exists(dirName)) {
+        Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
+            result = QFile::remove(info.absoluteFilePath());
+            if (!result) {
+                return result;
+            }
+        }
+    } 
+    return result;
+}
+
+/**
  * @brief Actions::copyFile
  * Copy the media in dest directory
  */
