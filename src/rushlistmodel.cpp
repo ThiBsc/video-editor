@@ -75,9 +75,7 @@ bool RushListModel::setData(const QModelIndex &index, const QVariant &value, int
 bool RushListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(action);
-    Q_UNUSED(row);
     Q_UNUSED(column);
-    Q_UNUSED(parent);
     bool ret = false;
     if (data->hasFormat("video-editor/rushUrl")){
         if (row != -1 || parent.isValid()){
