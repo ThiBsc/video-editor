@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuBar->addMenu(mnuFile);
 
     actRemoveMedia = ui->mainToolBar->addAction(QIcon("://icon/delete.svg"), "Delete media");
+    actFusionMedia = ui->mainToolBar->addAction(QIcon("://icon/merge.svg"), "Fusion media");
 
     gLayout = new QGridLayout();
     ui->centralWidget->setLayout(gLayout);
@@ -53,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
     connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));
     connect(actRemoveMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(removeSelectedMedia()));
+    connect(actFusionMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(fusionSelectedMedia()));
     connect(mnuFile, SIGNAL(filesImported(QStringList)), rushListModel, SLOT(addRushs(QStringList)));
     connect(mnuFile, SIGNAL(quit()), this, SLOT(close()));
     resize(600, 500);
@@ -63,6 +65,7 @@ MainWindow::~MainWindow()
     delete ui;
 
     delete actRemoveMedia;
+    delete actFusionMedia;
     delete mnuFile;
     delete rushListModel;
     delete listRush;
@@ -70,8 +73,8 @@ MainWindow::~MainWindow()
     delete trackTool;
     delete gLayout;
 
-    // Suppression des fichiers vidéos des dossiers de gestion (originalSplit, preview)
-    QString nameDir = MainWindow::settings->value("General/dir_originalsplit").toString();
+    // Suppression des fichiers vidéos des dossiers de gestion (original, preview)
+    QString nameDir = MainWindow::settings->value("General/dir_original").toString();
     Actions::removeAllFileDir(nameDir);
     nameDir = MainWindow::settings->value("General/dir_preview").toString();
     Actions::removeAllFileDir(nameDir);
@@ -89,9 +92,9 @@ void MainWindow::initSettings()
         QDir dir;
         if (dir.mkpath(preview_path))
             settings->setValue("dir_preview", preview_path);
-        QString originalsplit_path = QString(QDir::homePath()+"/."+settings->applicationName()+"/originalsplit");
+        QString originalsplit_path = QString(QDir::homePath()+"/."+settings->applicationName()+"/original");
         if (dir.mkpath(originalsplit_path))
-            settings->setValue("dir_originalsplit", originalsplit_path);
+            settings->setValue("dir_original", originalsplit_path);
         settings->endGroup();
         settings->sync();
     }

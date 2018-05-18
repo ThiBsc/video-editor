@@ -190,17 +190,32 @@ void RushListModel::removeSelectedMedia()
     }
 }
 
-/*
 void RushListModel::fusionSelectedMedia()
 {
+    // Récupération des medias valides sélectionnés
     QModelIndexList indexes = parentView->selectionModel()->selectedIndexes();
+    QStringList listeVideoSelected;
+    QString firstVideoName;
     for (QModelIndex index : indexes) {
         if (index.isValid()) {
-            
+            listeVideoSelected.append(rushItems.at(index.row()).currentPath());
+            if (firstVideoName.isNull()) {
+                firstVideoName = rushItems.at(index.row()).getName();
+            }
         }
     }
+    // Gestion de la fusion 
+    QString newName = MainWindow::settings->value("General/dir_preview").toString()+"/fusion_"+firstVideoName;
+    QString command = Actions::fusionVideos(newName, listeVideoSelected);
+    Actions myAction;
+    bool cmdSuccess = myAction.executeCommand(command);
+    if (cmdSuccess) {
+        manageNewVideo(newName);
+        removeSelectedMedia();
+    } else {
+        // Gestion des erreurs
+    }
 }
-*/
 
 /**
  * @brief RushListModel::updateMedia
@@ -230,16 +245,16 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
             // emit actionError();
         } else if (action == Actions::enumActions::SPLIT) {
             QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
-            managePartSplit(path+"part_"+m.getName());
+            manageNewVideo(path+"part_"+m.getName());
         }
     }    
 }
 
-void RushListModel::managePartSplit(QString url)
+void RushListModel::manageNewVideo(QString url)
 {
     QUrl origin(url);
     // Déplace le fichier dans un dossier
-    bool copy = Actions::copyFile(origin.path(), MainWindow::settings->value("General/dir_originalsplit").toString());
+    bool copy = Actions::copyFile(origin.path(), MainWindow::settings->value("General/dir_original").toString());
     if (!copy) {
         // Gestion erreur
 
@@ -247,7 +262,7 @@ void RushListModel::managePartSplit(QString url)
     // Suppression du fichier de preview
     Actions::removeFile({origin.path()});
     // Ajout aux rushs le nouveau fichier
-    QFileInfo info(MainWindow::settings->value("General/dir_originalsplit").toString()+"/"+origin.fileName());
+    QFileInfo info(MainWindow::settings->value("General/dir_original").toString()+"/"+origin.fileName());
     QStringList newFile(info.absoluteFilePath());
     addRushs(newFile);
 }
