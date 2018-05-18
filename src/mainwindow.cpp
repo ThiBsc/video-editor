@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuBar->addMenu(mnuFile);
 
     actRemoveMedia = ui->mainToolBar->addAction(QIcon("://icon/delete.svg"), "Delete media");
+    actRenameMedia = ui->mainToolBar->addAction(QIcon("://icon/edit.svg"), "Rename media");
 
     gLayout = new QGridLayout();
     ui->centralWidget->setLayout(gLayout);
@@ -53,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
     connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));
     connect(actRemoveMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(removeSelectedMedia()));
+    connect(actRenameMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(renameSelectedMedia()));
     connect(mnuFile, SIGNAL(filesImported(QStringList)), rushListModel, SLOT(addRushs(QStringList)));
     connect(mnuFile, SIGNAL(quit()), this, SLOT(close()));
     resize(600, 500);
@@ -63,6 +65,7 @@ MainWindow::~MainWindow()
     delete ui;
 
     delete actRemoveMedia;
+    delete actRenameMedia;
     delete mnuFile;
     delete rushListModel;
     delete listRush;

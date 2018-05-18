@@ -41,6 +41,7 @@ private:
 
     MenuFile *mnuFile;
     QAction *actRemoveMedia;
+    QAction *actRenameMedia;
 
 };
 

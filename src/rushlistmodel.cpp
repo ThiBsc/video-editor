@@ -43,9 +43,23 @@ QVariant RushListModel::data(const QModelIndex &index, int role) const
             case Qt::ToolTipRole:
                 ret = media.getName();
                 break;
+            case Qt::EditRole:
+                ret = data(index, Qt::DisplayRole);
+                break;
             default:
                 break;
         }
+    }
+    return ret;
+}
+
+bool RushListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    bool ret = false;
+    if (index.isValid() && role == Qt::EditRole){
+
+        ret = true;
+        emit dataChanged(index, index);
     }
     return ret;
 }
@@ -134,7 +148,7 @@ QStringList RushListModel::mimeTypes() const
  */
 Qt::ItemFlags RushListModel::flags(const QModelIndex &index) const
 {
-    Qt::ItemFlags ret = QAbstractListModel::flags(index);
+    Qt::ItemFlags ret = QAbstractListModel::flags(index) | Qt::ItemIsEditable;
     if (index.isValid()){
         ret |= Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
     }
@@ -185,6 +199,13 @@ void RushListModel::removeSelectedMedia()
     QModelIndex index = parentView->currentIndex();
     if (index.isValid())
         removeRush(index.row());
+}
+
+void RushListModel::renameSelectedMedia()
+{
+    QModelIndex index = parentView->currentIndex();
+    if (index.isValid())
+        parentView->edit(index);
 }
 
 /**

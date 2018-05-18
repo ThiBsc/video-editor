@@ -24,6 +24,7 @@ public:
     ~RushListModel();
 
     QVariant data(const QModelIndex &index, int role) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role);
     bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
@@ -38,6 +39,7 @@ public slots:
     void addRushs(QStringList files);
     void removeRush(int i);
     void removeSelectedMedia();
+    void renameSelectedMedia();
     void currentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void updateMedia(Actions::enumActions,QVector<QTime>);
     
