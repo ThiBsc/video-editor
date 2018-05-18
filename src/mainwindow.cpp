@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     actRemoveMedia = ui->mainToolBar->addAction(QIcon("://icon/delete.svg"), "Delete media");
     actFusionMedia = ui->mainToolBar->addAction(QIcon("://icon/merge.svg"), "Fusion media");
+    actRenameMedia = ui->mainToolBar->addAction(QIcon("://icon/edit.svg"), "Rename media");
 
     gLayout = new QGridLayout();
     ui->centralWidget->setLayout(gLayout);
@@ -54,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
     connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));
     connect(actRemoveMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(removeSelectedMedia()));
+    connect(actRenameMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(renameSelectedMedia()));
     connect(actFusionMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(fusionSelectedMedia()));
     connect(mnuFile, SIGNAL(filesImported(QStringList)), rushListModel, SLOT(addRushs(QStringList)));
     connect(mnuFile, SIGNAL(quit()), this, SLOT(close()));
@@ -66,6 +68,7 @@ MainWindow::~MainWindow()
 
     delete actRemoveMedia;
     delete actFusionMedia;
+    delete actRenameMedia;
     delete mnuFile;
     delete rushListModel;
     delete listRush;

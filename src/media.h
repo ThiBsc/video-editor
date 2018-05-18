@@ -25,6 +25,7 @@ class Media : public QObject
         QString getPreviewPath() const;
         QString getOriginalName() const;
         QString getName() const;
+        void setName(const QString& newname);
         QTime getDuration() const;
 
         void findMarkers();

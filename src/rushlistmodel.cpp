@@ -43,8 +43,26 @@ QVariant RushListModel::data(const QModelIndex &index, int role) const
             case Qt::ToolTipRole:
                 ret = media.getName();
                 break;
+            case Qt::EditRole:
+                ret = data(index, Qt::DisplayRole);
+                break;
             default:
                 break;
+        }
+    }
+    return ret;
+}
+
+bool RushListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    bool ret = false;
+    if (index.isValid() && role == Qt::EditRole){
+        Media media = rushItems.at(index.row());
+        if (Actions::renameFile(media.currentPath(), media.getPreviewPath()+value.toString())){
+            ret = true;
+            media.setName(value.toString());
+            rushItems.replace(index.row(), media);
+            emit dataChanged(index, index);
         }
     }
     return ret;
@@ -134,7 +152,7 @@ QStringList RushListModel::mimeTypes() const
  */
 Qt::ItemFlags RushListModel::flags(const QModelIndex &index) const
 {
-    Qt::ItemFlags ret = QAbstractListModel::flags(index);
+    Qt::ItemFlags ret = QAbstractListModel::flags(index) | Qt::ItemIsEditable;
     if (index.isValid()){
         ret |= Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
     }
@@ -215,6 +233,13 @@ void RushListModel::fusionSelectedMedia()
     } else {
         // Gestion des erreurs
     }
+}
+
+void RushListModel::renameSelectedMedia()
+{
+    QModelIndex index = parentView->currentIndex();
+    if (index.isValid())
+        parentView->edit(index);
 }
 
 /**
