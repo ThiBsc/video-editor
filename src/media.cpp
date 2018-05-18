@@ -125,10 +125,10 @@ QMap<int,QString> Media::getActions() const
     return this->actions;
 }
 
-QSet<qint64> Media::findMarker()
+QSet<qint64> Media::findMarkers() const
 {
     QSet<qint64> ret;
-    // do something to find audio marker in movie
+    // do something to find audio markers in movie
     return ret;
 }
 

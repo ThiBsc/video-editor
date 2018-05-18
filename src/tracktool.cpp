@@ -75,7 +75,7 @@ Track *TrackTool::getTrack()
 
 void TrackTool::setMedia(const Media &media)
 {
-    soundTrack->setSource(media.currentPath());
+    soundTrack->setSource(media);
 }
 
 void TrackTool::emitActionClick(QAction *button)

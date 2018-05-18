@@ -30,7 +30,7 @@ class Media : public QObject
         void updateDuration();
         void addAction(QPair<int,QString> command);
         QMap<int,QString> getActions() const;
-        QSet<qint64> findMarker();
+        QSet<qint64> findMarkers() const;
 
     private:
         QString path;

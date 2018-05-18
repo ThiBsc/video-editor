@@ -44,11 +44,12 @@ void Track::addMarker(qint64 ms)
     markers.insert(ms);
 }
 
-void Track::setSource(const QString &fileName)
+void Track::setSource(const Media &media)
 {
     markers.clear();
     samples.clear();
-    decoder->setSourceFilename(fileName);
+    markers = media.findMarkers();
+    decoder->setSourceFilename(media.currentPath());
     decoder->start();
 }
 

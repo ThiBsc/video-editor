@@ -1,6 +1,7 @@
 #ifndef TRACK_H
 #define TRACK_H
 
+#include "media.h"
 #include "qcustomplot.h"
 #include <QAudioBuffer>
 
@@ -15,7 +16,7 @@ public:
     Track(QWidget *parent = Q_NULLPTR);
     ~Track();
     void addMarker(qint64 ms);
-    void setSource(const QString &fileName);
+    void setSource(const Media& media);
     QTime getSelectionTime(SelectionX x);
 
 public slots:
