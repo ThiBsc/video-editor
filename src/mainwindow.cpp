@@ -50,7 +50,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(rushListModel, SIGNAL(disableTrackTool(bool)), trackTool, SLOT(setDisabled(bool)));
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
     connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));
-    connect(trackTool->getToolbar(), SIGNAL(actionTriggered(QAction *)), trackTool, SLOT(emitActionClick(QAction *)));
     connect(mnuFile, SIGNAL(filesImported(QStringList)), rushListModel, SLOT(addRushs(QStringList)));
     connect(mnuFile, SIGNAL(quit()), this, SLOT(close()));
     resize(600, 500);

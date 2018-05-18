@@ -16,9 +16,19 @@ TrackTool::TrackTool(QWidget *parent)
 
     toolbarActions = new QToolBar("Track action", this);
 
-    actTrash = toolbarActions->addAction(QIcon("://icon/trash.svg"), "Trash");
-    actTrashBegin = toolbarActions->addAction(QIcon("://icon/trashBegin.svg"), "TrashBegin");
-    actTrashEnd = toolbarActions->addAction(QIcon("://icon/trashEnd.svg"), "TrashEnd");
+    toolBtnTrash = new QToolButton(this);
+    toolBtnTrash->setText("Remove");
+    toolBtnTrash->setIcon(QIcon("://icon/trash.svg"));
+    toolBtnTrash->setPopupMode(QToolButton::InstantPopup);
+    actTrashBegin = new QAction("Remove before", toolBtnTrash);
+    actTrashArea = new QAction("Remove area", toolBtnTrash);
+    actTrashEnd = new QAction("Remove after", toolBtnTrash);
+
+    toolBtnTrash->addAction(actTrashBegin);
+    toolBtnTrash->addAction(actTrashArea);
+    toolBtnTrash->addAction(actTrashEnd);
+    toolbarActions->addWidget(toolBtnTrash);
+
     actMute = toolbarActions->addAction(QIcon("://icon/volume-off.svg"), "Mute");
     actCut = toolbarActions->addAction(QIcon("://icon/cut.svg"), "Cut");
     actTrim = toolbarActions->addAction(QIcon("://icon/expand.svg"), "Trim");
@@ -31,13 +41,16 @@ TrackTool::TrackTool(QWidget *parent)
     vLayout->addWidget(soundTrack);
 
     connect(actDefaultTrack, SIGNAL(triggered(bool)), soundTrack, SLOT(defaultScale()));
+    connect(toolBtnTrash, SIGNAL(triggered(QAction*)), this, SLOT(emitActionClick(QAction*)));
+    connect(toolbarActions, SIGNAL(actionTriggered(QAction*)), this, SLOT(emitActionClick(QAction*)));
 }
 
 TrackTool::~TrackTool()
 {
-    delete actTrash;
     delete actTrashBegin;
+    delete actTrashArea;
     delete actTrashEnd;
+    delete toolBtnTrash;
     delete actMute;
     delete actCut;
     delete actTrim;
@@ -84,17 +97,17 @@ void TrackTool::emitActionClick(QAction *button)
     // Récupération de l'enum correspondant à l'action
     Actions::enumActions action = Actions::enumActions::NONE;
     QString text = button->text();
-    if (text == "Trash") {
+    if (button == actTrashArea) {
         action = Actions::enumActions::DELETE_ZONE;
-    } else if (text == "TrashBegin") {
+    } else if (button == actTrashBegin) {
         action = Actions::enumActions::DELETE_BEGIN;
-    } else if (text == "TrashEnd") {
+    } else if (button == actTrashEnd) {
         action = Actions::enumActions::DELETE_END;
-    } else if (text == "Mute") {
+    } else if (button == actMute) {
         action = Actions::enumActions::MUT;
-    } else if (text == "Cut") {
+    } else if (button == actCut) {
         action = Actions::enumActions::SPLIT;
-    } else if (text == "Trim") {
+    } else if (button == actTrim) {
         action = Actions::enumActions::TRIM;
     }
 

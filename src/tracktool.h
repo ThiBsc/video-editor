@@ -39,8 +39,9 @@ private:
     QVBoxLayout *vLayout;
 
     QToolBar *toolbarActions;
-    QAction *actTrash;
+    QToolButton *toolBtnTrash;
     QAction *actTrashBegin;
+    QAction *actTrashArea;
     QAction *actTrashEnd;
     QAction *actMute;
     QAction *actCut;
