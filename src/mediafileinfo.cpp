@@ -42,7 +42,7 @@ void MediaFileInfo::find_meta_data(const char *filename)
  * @brief MediaFileInfo::getMS
  * @return The total time in millisecond of the media file
  */
-int64_t MediaFileInfo::getMS()
+qint64 MediaFileInfo::getMS()
 {
     return duration;
 }

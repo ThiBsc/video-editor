@@ -69,11 +69,11 @@ QMediaPlayer *VideoPlayer::getMediaPlayer()
     return mediaPlayer;
 }
 
-void VideoPlayer::setCurrentMedia(const QString file, qint64 duration)
+void VideoPlayer::setCurrentMedia(const Media &media)
 {
-    if (mediaPlayer->media().canonicalUrl() != QUrl::fromLocalFile(file)){
-        mediaPlayer->setMedia(QMediaContent(QUrl::fromLocalFile(file)));
-        playerControl->updateDuration(duration);
+    if (mediaPlayer->media().canonicalUrl() != QUrl::fromLocalFile(media.currentPath())){
+        mediaPlayer->setMedia(QMediaContent(QUrl::fromLocalFile(media.currentPath())));
+        playerControl->updateDuration(QTime(0, 0, 0).msecsTo(media.getDuration()));
     }
 }
 

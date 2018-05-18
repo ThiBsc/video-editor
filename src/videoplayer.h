@@ -1,6 +1,7 @@
 #ifndef VIDEOPLAYER_H
 #define VIDEOPLAYER_H
 
+#include "media.h"
 #include <QWidget>
 #include <QMediaContent>
 
@@ -25,7 +26,7 @@ public:
     QMediaPlayer *getMediaPlayer();
 
 public slots:
-    void setCurrentMedia(const QString file, qint64 duration);
+    void setCurrentMedia(const Media& media);
 
 private:
     QVBoxLayout *vLayout;

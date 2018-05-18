@@ -39,7 +39,7 @@ Track::~Track()
     // wavePlot delete auto ?
 }
 
-void Track::addMarker(int64_t ms)
+void Track::addMarker(qint64 ms)
 {
     markers.insert(ms);
 }
@@ -57,7 +57,7 @@ void Track::setSource(const QString &fileName)
 QTime Track::getSelectionTime(SelectionX x)
 {
     QTime ret;
-    int64_t micros_x = -1;
+    qint64 micros_x = -1;
     if (x == X1){
         micros_x = curSelection.x1 < curSelection.x2 ? curSelection.x1 : curSelection.x2;
     } else {
@@ -250,7 +250,7 @@ void Track::paintEvent(QPaintEvent *evt)
     QCPAxisRect *rect = xAxis->axisRect();
     if (!samples.isEmpty()){
         painter.setPen(QColor(Qt::red));
-        for (int64_t marker : markers){
+        for (qint64 marker : markers){
             double x_value = getXFromMS(marker);
             int x_pixel = xAxis->coordToPixel(x_value);
             if (xAxis->range().contains(x_value)){
@@ -300,12 +300,12 @@ void Track::resizeEvent(QResizeEvent *evt)
     QCustomPlot::resizeEvent(evt);
 }
 
-double Track::getXFromMS(int64_t ms)
+double Track::getXFromMS(qint64 ms)
 {
     return (ms*1000) / (timePerBytes*(bytesPerFrame/channelCount));
 }
 
-int64_t Track::getMicrosecFromX(int x)
+qint64 Track::getMicrosecFromX(int x)
 {
     return x != -1 ? ((xAxis->pixelToCoord(x)*timePerBytes) * (bytesPerFrame/channelCount)) : -1.0;
 }

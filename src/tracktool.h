@@ -24,12 +24,12 @@ class TrackTool : public QWidget
 public:
     TrackTool(QWidget *parent = Q_NULLPTR);
     ~TrackTool();
-    void addMarker(int64_t ms);
+    void addMarker(qint64 ms);
     QToolBar *getToolbar();
     Track *getTrack();
 
 public slots:
-    void setMedia(const QString file, qint64 duration);
+    void setMedia(const Media& media);
     void emitActionClick(QAction *button);
 
 signals:
