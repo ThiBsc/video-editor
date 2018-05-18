@@ -113,6 +113,11 @@ QString Media::getName() const
     return this->name;
 }
 
+void Media::setName(const QString &newname)
+{
+    name = newname;
+}
+
 /**
  * @brief Media::getDuration
  * @return The duration of the media

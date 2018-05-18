@@ -57,9 +57,13 @@ bool RushListModel::setData(const QModelIndex &index, const QVariant &value, int
 {
     bool ret = false;
     if (index.isValid() && role == Qt::EditRole){
-
-        ret = true;
-        emit dataChanged(index, index);
+        Media media = rushItems.at(index.row());
+        if (Actions::renameFile(media.currentPath(), media.getPreviewPath()+value.toString())){
+            ret = true;
+            media.setName(value.toString());
+            rushItems.replace(index.row(), media);
+            emit dataChanged(index, index);
+        }
     }
     return ret;
 }

@@ -19,6 +19,7 @@ public:
     static bool removeAllFileDir(const QString &dirName);
     static bool removeFile(QStringList nameOfVideos);
     static bool copyFile(QString src, QString dest);
+    static bool renameFile(QString src, QString newname);
     bool executeCommand(QString command);
     ~Actions();
 };

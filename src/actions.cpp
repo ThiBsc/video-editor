@@ -193,6 +193,11 @@ bool Actions::copyFile(QString src, QString dest)
     return QFile::copy(src, fileDest);
 }
 
+bool Actions::renameFile(QString src, QString newname)
+{
+    return QFile::rename(src, newname);
+}
+
 bool Actions::executeCommand(QString command)
 {
     bool success = true;
