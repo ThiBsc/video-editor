@@ -29,7 +29,7 @@ public:
     Track *getTrack();
 
 public slots:
-    void setMedia(const Media& media);
+    void setMedia(Media &media);
     void emitActionClick(QAction *button);
 
 signals:

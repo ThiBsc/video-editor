@@ -16,7 +16,7 @@ public:
     Track(QWidget *parent = Q_NULLPTR);
     ~Track();
     void addMarker(qint64 ms);
-    void setSource(const Media& media);
+    void setSource(Media &media);
     QTime getSelectionTime(SelectionX x);
 
 public slots:

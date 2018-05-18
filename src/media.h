@@ -27,10 +27,12 @@ class Media : public QObject
         QString getName() const;
         QTime getDuration() const;
 
+        void findMarkers();
         void updateDuration();
         void addAction(QPair<int,QString> command);
         QMap<int,QString> getActions() const;
-        QSet<qint64> findMarkers() const;
+        QSet<qint64> getMarkers();
+        int getNbMarkers() const;
 
     private:
         QString path;
@@ -39,6 +41,8 @@ class Media : public QObject
         QString name;
         QTime duration;
         QMap<int,QString> actions;
+        QSet<qint64> markers;
+        int nMarkers;
 
 };
 

@@ -73,7 +73,7 @@ Track *TrackTool::getTrack()
     return soundTrack;
 }
 
-void TrackTool::setMedia(const Media &media)
+void TrackTool::setMedia(Media &media)
 {
     soundTrack->setSource(media);
 }

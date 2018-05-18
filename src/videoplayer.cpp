@@ -69,7 +69,7 @@ QMediaPlayer *VideoPlayer::getMediaPlayer()
     return mediaPlayer;
 }
 
-void VideoPlayer::setCurrentMedia(const Media &media)
+void VideoPlayer::setCurrentMedia(Media &media)
 {
     mediaPlayer->setMedia(QMediaContent(QUrl::fromLocalFile(media.currentPath())));
     playerControl->updateDuration(QTime(0, 0, 0).msecsTo(media.getDuration()));

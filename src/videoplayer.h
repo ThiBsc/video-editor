@@ -26,7 +26,7 @@ public:
     QMediaPlayer *getMediaPlayer();
 
 public slots:
-    void setCurrentMedia(const Media& media);
+    void setCurrentMedia(Media& media);
 
 private:
     QVBoxLayout *vLayout;

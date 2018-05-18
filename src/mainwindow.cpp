@@ -45,8 +45,8 @@ MainWindow::MainWindow(QWidget *parent) :
     gLayout->addWidget(trackTool, 1, 0, 1, 2);
 
     connect(listRush->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), rushListModel, SLOT(currentSelectionChanged(QItemSelection,QItemSelection)));
-    connect(rushListModel, SIGNAL(emitSelection(Media)), trackTool, SLOT(setMedia(Media)));
-    connect(rushListModel, SIGNAL(emitSelection(Media)), videoPlayer, SLOT(setCurrentMedia(Media)));
+    connect(rushListModel, SIGNAL(emitSelection(Media&)), trackTool, SLOT(setMedia(Media&)));
+    connect(rushListModel, SIGNAL(emitSelection(Media&)), videoPlayer, SLOT(setCurrentMedia(Media&)));
     connect(rushListModel, SIGNAL(disableTrackTool(bool)), trackTool, SLOT(setDisabled(bool)));
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
     connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));

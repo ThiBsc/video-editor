@@ -32,15 +32,16 @@ QVariant RushListModel::data(const QModelIndex &index, int role) const
 {
     QVariant ret;
     if (index.isValid()) {
+        const Media media = rushItems.at(index.row());
         switch (role) {
             case Qt::DisplayRole:
-                ret = rushItems.at(index.row()).getName();
+                ret = QString("%1%2").arg(media.getNbMarkers() > 0 ? "("+QString::number(media.getNbMarkers())+") " : "", media.getName());
                 break;
             case Qt::DecorationRole:
                 ret = QIcon(":/icon/video.png");
                 break;
             case Qt::ToolTipRole:
-                ret = rushItems.at(index.row()).getName();
+                ret = media.getName();
                 break;
             default:
                 break;

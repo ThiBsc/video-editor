@@ -42,8 +42,8 @@ public slots:
     
 signals:
     void totalDurationChanged(qint64 duration);
-    void rushAdded(Media rush);
-    void emitSelection(const Media& media);
+    void rushAdded(Media& rush);
+    void emitSelection(Media& media);
     void disableTrackTool(bool disable);
 
 private:

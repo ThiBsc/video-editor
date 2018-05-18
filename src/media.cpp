@@ -7,7 +7,10 @@
  * @brief Media::getContent
  * @return The content of the media
  */
-Media::Media() {}
+Media::Media()
+{
+    this->nMarkers = 0;
+}
 
 /**
  * @brief Media::getContent
@@ -19,6 +22,7 @@ Media::Media(QUrl url)
     this->previewPath = MainWindow::settings->value("General/dir_preview").toString()+"/";
     this->originalName = url.fileName();
     this->name = url.fileName();
+    this->nMarkers = 0;
     updateDuration();
 }
 
@@ -32,6 +36,7 @@ Media::Media(Media const& m): QObject()
     previewPath = m.getPreviewPath();
     originalName = m.getOriginalName();
     name = m.getName();
+    nMarkers = m.getNbMarkers();
     updateDuration();
 }
 
@@ -43,6 +48,7 @@ Media Media::operator=(Media const& m)
     name = m.getName();
     updateDuration();
     actions = m.getActions();
+    nMarkers = m.getNbMarkers();
     return *this;
 }
 
@@ -116,6 +122,12 @@ QTime Media::getDuration() const
     return this->duration;
 }
 
+void Media::findMarkers()
+{
+    markers.clear();
+    // do something to find audio markers in movie
+}
+
 /**
  * @brief Media::getActions
  * @return All actions of the media
@@ -125,11 +137,14 @@ QMap<int,QString> Media::getActions() const
     return this->actions;
 }
 
-QSet<qint64> Media::findMarkers() const
+QSet<qint64> Media::getMarkers()
 {
-    QSet<qint64> ret;
-    // do something to find audio markers in movie
-    return ret;
+    return markers;
+}
+
+int Media::getNbMarkers() const
+{
+    return nMarkers;
 }
 
 void Media::addAction(QPair<int,QString> command)
