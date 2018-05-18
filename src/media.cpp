@@ -2,6 +2,7 @@
 #include "mediafileinfo.h"
 #include "mainwindow.h"
 #include <QDir>
+#include <iostream>
 
 /**
  * @brief Media::getContent
@@ -50,6 +51,11 @@ Media Media::operator=(Media const& m)
     actions = m.getActions();
     nMarkers = m.getNbMarkers();
     return *this;
+}
+
+bool Media::operator==(Media const& m)
+{
+    return (m.getPath() == this->getPath() && m.currentPath() == this->currentPath());
 }
 
 /**

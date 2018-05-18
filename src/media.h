@@ -19,6 +19,7 @@ class Media : public QObject
         Media(QUrl url);
         Media(Media const& media);
         Media operator=(Media const& media);
+        bool operator==(Media const& media);
 
         QString getPath() const;
         QString currentPath() const;

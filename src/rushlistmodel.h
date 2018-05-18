@@ -34,6 +34,7 @@ public:
     qint64 getTrackDuration() const;
     qint64 calculAllDuration();
     void manageNewVideo(QString url);
+    void removeMedia(Media const m);
 
 public slots:
     void addRushs(QStringList files);
