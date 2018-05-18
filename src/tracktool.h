@@ -44,9 +44,7 @@ private:
     QAction *actTrashEnd;
     QAction *actMute;
     QAction *actCut;
-    QAction *actMerge;
-    QAction *actEdit;
-    QAction *actLink;
+    QAction *actTrim;
     QAction *actDefaultTrack;
 
     Track *soundTrack;

@@ -21,9 +21,7 @@ TrackTool::TrackTool(QWidget *parent)
     actTrashEnd = toolbarActions->addAction(QIcon("://icon/trashEnd.svg"), "TrashEnd");
     actMute = toolbarActions->addAction(QIcon("://icon/volume-off.svg"), "Mute");
     actCut = toolbarActions->addAction(QIcon("://icon/cut.svg"), "Cut");
-    //actMerge = toolbarActions->addAction(QIcon("://icon/merge.svg"), "Merge");
-    //actEdit = toolbarActions->addAction(QIcon("://icon/edit.svg"), "Edit");
-    //actLink = toolbarActions->addAction(QIcon("://icon/link.svg"), "Link");
+    actTrim = toolbarActions->addAction(QIcon("://icon/expand.svg"), "Trim");
     toolbarActions->addSeparator();
     actDefaultTrack = toolbarActions->addAction(QIcon("://icon/default_track.svg"), "Default track zoom");
 
@@ -42,9 +40,7 @@ TrackTool::~TrackTool()
     delete actTrashEnd;
     delete actMute;
     delete actCut;
-    //delete actMerge;
-    //delete actEdit;
-    //delete actLink;
+    delete actTrim;
     delete actDefaultTrack;
     delete toolbarActions;
 
@@ -98,6 +94,8 @@ void TrackTool::emitActionClick(QAction *button)
         action = Actions::enumActions::MUT;
     } else if (text == "Cut") {
         action = Actions::enumActions::SPLIT;
+    } else if (text == "Trim") {
+        action = Actions::enumActions::TRIM;
     }
 
     if (action != Actions::enumActions::NONE) {
