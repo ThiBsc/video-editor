@@ -175,8 +175,16 @@ void RushListModel::addRushs(QStringList files)
 void RushListModel::removeRush(int i)
 {
     beginRemoveRows(QModelIndex(), i, i);
-    rushItems.remove(i);
+    Media media = rushItems.takeAt(i);
+    Actions::removeFile({media.currentPath()});
     endRemoveRows();
+}
+
+void RushListModel::removeSelectedMedia()
+{
+    QModelIndex index = parentView->currentIndex();
+    if (index.isValid())
+        removeRush(index.row());
 }
 
 /**

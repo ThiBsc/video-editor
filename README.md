@@ -8,6 +8,7 @@ Projet annuel d'édition de video linéaire
 - libqt5multimedia5
 - libqt5multimedia5-plugins
 - libavformat-dev
+- ffmpeg
 
 ### Used libraries
 [![QCustomPlot](http://www.qcustomplot.com/qcp-logo.png)](http://www.qcustomplot.com/)

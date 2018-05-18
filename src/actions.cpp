@@ -126,6 +126,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             break;
         default:
             str = "";
+            break;
     }
     return str;
 }

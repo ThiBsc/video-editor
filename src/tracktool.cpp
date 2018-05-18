@@ -96,7 +96,6 @@ void TrackTool::emitActionClick(QAction *button)
 
     // Récupération de l'enum correspondant à l'action
     Actions::enumActions action = Actions::enumActions::NONE;
-    QString text = button->text();
     if (button == actTrashArea) {
         action = Actions::enumActions::DELETE_ZONE;
     } else if (button == actTrashBegin) {
