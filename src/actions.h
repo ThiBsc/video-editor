@@ -11,7 +11,7 @@
 class Actions : public QObject
 {
 public:
-    enum enumActions {NONE, DELETE_ZONE, DELETE_BEGIN, DELETE_END, MUT, SPLIT, FUSION};
+    enum enumActions {NONE, DELETE_ZONE, DELETE_BEGIN, DELETE_END, MUT, TRIM, SPLIT, FUSION};
 
     Actions();
     static QString getCommandOnVideo(Actions::enumActions action, QString nameVideo, QTime start, QTime end=QTime());

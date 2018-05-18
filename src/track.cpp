@@ -58,9 +58,17 @@ QTime Track::getSelectionTime(SelectionX x)
     QTime ret;
     qint64 micros_x = -1;
     if (x == X1){
-        micros_x = curSelection.x1 < curSelection.x2 ? curSelection.x1 : curSelection.x2;
+        if (curSelection.x2 == -1) {
+            micros_x = curSelection.x1;
+        } else {
+            micros_x = curSelection.x1 < curSelection.x2 ? curSelection.x1 : curSelection.x2;
+        }
     } else {
-        micros_x = curSelection.x1 < curSelection.x2 ? curSelection.x2 : curSelection.x1;
+        if (curSelection.x2 == -1) {
+            micros_x = curSelection.x2;
+        } else {
+            micros_x = curSelection.x1 < curSelection.x2 ? curSelection.x2 : curSelection.x1;
+        }
     }
     micros_x = getMicrosecFromX(micros_x);
     if (micros_x != -1){
