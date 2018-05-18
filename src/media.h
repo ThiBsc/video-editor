@@ -4,6 +4,7 @@
 #include <QTime>
 #include <QObject>
 #include <QMap>
+#include <QSet>
 #include <QUrl>
 
 /**
@@ -29,6 +30,7 @@ class Media : public QObject
         void updateDuration();
         void addAction(QPair<int,QString> command);
         QMap<int,QString> getActions() const;
+        QSet<qint64> findMarkers() const;
 
     private:
         QString path;
@@ -37,6 +39,7 @@ class Media : public QObject
         QString name;
         QTime duration;
         QMap<int,QString> actions;
+
 };
 
 #endif // MEDIA_H

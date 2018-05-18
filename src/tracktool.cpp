@@ -58,7 +58,7 @@ TrackTool::~TrackTool()
  * @param ms
  * Add a time marker at ms on the track
  */
-void TrackTool::addMarker(int64_t ms)
+void TrackTool::addMarker(qint64 ms)
 {
     soundTrack->addMarker(ms);
 }
@@ -73,10 +73,9 @@ Track *TrackTool::getTrack()
     return soundTrack;
 }
 
-void TrackTool::setMedia(const QString file, qint64 duration)
+void TrackTool::setMedia(const Media &media)
 {
-    Q_UNUSED(duration);
-    soundTrack->setSource(file);
+    soundTrack->setSource(media);
 }
 
 void TrackTool::emitActionClick(QAction *button)

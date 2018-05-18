@@ -1,6 +1,7 @@
 #ifndef TRACK_H
 #define TRACK_H
 
+#include "media.h"
 #include "qcustomplot.h"
 #include <QAudioBuffer>
 
@@ -14,8 +15,8 @@ public:
     enum SelectionX { X1=0, X2 };
     Track(QWidget *parent = Q_NULLPTR);
     ~Track();
-    void addMarker(int64_t ms);
-    void setSource(const QString &fileName);
+    void addMarker(qint64 ms);
+    void setSource(const Media& media);
     QTime getSelectionTime(SelectionX x);
 
 public slots:
@@ -37,8 +38,8 @@ protected:
     void resizeEvent(QResizeEvent *evt) override;
 
 private:
-    double getXFromMS(int64_t ms);
-    int64_t getMicrosecFromX(int x);
+    double getXFromMS(qint64 ms);
+    qint64 getMicrosecFromX(int x);
     qreal getPeakValue(const QAudioFormat& format);
 
     struct Selection
@@ -51,9 +52,9 @@ private:
     double timePerBytes;
     int bytesPerFrame;
     int channelCount;
-    int64_t cursorVideo;
+    qint64 cursorVideo;
 
-    QSet<int64_t> markers;
+    QSet<qint64> markers;
 
     QAudioDecoder *decoder;
     QAudioBuffer buffer;

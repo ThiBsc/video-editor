@@ -198,7 +198,7 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
             Actions myAction;
             cmdSuccess = myAction.executeCommand(command);
             m.updateDuration();
-            emit emitSelection(m.currentPath(), QTime(0, 0, 0).msecsTo(m.getDuration()));
+            emit emitSelection(m);
         }
         // Gestion des erreurs et cas particuliers
         if (!cmdSuccess) {
@@ -246,8 +246,7 @@ void RushListModel::currentSelectionChanged(const QItemSelection &selected, cons
         QModelIndex idx = parentView->selectionModel()->selectedIndexes().first();
         curentIndex = idx;
         Media cur = rushItems.at(idx.row());
-        QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
-        emit emitSelection(cur.currentPath(), QTime(0, 0, 0).msecsTo(cur.getDuration()));
+        emit emitSelection(cur);
         emit disableTrackTool(false);
     } else {
         // Aucune selection

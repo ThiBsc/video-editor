@@ -2,6 +2,7 @@
 #define MEDIAFILEINFO_H
 
 #include <string>
+#include <QObject>
 
 extern "C" {
 #include <libavformat/avformat.h>
@@ -18,7 +19,7 @@ public:
     MediaFileInfo();
     ~MediaFileInfo();
     void find_meta_data(const char* filename);
-    int64_t getMS();
+    qint64 getMS();
     int getUSecond();
     int getSecond();
     int getMinute();
@@ -27,7 +28,7 @@ public:
 private:
     std::string filename;
     AVFormatContext *pFormatCtx;
-    int64_t duration;
+    qint64 duration;
 
 };
 
