@@ -12,5 +12,6 @@
         <file>icon/trashBegin.svg</file>
         <file>icon/trashEnd.svg</file>
         <file>icon/default_track.svg</file>
+        <file>icon/expand.svg</file>
     </qresource>
 </RCC>
