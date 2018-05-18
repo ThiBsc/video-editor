@@ -196,10 +196,25 @@ void RushListModel::removeRush(int i)
 
 void RushListModel::removeSelectedMedia()
 {
-    QModelIndex index = parentView->currentIndex();
-    if (index.isValid())
-        removeRush(index.row());
+    QModelIndexList indexes = parentView->selectionModel()->selectedIndexes();
+    for (QModelIndex index : indexes) {
+        if (index.isValid()) {
+            removeRush(index.row());
+        }
+    }
 }
+
+/*
+void RushListModel::fusionSelectedMedia()
+{
+    QModelIndexList indexes = parentView->selectionModel()->selectedIndexes();
+    for (QModelIndex index : indexes) {
+        if (index.isValid()) {
+            
+        }
+    }
+}
+*/
 
 void RushListModel::renameSelectedMedia()
 {
@@ -251,7 +266,7 @@ void RushListModel::managePartSplit(QString url)
 
     }
     // Suppression du fichier de preview
-    Actions::removeFile(QStringList(origin.path()));
+    Actions::removeFile({origin.path()});
     // Ajout aux rushs le nouveau fichier
     QFileInfo info(MainWindow::settings->value("General/dir_originalsplit").toString()+"/"+origin.fileName());
     QStringList newFile(info.absoluteFilePath());
