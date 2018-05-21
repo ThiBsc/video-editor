@@ -221,6 +221,19 @@ void RushListModel::removeSelectedMedia()
     }
 }
 
+void RushListModel::getFinalVideo()
+{
+    QStringList nameOfVideos;
+    for (Media rush : rushItems) {
+        nameOfVideos.append(rush.currentPath());
+    }
+    QString finalName = MainWindow::settings->value("General/dir_preview").toString()+"/finalVideo.mkv";
+    QString command = Actions::fusionVideos(finalName, nameOfVideos);
+
+    Actions myAction;
+    myAction.executeCommand(command);
+}
+
 void RushListModel::fusionSelectedMedia()
 {
     // Récupération des medias valides sélectionnés

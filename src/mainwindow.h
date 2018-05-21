@@ -43,6 +43,7 @@ private:
     QAction *actRemoveMedia;
     QAction *actRenameMedia;
     QAction *actFusionMedia;
+    QAction *actFinalVideo;
 
 };
 
