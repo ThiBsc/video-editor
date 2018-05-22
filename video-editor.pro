@@ -22,7 +22,6 @@ SOURCES += src/main.cpp\
     src/videoplayer.cpp \
     src/playercontrol.cpp \
     src/mediafileinfo.cpp \
-    src/menufile.cpp \
     src/actions.cpp \
     src/tracktool.cpp \
     src/track.cpp \
@@ -34,7 +33,6 @@ HEADERS  += src/mainwindow.h \
     src/videoplayer.h \
     src/playercontrol.h \
     src/mediafileinfo.h \
-    src/menufile.h \
     src/actions.h \
     src/tracktool.h \
     src/track.h \

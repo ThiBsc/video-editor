@@ -11,6 +11,7 @@
 class Actions : public QObject
 {
 public:
+    static QString ffmpeg;
     enum enumActions {NONE, DELETE_ZONE, DELETE_BEGIN, DELETE_END, MUT, TRIM, SPLIT, FUSION};
 
     Actions();

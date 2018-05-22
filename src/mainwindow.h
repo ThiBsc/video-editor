@@ -30,6 +30,7 @@ public:
 
 public slots:
     void selectionActionChanged(RushListModel::SelectionType type);
+    void importFiles();
 
 private:
     void initSettings();
@@ -42,7 +43,6 @@ private:
 
     VideoPlayer *videoPlayer;
 
-    MenuFile *mnuFile;
     QAction *actAddRushs;
     QAction *actRemoveMedia;
     QAction *actRenameMedia;
