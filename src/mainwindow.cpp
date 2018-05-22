@@ -99,6 +99,7 @@ void MainWindow::selectionActionChanged(RushListModel::SelectionType type)
         case RushListModel::SINGLE:
             trackTool->setEnabled(true);
             trackTool->getTrack()->graph()->setVisible(true);
+            videoPlayer->getPlayerControl()->enablePlayerControl(true);
             actRenameMedia->setEnabled(true);
             actRemoveMedia->setEnabled(true);
             actFusionMedia->setEnabled(false);
@@ -107,6 +108,7 @@ void MainWindow::selectionActionChanged(RushListModel::SelectionType type)
             trackTool->setEnabled(false);
             trackTool->getTrack()->graph()->setVisible(false);
             trackTool->getTrack()->replot();
+            videoPlayer->getPlayerControl()->enablePlayerControl(false);
             actRenameMedia->setEnabled(false);
             actFusionMedia->setEnabled(true);
             actRemoveMedia->setEnabled(true);
@@ -115,6 +117,7 @@ void MainWindow::selectionActionChanged(RushListModel::SelectionType type)
             trackTool->setEnabled(false);
             trackTool->getTrack()->graph()->setVisible(false);
             trackTool->getTrack()->replot();
+            videoPlayer->getPlayerControl()->enablePlayerControl(false);
             actFusionMedia->setEnabled(false);
             actRenameMedia->setEnabled(false);
             actRemoveMedia->setEnabled(false);

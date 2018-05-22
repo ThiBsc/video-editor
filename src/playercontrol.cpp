@@ -16,20 +16,19 @@ PlayerControl::PlayerControl(QWidget *parent)
     setLayout(mainLayout);
 
     positionSlider = new QSlider(Qt::Horizontal, this);
+    positionSlider->setRange(0, 0);
     volumeSlider = new QSlider(Qt::Horizontal, this);
     volumeSlider->setMaximum(100);
     volumeSlider->setMinimum(0);
     volumeSlider->setValue(50);
 
-    btnPlay = new QToolButton(this);
+    btnPlayPause = new QToolButton(this);
     btnStop = new QToolButton(this);
-    btnPause = new QToolButton(this);
-    btnPlay->setText("Play");
+    btnPlayPause->setText("Play/Pause");
     btnStop->setText("Stop");
-    btnPause->setText("Pause");
-    btnPlay->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    btnPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    btnPlayPause->setCheckable(true);
     btnStop->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
-    btnPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 
     lblPosition = new QLabel(QString("%1/%1").arg(QTime(0, 0, 0).toString()), this);
     lblVolume = new QLabel(QString("%1%").arg(QString::number(volumeSlider->value())), this);
@@ -41,9 +40,8 @@ PlayerControl::PlayerControl(QWidget *parent)
 
     hBottomLayout = new QHBoxLayout();
     hBottomLayout->setContentsMargins(0, 0, 0, 0);
-    hBottomLayout->addWidget(btnPlay);
+    hBottomLayout->addWidget(btnPlayPause);
     hBottomLayout->addWidget(btnStop);
-    hBottomLayout->addWidget(btnPause);
     hBottomLayout->addWidget(volumeSlider);
     hBottomLayout->addWidget(lblVolume);
 
@@ -52,9 +50,8 @@ PlayerControl::PlayerControl(QWidget *parent)
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
-    connect(btnPlay, SIGNAL(released()), this, SLOT(emitPlayClicked()));
+    connect(btnPlayPause, SIGNAL(released()), this, SLOT(emitPlayPauseClicked()));
     connect(btnStop, SIGNAL(released()), this, SLOT(emitStopClicked()));
-    connect(btnPause, SIGNAL(released()), this, SLOT(emitPauseClicked()));
     connect(volumeSlider, SIGNAL(sliderMoved(int)), this, SLOT(emitVolumeChanged(int)));
     connect(positionSlider, SIGNAL(sliderMoved(int)), this, SLOT(emitPositionChanged(int)));
 }
@@ -66,9 +63,8 @@ PlayerControl::~PlayerControl()
     delete lblPosition;
     delete lblVolume;
 
-    delete btnPlay;
+    delete btnPlayPause;
     delete btnStop;
-    delete btnPause;
 
     delete hTopLayout;
     delete hBottomLayout;
@@ -82,6 +78,12 @@ PlayerControl::~PlayerControl()
 int PlayerControl::getVolume()
 {
     return volumeSlider->value();
+}
+
+void PlayerControl::enablePlayerControl(bool enabled)
+{
+    btnPlayPause->setEnabled(enabled);
+    btnStop->setEnabled(enabled);
 }
 
 /**
@@ -144,12 +146,18 @@ void PlayerControl::emitPositionChanged(int pos)
 }
 
 /**
- * @brief PlayerControl::emitPlayClicked
- * Emit signal "playClicked()"
+ * @brief PlayerControl::emitPlayPauseClicked
+ * Emit play or pause signal
  */
-void PlayerControl::emitPlayClicked()
+void PlayerControl::emitPlayPauseClicked()
 {
-    emit playClicked();
+    if (btnPlayPause->isChecked()){
+        btnPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+        emit playClicked();
+    } else {
+        btnPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+        emit pauseClicked();
+    }
 }
 
 /**
@@ -158,14 +166,9 @@ void PlayerControl::emitPlayClicked()
  */
 void PlayerControl::emitStopClicked()
 {
+    btnPlayPause->setChecked(false);
+    btnPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    positionSlider->setValue(0);
     emit stopClicked();
 }
 
-/**
- * @brief PlayerControl::emitPauseClicked
- * Emit signal "pauseClicked()"
- */
-void PlayerControl::emitPauseClicked()
-{
-    emit pauseClicked();
-}

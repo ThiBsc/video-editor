@@ -20,6 +20,7 @@ public:
     PlayerControl(QWidget *parent = Q_NULLPTR);
     ~PlayerControl();
     int getVolume();
+    void enablePlayerControl(bool enabled);
 
 signals:
     void volumeChanged(int vol);
@@ -33,9 +34,8 @@ public slots:
     void updateCursorPosition(qint64 position);
     void emitVolumeChanged(int vol);
     void emitPositionChanged(int pos);
-    void emitPlayClicked();
+    void emitPlayPauseClicked();
     void emitStopClicked();
-    void emitPauseClicked();
 
 private:
     QVBoxLayout *mainLayout;
@@ -48,9 +48,8 @@ private:
     QLabel *lblPosition;
     QLabel *lblVolume;
 
-    QToolButton *btnPlay;
+    QToolButton *btnPlayPause;
     QToolButton *btnStop;
-    QToolButton *btnPause;
 
 };
 
