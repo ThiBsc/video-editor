@@ -20,10 +20,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // Tool bar
     actAddRushs = ui->mainToolBar->addAction(QIcon("://icon/file-plus.svg"), "Add rushs");
-    actFinalVideo = ui->mainToolBar->addAction(QIcon("://icon/file-archive.svg"), "Generate final media");
+    actFinalVideo = ui->mainToolBar->addAction(QIcon("://icon/file-archive.svg"), "Generate final video");
     ui->mainToolBar->addSeparator();
-    actRemoveMedia = ui->mainToolBar->addAction(QIcon("://icon/delete.svg"), "Delete media");
     actRenameMedia = ui->mainToolBar->addAction(QIcon("://icon/edit.svg"), "Rename media");
+    actRemoveMedia = ui->mainToolBar->addAction(QIcon("://icon/delete.svg"), "Delete media");
     actFusionMedia = ui->mainToolBar->addAction(QIcon("://icon/merge.svg"), "Fusion media");
 
     // Organisation
