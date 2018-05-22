@@ -123,16 +123,25 @@ void MainWindow::selectionActionChanged(RushListModel::SelectionType type)
 void MainWindow::initSettings()
 {
     // Si première utilisation
+    QString preview_path = QString(QDir::homePath()+"/."+settings->applicationName()+"/preview");
+    QString original_path = QString(QDir::homePath()+"/."+settings->applicationName()+"/original");
     if (settings->allKeys().isEmpty()){
         settings->beginGroup("General");
-        QString preview_path = QString(QDir::homePath()+"/."+settings->applicationName()+"/preview");
-        QDir dir;
-        if (dir.mkpath(preview_path))
-            settings->setValue("dir_preview", preview_path);
-        QString originalsplit_path = QString(QDir::homePath()+"/."+settings->applicationName()+"/original");
-        if (dir.mkpath(originalsplit_path))
-            settings->setValue("dir_original", originalsplit_path);
+        settings->setValue("dir_preview", preview_path);
+        settings->setValue("dir_original", original_path);
+#ifdef Q_OS_WIN
+        settings->setValue("prog_ffmpeg", "ffmpeg");
+#else
+        settings->setValue("prog_ffmpeg", "ffmpeg");
+#endif
         settings->endGroup();
         settings->sync();
     }
+    QDir dir;
+    dir.setCurrent(settings->value("dir_preview", preview_path).toString());
+    if (!dir.exists())
+        dir.mkpath(settings->value("dir_preview", preview_path).toString());
+    dir.setCurrent(settings->value("dir_original", original_path).toString());
+    if (!dir.exists())
+        dir.mkpath(settings->value("dir_original", original_path).toString());
 }
