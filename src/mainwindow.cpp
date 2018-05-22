@@ -23,8 +23,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     actFinalVideo = ui->mainToolBar->addAction(QIcon("://icon/file-archive.svg"), "Generate final media");
     ui->mainToolBar->addSeparator();
     actRemoveMedia = ui->mainToolBar->addAction(QIcon("://icon/delete.svg"), "Delete media");
-    actFusionMedia = ui->mainToolBar->addAction(QIcon("://icon/merge.svg"), "Fusion media");
     actRenameMedia = ui->mainToolBar->addAction(QIcon("://icon/edit.svg"), "Rename media");
+    actFusionMedia = ui->mainToolBar->addAction(QIcon("://icon/merge.svg"), "Fusion media");
 
     // Organisation
     trackTool = new TrackTool(this);    
@@ -98,18 +98,23 @@ void MainWindow::selectionActionChanged(RushListModel::SelectionType type)
     switch (type) {
         case RushListModel::SINGLE:
             trackTool->setEnabled(true);
+            trackTool->getTrack()->graph()->setVisible(true);
             actRenameMedia->setEnabled(true);
             actRemoveMedia->setEnabled(true);
             actFusionMedia->setEnabled(false);
             break;
         case RushListModel::MULTI:
             trackTool->setEnabled(false);
+            trackTool->getTrack()->graph()->setVisible(false);
+            trackTool->getTrack()->replot();
             actRenameMedia->setEnabled(false);
             actFusionMedia->setEnabled(true);
             actRemoveMedia->setEnabled(true);
             break;
         case RushListModel::NOTHING:
             trackTool->setEnabled(false);
+            trackTool->getTrack()->graph()->setVisible(false);
+            trackTool->getTrack()->replot();
             actFusionMedia->setEnabled(false);
             actRenameMedia->setEnabled(false);
             actRemoveMedia->setEnabled(false);
