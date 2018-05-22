@@ -186,11 +186,13 @@ bool Actions::removeAllFileDir(const QString &dirName)
 bool Actions::copyFile(QString src, QString dest)
 {
     QDir dir(dest);
-    if(!dir.exists()){
-        return false;
-    }
     QUrl origin(src);
-    QString fileDest(dest+"/"+origin.fileName());
+    QString fileDest;
+    if(dir.exists()){        
+        fileDest = dest+"/"+origin.fileName();
+    } else {
+        fileDest = dest;
+    }
     if (QFile::exists(fileDest)) {
         QFile::remove(fileDest);
     }

@@ -30,7 +30,7 @@ TrackTool::TrackTool(QWidget *parent)
     toolbarActions->addWidget(toolBtnTrash);
 
     actMute = toolbarActions->addAction(QIcon("://icon/volume-off.svg"), "Mute");
-    actCut = toolbarActions->addAction(QIcon("://icon/cut.svg"), "Cut");
+    actCut = toolbarActions->addAction(QIcon("://icon/cut.svg"), "Split");
     actTrim = toolbarActions->addAction(QIcon("://icon/expand.svg"), "Trim");
     toolbarActions->addSeparator();
     actDefaultTrack = toolbarActions->addAction(QIcon("://icon/default_track.svg"), "Default track zoom");
