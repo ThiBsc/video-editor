@@ -11,6 +11,8 @@
 #include <iostream>
 #include <fstream>
 
+QString Actions::ffmpeg = "ffmpeg";
+
 Actions::Actions(){}
 
 Actions::~Actions(){}
