@@ -29,7 +29,8 @@ MenuFile::~MenuFile()
 void MenuFile::importFiles()
 {
     QStringList files = QFileDialog::getOpenFileNames(this, "Select files", QDir::home().canonicalPath(), "Movies (*.mkv *.avi *.mp4);;Audio (*.mp3 *.wav *.ogg);;All files (*.*)");
-    emit filesImported(files);
+    if (!files.isEmpty())
+        emit filesImported(files);
 }
 
 /**

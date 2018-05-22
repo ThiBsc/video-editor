@@ -40,6 +40,7 @@ private:
     VideoPlayer *videoPlayer;
 
     MenuFile *mnuFile;
+    QAction *actAddRushs;
     QAction *actRemoveMedia;
     QAction *actRenameMedia;
     QAction *actFusionMedia;

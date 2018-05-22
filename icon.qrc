@@ -14,5 +14,7 @@
         <file>icon/default_track.svg</file>
         <file>icon/expand.svg</file>
         <file>icon/delete.svg</file>
+        <file>icon/file-archive.svg</file>
+        <file>icon/file-plus.svg</file>
     </qresource>
 </RCC>
