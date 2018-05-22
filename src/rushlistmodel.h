@@ -20,6 +20,7 @@ class RushListModel : public QAbstractListModel
     Q_OBJECT
 
 public:
+    enum SelectionType { NOTHING=0, SINGLE, MULTI };
     RushListModel(QAbstractItemView *parent);
     ~RushListModel();
 
@@ -50,7 +51,7 @@ signals:
     void totalDurationChanged(qint64 duration);
     void rushAdded(Media& rush);
     void emitSelection(Media& media);
-    void disableTrackTool(bool disable);
+    void selectionTypeChange(RushListModel::SelectionType type);
 
 private:
     QAbstractItemView *parentView;

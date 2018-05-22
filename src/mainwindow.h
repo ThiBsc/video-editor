@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSettings>
+#include "rushlistmodel.h"
 
 namespace Ui {
     class MainWindow;
@@ -11,7 +12,6 @@ namespace Ui {
 class QListView;
 class QGridLayout;
 class MenuFile;
-class RushListModel;
 class VideoPlayer;
 class TrackTool;
 
@@ -27,6 +27,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     static QSettings *settings;
+
+public slots:
+    void selectionActionChanged(RushListModel::SelectionType type);
 
 private:
     void initSettings();

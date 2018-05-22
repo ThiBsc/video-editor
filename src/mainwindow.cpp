@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "menufile.h"
-#include "rushlistmodel.h"
 #include "videoplayer.h"
 #include "playercontrol.h"
 #include "tracktool.h"
@@ -26,11 +25,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuBar->addMenu(mnuFile);
 
     actAddRushs = ui->mainToolBar->addAction(QIcon("://icon/file-plus.svg"), "Add rushs");
+    actFinalVideo = ui->mainToolBar->addAction(QIcon("://icon/file-archive.svg"), "Generate final media");
     ui->mainToolBar->addSeparator();
     actRemoveMedia = ui->mainToolBar->addAction(QIcon("://icon/delete.svg"), "Delete media");
     actFusionMedia = ui->mainToolBar->addAction(QIcon("://icon/merge.svg"), "Fusion media");
     actRenameMedia = ui->mainToolBar->addAction(QIcon("://icon/edit.svg"), "Rename media");
-    actFinalVideo = ui->mainToolBar->addAction(QIcon("://icon/file-archive.svg"), "Get final media");
 
     gLayout = new QGridLayout();
     ui->centralWidget->setLayout(gLayout);
@@ -43,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     listRush->setSelectionMode(QAbstractItemView::ExtendedSelection);
     listRush->setDragEnabled(true);
     listRush->setAcceptDrops(true);
-    listRush->setMaximumWidth(200);
+    listRush->setFixedWidth(200);
 
     videoPlayer = new VideoPlayer(this);
 
@@ -54,16 +53,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(listRush->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), rushListModel, SLOT(currentSelectionChanged(QItemSelection,QItemSelection)));
     connect(rushListModel, SIGNAL(emitSelection(Media&)), trackTool, SLOT(setMedia(Media&)));
     connect(rushListModel, SIGNAL(emitSelection(Media&)), videoPlayer, SLOT(setCurrentMedia(Media&)));
-    connect(rushListModel, SIGNAL(disableTrackTool(bool)), trackTool, SLOT(setDisabled(bool)));
+    connect(rushListModel, SIGNAL(selectionTypeChange(RushListModel::SelectionType)), this, SLOT(selectionActionChanged(RushListModel::SelectionType)));
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
     connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));
     connect(actAddRushs, SIGNAL(triggered(bool)), mnuFile, SLOT(importFiles()));
+    connect(actFinalVideo, SIGNAL(triggered(bool)), rushListModel, SLOT(getFinalVideo()));
     connect(actRemoveMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(removeSelectedMedia()));
     connect(actRenameMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(renameSelectedMedia()));
     connect(actFusionMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(fusionSelectedMedia()));
-    connect(actFinalVideo, SIGNAL(triggered(bool)), rushListModel, SLOT(getFinalVideo()));
     connect(mnuFile, SIGNAL(filesImported(QStringList)), rushListModel, SLOT(addRushs(QStringList)));
     connect(mnuFile, SIGNAL(quit()), this, SLOT(close()));
+    selectionActionChanged(RushListModel::NOTHING);
     resize(600, 500);
 }
 
@@ -91,6 +91,33 @@ MainWindow::~MainWindow()
 
     settings->sync();
     delete settings;
+}
+
+void MainWindow::selectionActionChanged(RushListModel::SelectionType type)
+{
+    // actAddRushs always enable
+    switch (type) {
+        case RushListModel::SINGLE:
+            trackTool->setEnabled(true);
+            actRenameMedia->setEnabled(true);
+            actRemoveMedia->setEnabled(true);
+            actFusionMedia->setEnabled(false);
+            break;
+        case RushListModel::MULTI:
+            trackTool->setEnabled(false);
+            actRenameMedia->setEnabled(false);
+            actFusionMedia->setEnabled(true);
+            actRemoveMedia->setEnabled(true);
+            break;
+        case RushListModel::NOTHING:
+            trackTool->setEnabled(false);
+            actFusionMedia->setEnabled(false);
+            actRenameMedia->setEnabled(false);
+            actRemoveMedia->setEnabled(false);
+            break;
+        default:
+            break;
+    }
 }
 
 void MainWindow::initSettings()

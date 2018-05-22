@@ -2,6 +2,7 @@
 #define TRACKTOOL_H
 
 #include <QWidget>
+#include "rushlistmodel.h"
 #include "media.h"
 #include "actions.h"
 #include "qcustomplot.h"

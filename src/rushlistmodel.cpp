@@ -330,17 +330,17 @@ void RushListModel::currentSelectionChanged(const QItemSelection &selected, cons
     curentIndex = QModelIndex();
     if (parentView->selectionModel()->selectedRows().size() > 1){
         // Selection multiple
-        emit disableTrackTool(true);
+        emit selectionTypeChange(MULTI);
     } else if (parentView->selectionModel()->selectedRows().size() == 1){
         // Selection simple
         QModelIndex idx = parentView->selectionModel()->selectedIndexes().first();
         curentIndex = idx;
         Media cur = rushItems.at(idx.row());
         emit emitSelection(cur);
-        emit disableTrackTool(false);
+        emit selectionTypeChange(SINGLE);
     } else {
         // Aucune selection
-        emit disableTrackTool(true);
+        emit selectionTypeChange(NOTHING);
     }
 }
 

@@ -115,3 +115,4 @@ void TrackTool::emitActionClick(QAction *button)
     }
 
 }
+
