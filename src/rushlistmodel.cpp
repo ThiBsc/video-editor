@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QIcon>
 #include <QDataStream>
+#include <QFileDialog>
 #include <QSize>
 #include <QMap>
 #include <iostream>
@@ -223,15 +224,20 @@ void RushListModel::removeSelectedMedia()
 
 void RushListModel::getFinalVideo()
 {
-    QStringList nameOfVideos;
-    for (Media rush : rushItems) {
-        nameOfVideos.append(rush.currentPath());
-    }
-    QString finalName = MainWindow::settings->value("General/dir_preview").toString()+"/finalVideo.mkv";
-    QString command = Actions::fusionVideos(finalName, nameOfVideos);
+    QString finaleName = QFileDialog::getSaveFileName(parentView, tr("Save File"), "untitled.mkv");
+    if (!finaleName.isEmpty()) {
+        QStringList nameOfVideos;
+        for (Media rush : rushItems) {
+            nameOfVideos.append(rush.currentPath());
+        }
+        QString tmpName = MainWindow::settings->value("General/dir_preview").toString()+"/finalVideo.mkv";
+        QString command = Actions::fusionVideos(tmpName, nameOfVideos);
 
-    Actions myAction;
-    myAction.executeCommand(command);
+        Actions myAction;
+        myAction.executeCommand(command);
+        Actions::copyFile(tmpName, finaleName);
+        QFile::remove(tmpName);
+    }
 }
 
 void RushListModel::fusionSelectedMedia()
