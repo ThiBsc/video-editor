@@ -196,14 +196,42 @@ void RushListModel::removeRush(int i)
     endRemoveRows();
 }
 
+void RushListModel::removeMedia(Media const m)
+{
+    int i = rushItems.indexOf(m);
+    if (i != -1) {
+        removeRush(i);
+    } else {
+        // Gestion erreur
+        std::cout << "Erreur suppression, index inconnu" << std::endl;
+    }
+}
+
 void RushListModel::removeSelectedMedia()
 {
     QModelIndexList indexes = parentView->selectionModel()->selectedIndexes();
+    QVector<Media> allRemoveMedia;
     for (QModelIndex index : indexes) {
         if (index.isValid()) {
-            removeRush(index.row());
+            allRemoveMedia.append(rushItems.at(index.row()));
         }
     }
+    for (auto media : allRemoveMedia) {
+        removeMedia(media);
+    }
+}
+
+void RushListModel::getFinalVideo()
+{
+    QStringList nameOfVideos;
+    for (Media rush : rushItems) {
+        nameOfVideos.append(rush.currentPath());
+    }
+    QString finalName = MainWindow::settings->value("General/dir_preview").toString()+"/finalVideo.mkv";
+    QString command = Actions::fusionVideos(finalName, nameOfVideos);
+
+    Actions myAction;
+    myAction.executeCommand(command);
 }
 
 void RushListModel::fusionSelectedMedia()

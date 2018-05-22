@@ -34,6 +34,7 @@ public:
     qint64 getTrackDuration() const;
     qint64 calculAllDuration();
     void manageNewVideo(QString url);
+    void removeMedia(Media const m);
 
 public slots:
     void addRushs(QStringList files);
@@ -41,6 +42,7 @@ public slots:
     void removeSelectedMedia();
     void fusionSelectedMedia();
     void renameSelectedMedia();
+    void getFinalVideo();
     void currentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void updateMedia(Actions::enumActions,QVector<QTime>);
     
