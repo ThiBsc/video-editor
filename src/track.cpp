@@ -208,6 +208,12 @@ void Track::mouseMoveEvent(QMouseEvent *evt)
         QCustomPlot::mouseMoveEvent(evt);
     } else {
         int x = evt->x();
+        QCPAxisRect *rect = xAxis->axisRect();
+        if (x < rect->left()){
+            x = rect->left();
+        } else if (x > rect->right()){
+            x = rect->right();
+        }
         curSelection.x2 = x;
         update();
     }
@@ -227,6 +233,12 @@ void Track::mousePressEvent(QMouseEvent *evt)
             curSelection.x1 = curSelection.x2 = -1;
         } else {
             int x = evt->x();
+            QCPAxisRect *rect = xAxis->axisRect();
+            if (x < rect->left()){
+                x = rect->left();
+            } else if (x > rect->right()){
+                x = rect->right();
+            }
             curSelection.x1 = x;
             curSelection.x2 = -1;
         }
