@@ -16,5 +16,6 @@
         <file>icon/delete.svg</file>
         <file>icon/file-archive.svg</file>
         <file>icon/file-plus.svg</file>
+        <file>icon/appli-icon.svg</file>
     </qresource>
 </RCC>

@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
     setWindowTitle("Video editor");
+    setWindowIcon(QIcon("://icon/appli-icon.svg"));
     initSettings();
 
     // Tool bar
