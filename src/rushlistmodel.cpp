@@ -222,6 +222,18 @@ void RushListModel::removeSelectedMedia()
     }
 }
 
+void RushListModel::saveProject()
+{
+    QString dossier = QFileDialog::getExistingDirectory(parentView, tr("Open Directory"), "/home", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    std::cout << dossier.toStdString() << std::endl;
+    if (!dossier.isEmpty()) {
+        for (Media rush : rushItems) {        
+            bool success = Actions::copyFile(rush.currentPath(), dossier);
+            std::cout << rush.currentPath().toStdString() << " : " << success << std::endl;
+        }
+    }
+}
+
 void RushListModel::getFinalVideo()
 {
     QString finaleName = QFileDialog::getSaveFileName(parentView, tr("Save File"), "untitled.mkv");

@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Tool bar
     actAddRushs = ui->mainToolBar->addAction(QIcon("://icon/file-plus.svg"), tr("Add rushs"));
     actFinalVideo = ui->mainToolBar->addAction(QIcon("://icon/file-archive.svg"), tr("Generate final video"));
+    actSave = ui->mainToolBar->addAction(QIcon("://icon/save.svg"), tr("Save project"));
     ui->mainToolBar->addSeparator();
     actRenameMedia = ui->mainToolBar->addAction(QIcon("://icon/edit.svg"), tr("Rename media"));
     actRemoveMedia = ui->mainToolBar->addAction(QIcon("://icon/delete.svg"), tr("Delete media"));
@@ -52,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
     connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));
     connect(actAddRushs, SIGNAL(triggered(bool)), this, SLOT(importFiles()));
+    connect(actSave, SIGNAL(triggered(bool)), rushListModel, SLOT(saveProject()));
     connect(actFinalVideo, SIGNAL(triggered(bool)), rushListModel, SLOT(getFinalVideo()));
     connect(actRemoveMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(removeSelectedMedia()));
     connect(actRenameMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(renameSelectedMedia()));
@@ -73,6 +75,7 @@ MainWindow::~MainWindow()
     delete ui;
 
     delete actAddRushs;
+    delete actSave;
     delete actRemoveMedia;
     delete actFusionMedia;
     delete actRenameMedia;
