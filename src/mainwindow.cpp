@@ -146,12 +146,10 @@ void MainWindow::initSettings()
         settings->sync();
     }
     QDir dir;
-    dir.setCurrent(settings->value("dir_preview", preview_path).toString());
-    if (!dir.exists()) {
+    if (!QDir(settings->value("dir_preview", preview_path).toString()).exists()) {
         dir.mkpath(settings->value("dir_preview", preview_path).toString());
     }
-    dir.setCurrent(settings->value("dir_original", original_path).toString());
-    if (!dir.exists()) {
+    if (!QDir(settings->value("dir_original", original_path).toString()).exists()) {
         dir.mkpath(settings->value("dir_original", original_path).toString());
     }
     Actions::ffmpeg = settings->value("prog_ffmpeg", "ffmpeg").toString();
