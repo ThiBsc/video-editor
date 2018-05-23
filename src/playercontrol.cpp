@@ -24,8 +24,8 @@ PlayerControl::PlayerControl(QWidget *parent)
 
     btnPlayPause = new QToolButton(this);
     btnStop = new QToolButton(this);
-    btnPlayPause->setText("Play/Pause");
-    btnStop->setText("Stop");
+    btnPlayPause->setText(tr("Play/Break"));
+    btnStop->setText(tr("Stop"));
     btnPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
     btnPlayPause->setCheckable(true);
     btnStop->setIcon(style()->standardIcon(QStyle::SP_MediaStop));

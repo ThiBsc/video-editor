@@ -44,6 +44,7 @@ private:
     VideoPlayer *videoPlayer;
 
     QAction *actAddRushs;
+    QAction *actSave;
     QAction *actRemoveMedia;
     QAction *actRenameMedia;
     QAction *actFusionMedia;
