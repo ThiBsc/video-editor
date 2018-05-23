@@ -18,5 +18,6 @@
         <file>icon/file-plus.svg</file>
         <file>icon/appli-icon.svg</file>
         <file>icon/save.svg</file>
+        <file>icon/file-video.svg</file>
     </qresource>
 </RCC>
