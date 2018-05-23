@@ -7,6 +7,17 @@
 #include <QTime>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QMouseEvent>
+
+bool PlayerControl::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched == positionSlider && event->type() == QEvent::MouseButtonRelease )
+    {
+        QMouseEvent *mouseEvent = reinterpret_cast<QMouseEvent *>(event);
+        positionSlider->setValue(QStyle::sliderValueFromPosition(positionSlider->minimum(), positionSlider->maximum(), mouseEvent->x(), positionSlider->width()));
+    }
+    return false;
+}
 
 PlayerControl::PlayerControl(QWidget *parent)
     : QWidget(parent)
@@ -16,6 +27,7 @@ PlayerControl::PlayerControl(QWidget *parent)
     setLayout(mainLayout);
 
     positionSlider = new QSlider(Qt::Horizontal, this);
+    positionSlider->installEventFilter(this);
     positionSlider->setRange(0, 0);
     volumeSlider = new QSlider(Qt::Horizontal, this);
     volumeSlider->setMaximum(100);
