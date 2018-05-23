@@ -17,23 +17,23 @@ TrackTool::TrackTool(QWidget *parent)
     toolbarActions = new QToolBar("Track action", this);
 
     toolBtnTrash = new QToolButton(this);
-    toolBtnTrash->setText("Remove");
+    toolBtnTrash->setText(tr("Remove"));
     toolBtnTrash->setIcon(QIcon("://icon/trash.svg"));
     toolBtnTrash->setPopupMode(QToolButton::InstantPopup);
-    actTrashBegin = new QAction("Remove before", toolBtnTrash);
-    actTrashArea = new QAction("Remove area", toolBtnTrash);
-    actTrashEnd = new QAction("Remove after", toolBtnTrash);
+    actTrashBegin = new QAction(tr("Remove before"), toolBtnTrash);
+    actTrashArea = new QAction(tr("Remove area"), toolBtnTrash);
+    actTrashEnd = new QAction(tr("Remove after"), toolBtnTrash);
 
     toolBtnTrash->addAction(actTrashBegin);
     toolBtnTrash->addAction(actTrashArea);
     toolBtnTrash->addAction(actTrashEnd);
     toolbarActions->addWidget(toolBtnTrash);
 
-    actMute = toolbarActions->addAction(QIcon("://icon/volume-off.svg"), "Mute");
-    actCut = toolbarActions->addAction(QIcon("://icon/cut.svg"), "Split");
-    actTrim = toolbarActions->addAction(QIcon("://icon/expand.svg"), "Trim");
+    actMute = toolbarActions->addAction(QIcon("://icon/volume-off.svg"), tr("Mute"));
+    actCut = toolbarActions->addAction(QIcon("://icon/cut.svg"), tr("Split"));
+    actTrim = toolbarActions->addAction(QIcon("://icon/expand.svg"), tr("Trim"));
     toolbarActions->addSeparator();
-    actDefaultTrack = toolbarActions->addAction(QIcon("://icon/default_track.svg"), "Default track zoom");
+    actDefaultTrack = toolbarActions->addAction(QIcon("://icon/default_track.svg"), tr("Default track zoom"));
 
     soundTrack = new Track(this);
 

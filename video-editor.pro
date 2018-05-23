@@ -38,6 +38,8 @@ HEADERS  += src/mainwindow.h \
     src/track.h \
     src/qcustomplot.h
 
+TRANSLATIONS = video_editor_fr.ts
+
 FORMS    += mainwindow.ui
 
 RESOURCES += \
