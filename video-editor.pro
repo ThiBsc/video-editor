@@ -13,7 +13,15 @@ QMAKE_CXXFLAGS += -std=c++11
 TARGET = video-editor
 TEMPLATE = app
 
-LIBS += -lavformat
+unix {
+    # sudo apt install libavformat-dev
+    LIBS += -lavformat
+}
+win32 {
+    # https://ffmpeg.zeranoe.com/builds/
+    LIBS += -L"c:/path/to/ffmpeg_dev/lib" -lavformat
+    INCLUDEPATH += c:/path/to/ffmpeg_dev/include
+}
 
 SOURCES += src/main.cpp\
     src/mainwindow.cpp \

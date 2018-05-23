@@ -321,7 +321,11 @@ void Track::resizeEvent(QResizeEvent *evt)
 
 double Track::getXFromMS(qint64 ms)
 {
-    return (ms*1000) / (timePerBytes*(bytesPerFrame/channelCount));
+    double ret = 0;
+    if (!samples.isEmpty()){
+        ret = (ms*1000) / (timePerBytes*(bytesPerFrame/channelCount));
+    }
+    return ret;
 }
 
 qint64 Track::getMicrosecFromX(int x)
