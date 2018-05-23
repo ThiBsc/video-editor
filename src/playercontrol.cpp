@@ -14,7 +14,9 @@ bool PlayerControl::eventFilter(QObject* watched, QEvent* event)
     if (watched == positionSlider && event->type() == QEvent::MouseButtonRelease )
     {
         QMouseEvent *mouseEvent = reinterpret_cast<QMouseEvent *>(event);
-        positionSlider->setValue(QStyle::sliderValueFromPosition(positionSlider->minimum(), positionSlider->maximum(), mouseEvent->x(), positionSlider->width()));
+        qint64 position = QStyle::sliderValueFromPosition(positionSlider->minimum(), positionSlider->maximum(), mouseEvent->x(), positionSlider->width());
+        updateCursorPosition(position);
+        emitPositionChanged(position);
     }
     return false;
 }
