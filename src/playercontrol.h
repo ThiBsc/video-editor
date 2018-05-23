@@ -2,6 +2,7 @@
 #define PLAYERCONTROL_H
 
 #include <QWidget>
+#include <QEvent>
 
 class QSlider;
 class QToolButton;
@@ -21,6 +22,9 @@ public:
     ~PlayerControl();
     int getVolume();
     void enablePlayerControl(bool enabled);
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event);
 
 signals:
     void volumeChanged(int vol);
