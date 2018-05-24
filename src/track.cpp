@@ -1,4 +1,5 @@
 #include "track.h"
+#include "axistickertime.h"
 
 #include <QAudioDecoder>
 #include <numeric>
@@ -16,6 +17,8 @@ Track::Track(QWidget *parent)
     setMouseTracking(ctrlPressed);
 
     wavePlot = addGraph();
+    tickerTime = new AxisTickerTime();
+    xAxis->setTicker(QSharedPointer<AxisTickerTime>(tickerTime));
     yAxis->setRange(QCPRange(-1, 1));
 
     setMinimumWidth(500);
@@ -37,6 +40,7 @@ Track::~Track()
 {
     delete decoder;
     // wavePlot delete auto ?
+    // QSharedPointer -> delete tickerTime;
 }
 
 void Track::addMarker(qint64 ms)
@@ -109,6 +113,7 @@ void Track::plot()
     timePerBytes = duration / buffer.frameCount();
     bytesPerFrame = buffer.format().bytesPerFrame();
     channelCount = buffer.format().channelCount();
+    tickerTime->setTrackInfo(timePerBytes, bytesPerFrame, channelCount);
     QVector<double> x(samples.size());
     std::iota(x.begin(), x.end(), 0.0);
     wavePlot->setData(x, samples, true);

@@ -6,6 +6,7 @@
 #include <QAudioBuffer>
 
 class QAudioDecoder;
+class AxisTickerTime;
 
 class Track : public QCustomPlot
 {
@@ -60,6 +61,7 @@ private:
     QAudioBuffer buffer;
     QVector<double> samples;
     QCPGraph *wavePlot;
+    AxisTickerTime *tickerTime;
 
 };
 
