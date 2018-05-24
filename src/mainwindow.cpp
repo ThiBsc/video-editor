@@ -24,6 +24,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     actFinalVideo = ui->mainToolBar->addAction(QIcon("://icon/file-archive.svg"), tr("Generate final video"));
     actSave = ui->mainToolBar->addAction(QIcon("://icon/save.svg"), tr("Save project"));
     ui->mainToolBar->addSeparator();
+    lblPlayAll.setText(tr("Play all:"));
+    ui->mainToolBar->addWidget(&lblPlayAll);
+    actPlayAll = ui->mainToolBar->addAction(QIcon("://icon/toggle-off.svg"), tr("Play all"));
+    actPlayAll->setCheckable(true);
+    ui->mainToolBar->addSeparator();
     actRenameMedia = ui->mainToolBar->addAction(QIcon("://icon/edit.svg"), tr("Rename media"));
     actRemoveMedia = ui->mainToolBar->addAction(QIcon("://icon/delete.svg"), tr("Delete media"));
     actFusionMedia = ui->mainToolBar->addAction(QIcon("://icon/merge.svg"), tr("Fusion media"));
@@ -47,17 +52,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // Connect 
     connect(listRush->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), rushListModel, SLOT(currentSelectionChanged(QItemSelection,QItemSelection)));
-    connect(rushListModel, SIGNAL(emitSelection(Media&)), trackTool, SLOT(setMedia(Media&)));
-    connect(rushListModel, SIGNAL(emitSelection(Media&)), videoPlayer, SLOT(setCurrentMedia(Media&)));
+    connect(rushListModel, SIGNAL(emitSelection(int,Media&)), trackTool, SLOT(setMedia(int,Media&)));
+    connect(rushListModel, SIGNAL(rushAdded(Media&)), videoPlayer, SLOT(addMediaToPlaylist(Media&)));
+    connect(rushListModel, SIGNAL(rushRemoved(int)), videoPlayer, SLOT(removeMediaToPlaylist(int)));
+    connect(rushListModel, SIGNAL(rushMoved(int,int)), videoPlayer, SLOT(moveMediaInPlaylist(int,int)));
+    connect(rushListModel, SIGNAL(emitSelection(int,Media&)), videoPlayer, SLOT(setCurrentMedia(int,Media&)));
     connect(rushListModel, SIGNAL(selectionTypeChange(RushListModel::SelectionType)), this, SLOT(selectionActionChanged(RushListModel::SelectionType)));
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
     connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));
+    connect(videoPlayer, SIGNAL(currentMediaChanged(int)), this, SLOT(changeRushListSelection(int)));
     connect(actAddRushs, SIGNAL(triggered(bool)), this, SLOT(importFiles()));
     connect(actSave, SIGNAL(triggered(bool)), rushListModel, SLOT(saveProject()));
     connect(actFinalVideo, SIGNAL(triggered(bool)), rushListModel, SLOT(getFinalVideo()));
     connect(actRemoveMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(removeSelectedMedia()));
     connect(actRenameMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(renameSelectedMedia()));
     connect(actFusionMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(fusionSelectedMedia()));
+    connect(actPlayAll, SIGNAL(triggered(bool)), this, SLOT(changePlayMode()));
     selectionActionChanged(RushListModel::NOTHING);
     resize(600, 500);
 }
@@ -68,6 +78,22 @@ void MainWindow::importFiles()
     if (!files.isEmpty()) {
         rushListModel->addRushs(files);
     }
+}
+
+void MainWindow::changePlayMode()
+{
+    if (actPlayAll->isChecked()){
+        actPlayAll->setIcon(QIcon("://icon/toggle-on.svg"));
+        videoPlayer->setPlayMode(QMediaPlaylist::PlaybackMode::Sequential);
+    } else {
+        actPlayAll->setIcon(QIcon("://icon/toggle-off.svg"));
+        videoPlayer->setPlayMode(QMediaPlaylist::PlaybackMode::CurrentItemOnce);
+    }
+}
+
+void MainWindow::changeRushListSelection(int i)
+{
+    listRush->setCurrentIndex(rushListModel->index(i));
 }
 
 MainWindow::~MainWindow()

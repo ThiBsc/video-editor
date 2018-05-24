@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSettings>
+#include <QLabel>
 #include "rushlistmodel.h"
 
 namespace Ui {
@@ -31,6 +32,8 @@ public:
 public slots:
     void selectionActionChanged(RushListModel::SelectionType type);
     void importFiles();
+    void changePlayMode();
+    void changeRushListSelection(int i);
 
 private:
     void initSettings();
@@ -45,6 +48,8 @@ private:
 
     QAction *actAddRushs;
     QAction *actSave;
+    QLabel lblPlayAll;
+    QAction *actPlayAll;
     QAction *actRemoveMedia;
     QAction *actRenameMedia;
     QAction *actFusionMedia;

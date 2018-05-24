@@ -113,6 +113,7 @@ bool RushListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
             }
             endMoveRows();
             ret = true;
+            emit rushMoved(src.row(), dest.row());
         }
     }
     return ret;
@@ -195,6 +196,7 @@ void RushListModel::removeRush(int i)
     Media media = rushItems.takeAt(i);
     Actions::removeFile({media.currentPath()});
     endRemoveRows();
+    emit rushRemoved(i);
 }
 
 void RushListModel::removeMedia(Media const m)
@@ -306,7 +308,7 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
             Actions myAction;
             cmdSuccess = myAction.executeCommand(command);
             m.updateDuration();
-            emit emitSelection(m);
+            emit emitSelection(curentIndex.row(), m);
         }
         // Gestion des erreurs et cas particuliers
         if (!cmdSuccess) {
@@ -354,7 +356,7 @@ void RushListModel::currentSelectionChanged(const QItemSelection &selected, cons
         QModelIndex idx = parentView->selectionModel()->selectedIndexes().first();
         curentIndex = idx;
         Media cur = rushItems.at(idx.row());
-        emit emitSelection(cur);
+        emit emitSelection(curentIndex.row(), cur);
         emit selectionTypeChange(SINGLE);
     } else {
         // Aucune selection

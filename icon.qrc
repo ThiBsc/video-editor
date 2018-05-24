@@ -19,5 +19,8 @@
         <file>icon/appli-icon.svg</file>
         <file>icon/save.svg</file>
         <file>icon/file-video.svg</file>
+        <file>icon/toggle-off.svg</file>
+        <file>icon/toggle-on.svg</file>
+        <file>icon/play-circle.svg</file>
     </qresource>
 </RCC>

@@ -30,7 +30,7 @@ public:
     Track *getTrack();
 
 public slots:
-    void setMedia(Media &media);
+    void setMedia(int i, Media &media);
     void emitActionClick(QAction *button);
 
 signals:

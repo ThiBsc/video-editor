@@ -82,8 +82,9 @@ Track *TrackTool::getTrack()
     return soundTrack;
 }
 
-void TrackTool::setMedia(Media &media)
+void TrackTool::setMedia(int i, Media &media)
 {
+    Q_UNUSED(i);
     soundTrack->setSource(media);
 }
 

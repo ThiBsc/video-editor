@@ -51,7 +51,9 @@ public slots:
 signals:
     void totalDurationChanged(qint64 duration);
     void rushAdded(Media& rush);
-    void emitSelection(Media& media);
+    void rushRemoved(int i);
+    void rushMoved(int a, int b);
+    void emitSelection(int i, Media& media);
     void selectionTypeChange(RushListModel::SelectionType type);
 
 private:
