@@ -32,6 +32,7 @@ Track::Track(QWidget *parent)
 
     connect(decoder, SIGNAL(bufferReady()), this, SLOT(setBuffer()));
     connect(decoder, SIGNAL(finished()), this, SLOT(plot()));
+    connect(decoder, SIGNAL(error(QAudioDecoder::Error)), this, SLOT(manageDecoderError(QAudioDecoder::Error)));
     connect(xAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(onXRangeChange(QCPRange)));
     connect(this, SIGNAL(afterReplot()), this, SLOT(onReplotIsFinished()));
 }
@@ -175,6 +176,27 @@ void Track::updateCursorVideo(qint64 ms)
 {
     cursorVideo = ms;
     update();
+}
+
+void Track::manageDecoderError(QAudioDecoder::Error error)
+{
+    if (error == QAudioDecoder::ServiceMissingError){
+        emit requestTimeFromPlayerAfterError();
+    }
+}
+
+void Track::setTimeAfterDecoderError(qint64 ms)
+{
+    timePerBytes = 1000;
+    bytesPerFrame = 1;
+    channelCount = 1;
+    tickerTime->setTrackInfo(timePerBytes, bytesPerFrame, channelCount);
+    samples.fill(0.0, ms);
+    QVector<double> x(samples.size());
+    std::iota(x.begin(), x.end(), 0.0);
+    wavePlot->setData(x, samples, true);
+    xAxis->setRange(QCPRange(0, samples.size()));
+    replot();
 }
 
 bool Track::restoreSelectionCoordToPX()

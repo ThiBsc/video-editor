@@ -32,11 +32,16 @@ public slots:
     void moveMediaInPlaylist(int a, int b);
     void setCurrentMedia(int i, Media& media);
     void emitCurrentMediaChanged(int i);
+    void timeAsked();
+    void playerReady();
 
 signals:
     void currentMediaChanged(int i);
+    void sendDuration(qint64 duration);
 
 private:
+    bool isReady;
+    bool durationIsNeeded;
     int lastIndex;
     QVBoxLayout *vLayout;
 

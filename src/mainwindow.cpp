@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     actFusionMedia = ui->mainToolBar->addAction(QIcon("://icon/merge.svg"), tr("Fusion media"));
 
     // Organisation
-    trackTool = new TrackTool(this);    
+    trackTool = new TrackTool(this);
     listRush = new QListView(this);
     rushListModel = new RushListModel(listRush);
     listRush->setModel(rushListModel);
@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     gLayout->addWidget(trackTool, 1, 0, 1, 2);
     ui->centralWidget->setLayout(gLayout);
 
-    // Connect 
+    // Connect
     connect(listRush->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), rushListModel, SLOT(currentSelectionChanged(QItemSelection,QItemSelection)));
     connect(rushListModel, SIGNAL(emitSelection(int,Media&)), trackTool, SLOT(setMedia(int,Media&)));
     connect(rushListModel, SIGNAL(rushAdded(Media&)), videoPlayer, SLOT(addMediaToPlaylist(Media&)));
@@ -59,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(rushListModel, SIGNAL(emitSelection(int,Media&)), videoPlayer, SLOT(setCurrentMedia(int,Media&)));
     connect(rushListModel, SIGNAL(selectionTypeChange(RushListModel::SelectionType)), this, SLOT(selectionActionChanged(RushListModel::SelectionType)));
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
+    connect(trackTool->getTrack(), SIGNAL(requestTimeFromPlayerAfterError()), videoPlayer, SLOT(timeAsked()));
+    connect(videoPlayer, SIGNAL(sendDuration(qint64)), trackTool->getTrack(), SLOT(setTimeAfterDecoderError(qint64)));
     connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));
     connect(videoPlayer, SIGNAL(currentMediaChanged(int)), this, SLOT(changeRushListSelection(int)));
     connect(actAddRushs, SIGNAL(triggered(bool)), this, SLOT(importFiles()));
