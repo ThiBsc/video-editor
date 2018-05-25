@@ -140,6 +140,7 @@ void Track::onXRangeChange(const QCPRange &range)
 {
     if (!samples.isEmpty()){
         curSelection.x1 = curSelection.x2 = -1;
+        emit selectionChanged(NONE);
         if (range.size() < samples.size()){
             bool replace = false;
             QCPRange r = range;
@@ -220,6 +221,7 @@ void Track::mouseMoveEvent(QMouseEvent *evt)
             x = rect->right();
         }
         curSelection.x2 = x;
+        emit selectionChanged(AREA);
         update();
     }
 }
@@ -236,6 +238,7 @@ void Track::mousePressEvent(QMouseEvent *evt)
     } else {
         if (evt->button() == Qt::RightButton){
             curSelection.x1 = curSelection.x2 = -1;
+            emit selectionChanged(NONE);
         } else {
             int x = evt->x();
             QCPAxisRect *rect = xAxis->axisRect();
@@ -246,6 +249,7 @@ void Track::mousePressEvent(QMouseEvent *evt)
             }
             curSelection.x1 = x;
             curSelection.x2 = -1;
+            emit selectionChanged(LINE);
         }
         update();
     }

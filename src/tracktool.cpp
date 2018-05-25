@@ -43,6 +43,7 @@ TrackTool::TrackTool(QWidget *parent)
     connect(actDefaultTrack, SIGNAL(triggered(bool)), soundTrack, SLOT(defaultScale()));
     connect(toolBtnTrash, SIGNAL(triggered(QAction*)), this, SLOT(emitActionClick(QAction*)));
     connect(toolbarActions, SIGNAL(actionTriggered(QAction*)), this, SLOT(emitActionClick(QAction*)));
+    connect(soundTrack, SIGNAL(selectionChanged(Track::SelectionType)), this, SLOT(activePossibleAction(Track::SelectionType)));
 }
 
 TrackTool::~TrackTool()
@@ -115,5 +116,40 @@ void TrackTool::emitActionClick(QAction *button)
         emit actionClick(action,selected);
     }
 
+}
+
+void TrackTool::activePossibleAction(Track::SelectionType stype)
+{
+    switch (stype) {
+        case Track::NONE:
+            toolBtnTrash->setEnabled(false);
+            actTrashBegin->setEnabled(false);
+            actTrashArea->setEnabled(false);
+            actTrashEnd->setEnabled(false);
+            actMute->setEnabled(false);
+            actCut->setEnabled(false);
+            actTrim->setEnabled(false);
+            break;
+        case Track::LINE:
+            toolBtnTrash->setEnabled(true);
+            actTrashBegin->setEnabled(true);
+            actTrashArea->setEnabled(false);
+            actTrashEnd->setEnabled(true);
+            actMute->setEnabled(false);
+            actCut->setEnabled(true);
+            actTrim->setEnabled(false);
+            break;
+        case Track::AREA:
+            toolBtnTrash->setEnabled(true);
+            actTrashBegin->setEnabled(true);
+            actTrashArea->setEnabled(true);
+            actTrashEnd->setEnabled(true);
+            actMute->setEnabled(true);
+            actCut->setEnabled(false);
+            actTrim->setEnabled(true);
+            break;
+        default:
+            break;
+    }
 }
 
