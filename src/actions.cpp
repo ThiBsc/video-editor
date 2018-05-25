@@ -230,6 +230,7 @@ bool Actions::executeCommand(QString command)
                 nameVideosDelete.append(nameFile);
                 QTextStream out(&file);
                 out << command.left(index).toStdString().c_str() << "\n";
+                file.close();
             }
         } else {
             returnStat = cmd.execute(command);
