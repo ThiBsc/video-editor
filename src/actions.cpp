@@ -227,7 +227,11 @@ bool Actions::executeCommand(QString command)
             nameFile = command.mid(index+3);
             QFile file(nameFile.toStdString().c_str());
             if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+#ifdef Q_OS_WIN
+                nameFile = "file "+QFileInfo(nameFile.trimmed().split("file ").first()).completeBaseName();;
+#else
                 nameVideosDelete.append(nameFile);
+#endif
                 QTextStream out(&file);
                 out << command.left(index).toStdString().c_str() << "\n";
                 file.close();
