@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(rushListModel, SIGNAL(emitSelection(int,Media&)), videoPlayer, SLOT(setCurrentMedia(int,Media&)));
     connect(rushListModel, SIGNAL(selectionTypeChange(RushListModel::SelectionType)), this, SLOT(selectionActionChanged(RushListModel::SelectionType)));
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
+    connect(trackTool, SIGNAL(actionNoiseGlobal(QVector<QTime>)), rushListModel, SLOT(updateNoiseAllMedia(QVector<QTime>)));
     connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));
     connect(videoPlayer, SIGNAL(currentMediaChanged(int)), this, SLOT(changeRushListSelection(int)));
     connect(actAddRushs, SIGNAL(triggered(bool)), this, SLOT(importFiles()));
@@ -168,8 +169,10 @@ void MainWindow::initSettings()
         settings->setValue("dir_original", original_path);
 #ifdef Q_OS_WIN
         settings->setValue("prog_ffmpeg", "ffmpeg");
+        settings->setValue("prog_sox", "");
 #else
         settings->setValue("prog_ffmpeg", "ffmpeg");
+        settings->setValue("prog_sox", "");
 #endif
         settings->endGroup();
         settings->sync();
@@ -182,4 +185,5 @@ void MainWindow::initSettings()
         dir.mkpath(settings->value("dir_original", original_path).toString());
     }
     Actions::ffmpeg = settings->value("prog_ffmpeg", "ffmpeg").toString();
+    Actions::sox = settings->value("General/prog_sox", "").toString();
 }

@@ -35,15 +35,19 @@ public slots:
 
 signals:
     void actionClick(Actions::enumActions action,QVector<QTime> selected);
+    void actionNoiseGlobal(QVector<QTime> selected);
 
 private:
     QVBoxLayout *vLayout;
 
     QToolBar *toolbarActions;
     QToolButton *toolBtnTrash;
+    QToolButton *toolBtnNoise;
     QAction *actTrashBegin;
     QAction *actTrashArea;
     QAction *actTrashEnd;
+    QAction *actNoiseLocal;
+    QAction *actNoiseGlobal;
     QAction *actMute;
     QAction *actCut;
     QAction *actTrim;

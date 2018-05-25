@@ -46,7 +46,8 @@ public slots:
     void saveProject();
     void getFinalVideo();
     void currentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-    void updateMedia(Actions::enumActions,QVector<QTime>);
+    void updateMedia(Actions::enumActions action, QVector<QTime> selected);
+    void updateNoiseAllMedia(QVector<QTime> selected);
     
 signals:
     void totalDurationChanged(qint64 duration);

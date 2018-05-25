@@ -12,6 +12,7 @@
 #include <fstream>
 
 QString Actions::ffmpeg = "ffmpeg";
+QString Actions::sox = "";
 
 Actions::Actions(){}
 
@@ -128,9 +129,52 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             // Suppression des vidéos temporaires
             str += "DELETE:"+nameTmp;
             break;
+        case Actions::enumActions::NOISE:
+
+            break;
         default:
             str = "";
             break;
+    }
+    return str;
+}
+
+QString Actions::getCommandApplyFilterNoise(QString videoName)
+{
+    QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
+    QString profileNoise = MainWindow::settings->value("General/dir_preview").toString()+"/noise.prof";
+    QString audioCleanFile(path+"best_audio.wav");
+    QString audiFile(path+"audio.wav");
+    QString videoTmp(path+"tmp_"+videoName);
+    QString str;
+    // Séparation de l'audio de la vidéo
+    str += Actions::ffmpeg+" -i "+path+videoName+" -sameq -an "+videoTmp+" && ";
+    str += Actions::ffmpeg+" -i "+path+videoName+" -sameq "+audiFile+" && ";
+    // Création de l'audio sans bruit ambiant avec SoX
+    str += Actions::sox+" "+audiFile+" "+audioCleanFile+" noisered "+profileNoise+" "+MainWindow::settings->value("General/sensibility").toString()+" && ";
+    // Assemblage de l'audio avec la vidéo sans son
+    str += Actions::ffmpeg+" -i "+audioCleanFile+" -i "+videoTmp+" -sameq "+path+videoName+" && ";
+    // Suppression des vidéos temporaires
+    str += "DELETE:"+videoTmp+"|"+audiFile+"|"+audioCleanFile+" && ";
+    return str;
+}
+
+QString Actions::createProfileNoise(QString videoName, QTime start, QTime end)
+{
+    QString str;
+    if (!Actions::ffmpeg.isEmpty() && !start.isNull() && !end.isNull()) {
+        QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
+        QString profileNoise = MainWindow::settings->value("General/dir_preview").toString()+"/noise.prof";
+        QString noiseAudio(path+"noise_audio.wav");
+        str += Actions::ffmpeg+" -i "+path+videoName+" -vn ";
+        str += " -ss "+start.toString("hh:mm:ss.zz");
+        str += " -to "+end.toString("hh:mm:ss.zz");
+        str += path+"noise_audio.wav";
+        // SoX profile
+        str += Actions::sox+""+noiseAudio+" -n noiseprof "+profileNoise;
+        str += "DELETE:"+noiseAudio+" && ";
+    } else {
+        // Erreur pas de zone de bruit sélectionnée ou pas sox de paramétré
     }
     return str;
 }
@@ -207,18 +251,10 @@ bool Actions::renameFile(QString src, QString newname)
 bool Actions::executeCommand(QString command)
 {
     bool success = true;
-
-    // Découpage de la commande si présence du mot DELETE
-    QStringList nameVideosDelete;
-    int index = command.indexOf("DELETE:");
-    if (index != -1) {
-        nameVideosDelete = command.mid(index+7).split("|");
-        command = command.left(index);
-    }
-
-    // Lancement des commandes
     QProcess cmd;
     int returnStat;
+    int index;
+    QStringList nameVideosDelete;
     QString nameFile;
     QStringList allCommand = command.split("&&");
     for (auto command : allCommand) {
@@ -232,11 +268,17 @@ bool Actions::executeCommand(QString command)
                 out << command.left(index).toStdString().c_str() << "\n";
             }
         } else {
-            returnStat = cmd.execute(command);
-            if (returnStat == -1) {
-                std::cout << "RETOUR STAT " << returnStat << std::endl;
-                success = false;
+            index = command.indexOf("DELETE:");
+            if (index != -1) {
+                nameVideosDelete.append(command.mid(index+7).split("|"));
+            } else {
+                returnStat = cmd.execute(command);
+                if (returnStat == -1) {
+                    std::cout << "RETOUR STAT " << returnStat << std::endl;
+                    success = false;
+                }
             }
+            
         }
     }
     // Suppression des fichiers

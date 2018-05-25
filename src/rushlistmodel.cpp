@@ -321,6 +321,33 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
     }    
 }
 
+void RushListModel::updateNoiseAllMedia(QVector<QTime> selected)
+{
+    if (curentIndex.isValid() && !selected.value(0).isNull()) {
+        // Création du profile de bruit ambiant avec le media courant et la zone
+        QString command = Actions::getCommandOnVideo(Actions::enumActions::NOISE, rushItems.at(curentIndex.row()).getName(), selected.value(0), selected.value(1));
+        Actions myAction;
+        bool cmdSuccess = false;
+        cmdSuccess = myAction.executeCommand(command);
+        if (!cmdSuccess) {
+            std::cout << "Erreur dans les commandes" << std::endl;
+            // emit actionError();
+        } else {
+            // Traitement de toutes les vidéos si le profile à bien été créé
+            for (Media m : rushItems) {
+                command = Actions::getCommandApplyFilterNoise(m.getName());
+                QPair<int,QString> actionCommand(static_cast<int>(Actions::enumActions::NOISE),command);
+                m.addAction(actionCommand);
+            }
+        }
+        
+            
+           
+        // Gestion des erreurs et cas particuliers
+        
+    }    
+}
+
 void RushListModel::manageNewVideo(QString url)
 {
     QUrl origin(url);
