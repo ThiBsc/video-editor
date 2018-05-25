@@ -4,8 +4,8 @@
 #include "media.h"
 #include "qcustomplot.h"
 #include <QAudioBuffer>
+#include <QAudioDecoder>
 
-class QAudioDecoder;
 class AxisTickerTime;
 
 class Track : public QCustomPlot
@@ -13,6 +13,7 @@ class Track : public QCustomPlot
     Q_OBJECT
 
 public:
+    enum SelectionType { NONE=0, LINE, AREA };
     enum SelectionX { X1=0, X2 };
     Track(QWidget *parent = Q_NULLPTR);
     ~Track();
@@ -27,6 +28,12 @@ public slots:
     void onXRangeChange(const QCPRange& range);
     void onReplotIsFinished();
     void updateCursorVideo(qint64 ms);
+    void manageDecoderError(QAudioDecoder::Error error);
+    void setTimeAfterDecoderError(qint64 ms);
+
+signals:
+    void selectionChanged(Track::SelectionType stype);
+    void requestTimeFromPlayerAfterError();
 
 protected:
     bool restoreSelectionCoordToPX();

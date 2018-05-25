@@ -11,6 +11,8 @@
 VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags f)
     : QWidget(parent, f)
 {
+    isReady = false;
+    durationIsNeeded = false;
     lastIndex = -1;
     vLayout = new QVBoxLayout(this);
     vLayout->setContentsMargins(0, 0, 0, 0);
@@ -44,6 +46,7 @@ VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags f)
     connect(playerControl, SIGNAL(positionChanged(qint64)), mediaPlayer, SLOT(setPosition(qint64)));
     connect(mediaPlayer, SIGNAL(positionChanged(qint64)), playerControl, SLOT(updateCursorPosition(qint64)));
     connect(mediaPlayer, SIGNAL(durationChanged(qint64)), playerControl, SLOT(updateDuration(qint64)));
+    connect(mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(playerReady()));
     connect(mediaPlaylist, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCurrentMediaChanged(int)));
 
     mediaPlayer->setVolume(playerControl->getVolume());
@@ -97,6 +100,8 @@ void VideoPlayer::moveMediaInPlaylist(int a, int b)
 void VideoPlayer::setCurrentMedia(int i, Media &media)
 {
     Q_UNUSED(media);
+    isReady = false;
+    durationIsNeeded = false;
     mediaPlaylist->setCurrentIndex(i);
     lastIndex = i;
     //mediaPlaylist->addMedia(QMediaContent(QUrl::fromLocalFile(media.currentPath())));
@@ -110,6 +115,21 @@ void VideoPlayer::emitCurrentMediaChanged(int i)
     } else if (i == -1){
         mediaPlayer->stop();
         mediaPlaylist->setCurrentIndex(lastIndex);
+    }
+}
+
+void VideoPlayer::timeAsked()
+{
+    durationIsNeeded = true;
+    if (isReady){
+        emit sendDuration(mediaPlayer->duration());
+    }
+}
+
+void VideoPlayer::playerReady()
+{
+    if (durationIsNeeded){
+        emit sendDuration(mediaPlayer->duration());
     }
 }
 

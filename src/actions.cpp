@@ -265,7 +265,8 @@ bool Actions::executeCommand(QString command)
             if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
                 nameVideosDelete.append(nameFile);
                 QTextStream out(&file);
-                out << command.left(index).toStdString().c_str() << "\n";
+                out << command.left(index) << "\n";
+                file.close();
             }
         } else {
             index = command.indexOf("DELETE:");

@@ -6,12 +6,12 @@
 #include "media.h"
 #include "actions.h"
 #include "qcustomplot.h"
+#include "track.h"
 
 class QToolBar;
 class QAction;
 class QVBoxLayout;
 class QSlider;
-class Track;
 
 /**
  * @brief The Track class
@@ -32,6 +32,7 @@ public:
 public slots:
     void setMedia(int i, Media &media);
     void emitActionClick(QAction *button);
+    void activePossibleAction(Track::SelectionType stype);
 
 signals:
     void actionClick(Actions::enumActions action,QVector<QTime> selected);
