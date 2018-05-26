@@ -169,12 +169,13 @@ void MainWindow::initSettings()
         settings->beginGroup("General");
         settings->setValue("dir_preview", preview_path);
         settings->setValue("dir_original", original_path);
+        settings->setValue("sensibility", "0.21");
 #ifdef Q_OS_WIN
         settings->setValue("prog_ffmpeg", "ffmpeg");
-        settings->setValue("prog_sox", "");
+        settings->setValue("prog_sox", "sox");
 #else
         settings->setValue("prog_ffmpeg", "ffmpeg");
-        settings->setValue("prog_sox", "");
+        settings->setValue("prog_sox", "sox");
 #endif
         settings->endGroup();
         settings->sync();

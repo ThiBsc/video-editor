@@ -12,7 +12,7 @@
 #include <fstream>
 
 QString Actions::ffmpeg = "ffmpeg";
-QString Actions::sox = "";
+QString Actions::sox = "sox";
 
 Actions::Actions(){}
 
@@ -130,7 +130,8 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += "DELETE:"+nameTmp;
             break;
         case Actions::enumActions::NOISE:
-
+            str += Actions::createProfileNoise(name, start, end);
+            str += Actions::getCommandApplyFilterNoise(name);
             break;
         default:
             str = "";
@@ -148,12 +149,12 @@ QString Actions::getCommandApplyFilterNoise(QString videoName)
     QString videoTmp(path+"tmp_"+videoName);
     QString str;
     // Séparation de l'audio de la vidéo
-    str += Actions::ffmpeg+" -i "+path+videoName+" -sameq -an "+videoTmp+" && ";
-    str += Actions::ffmpeg+" -i "+path+videoName+" -sameq "+audiFile+" && ";
-    // Création de l'audio sans bruit ambiant avec SoX
+    str += Actions::ffmpeg+" -y -i "+path+videoName+" -c copy -an "+videoTmp+" && ";
+    str += Actions::ffmpeg+" -y -i "+path+videoName+" -vn "+audiFile+" && ";
+    // Création de l'audio sans bruit ambiant avec SoXs
     str += Actions::sox+" "+audiFile+" "+audioCleanFile+" noisered "+profileNoise+" "+MainWindow::settings->value("General/sensibility").toString()+" && ";
     // Assemblage de l'audio avec la vidéo sans son
-    str += Actions::ffmpeg+" -i "+audioCleanFile+" -i "+videoTmp+" -sameq "+path+videoName+" && ";
+    str += Actions::ffmpeg+" -y -i "+audioCleanFile+" -i "+videoTmp+" -c copy "+path+videoName+" && ";
     // Suppression des vidéos temporaires
     str += "DELETE:"+videoTmp+"|"+audiFile+"|"+audioCleanFile+" && ";
     return str;
@@ -166,12 +167,12 @@ QString Actions::createProfileNoise(QString videoName, QTime start, QTime end)
         QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
         QString profileNoise = MainWindow::settings->value("General/dir_preview").toString()+"/noise.prof";
         QString noiseAudio(path+"noise_audio.wav");
-        str += Actions::ffmpeg+" -i "+path+videoName+" -vn ";
+        str += Actions::ffmpeg+" -y -i "+path+videoName+" -vn ";
         str += " -ss "+start.toString("hh:mm:ss.zz");
         str += " -to "+end.toString("hh:mm:ss.zz");
-        str += path+"noise_audio.wav";
+        str += " "+path+"noise_audio.wav && ";
         // SoX profile
-        str += Actions::sox+""+noiseAudio+" -n noiseprof "+profileNoise;
+        str += Actions::sox+" "+noiseAudio+" -n noiseprof "+profileNoise+" && ";
         str += "DELETE:"+noiseAudio+" && ";
     } else {
         // Erreur pas de zone de bruit sélectionnée ou pas sox de paramétré

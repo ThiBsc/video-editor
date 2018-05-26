@@ -294,57 +294,58 @@ void RushListModel::renameSelectedMedia()
  */
 void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> selected)
 {
+    std::cout << "Action update media " << std::endl;
     if (curentIndex.isValid() && !selected.value(0).isNull()) {
         // Récupération du média courant
         Media m = rushItems.at(curentIndex.row());
         // Création de la commande
         QString command = Actions::getCommandOnVideo(action, m.getName(), selected.value(0), selected.value(1));
-        bool cmdSuccess = false;
+        std::cout << "Commande : " << command.toStdString() << std::endl;
         if (command.size() != 0) {
             // Ajout de la commande
             QPair<int,QString> actionCommand(static_cast<int>(action),command);
             m.addAction(actionCommand);
             // Exécution de l'action
             Actions myAction;
+            bool cmdSuccess = false;
             cmdSuccess = myAction.executeCommand(command);
             m.updateDuration();
             emit emitSelection(curentIndex.row(), m);
-        }
-        // Gestion des erreurs et cas particuliers
-        if (!cmdSuccess) {
-            std::cout << "Erreur dans les commandes" << std::endl;
-            // emit actionError();
-        } else if (action == Actions::enumActions::SPLIT) {
-            QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
-            manageNewVideo(path+"part_"+m.getName());
+            // Gestion des erreurs et cas particuliers
+            if (!cmdSuccess) {
+                std::cout << "Erreur dans les commandes" << std::endl;
+                // emit actionError();
+            } else if (action == Actions::enumActions::SPLIT) {
+                QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
+                manageNewVideo(path+"part_"+m.getName());
+            }
         }
     }    
 }
 
 void RushListModel::updateNoiseAllMedia(QVector<QTime> selected)
 {
+    std::cout << "Update noise global " << std::endl;
     if (curentIndex.isValid() && !selected.value(0).isNull()) {
+        Media mediaSelected = rushItems.at(curentIndex.row());
         // Création du profile de bruit ambiant avec le media courant et la zone
-        QString command = Actions::getCommandOnVideo(Actions::enumActions::NOISE, rushItems.at(curentIndex.row()).getName(), selected.value(0), selected.value(1));
+        QString command = Actions::createProfileNoise(mediaSelected.getName(), selected.value(0), selected.value(1));
+        std::cout << "profile : " << command.toStdString() << std::endl;
         Actions myAction;
         bool cmdSuccess = false;
         cmdSuccess = myAction.executeCommand(command);
         if (!cmdSuccess) {
-            std::cout << "Erreur dans les commandes" << std::endl;
+            std::cout << "Erreur dans les commandes" << std::endl << std::endl;
             // emit actionError();
         } else {
             // Traitement de toutes les vidéos si le profile à bien été créé
             for (Media m : rushItems) {
                 command = Actions::getCommandApplyFilterNoise(m.getName());
+                cmdSuccess = myAction.executeCommand(command);
                 QPair<int,QString> actionCommand(static_cast<int>(Actions::enumActions::NOISE),command);
                 m.addAction(actionCommand);
             }
-        }
-        
-            
-           
-        // Gestion des erreurs et cas particuliers
-        
+        }        
     }    
 }
 
