@@ -54,6 +54,7 @@ TrackTool::TrackTool(QWidget *parent)
 
     connect(actDefaultTrack, SIGNAL(triggered(bool)), soundTrack, SLOT(defaultScale()));
     connect(toolBtnTrash, SIGNAL(triggered(QAction*)), this, SLOT(emitActionClick(QAction*)));
+    connect(toolBtnNoise, SIGNAL(triggered(QAction*)), this, SLOT(emitActionClick(QAction*)));
     connect(toolbarActions, SIGNAL(actionTriggered(QAction*)), this, SLOT(emitActionClick(QAction*)));
     connect(soundTrack, SIGNAL(selectionChanged(Track::SelectionType)), this, SLOT(activePossibleAction(Track::SelectionType)));
 }
@@ -130,7 +131,7 @@ void TrackTool::emitActionClick(QAction *button)
         } else if (button == actTrim) {
             action = Actions::enumActions::TRIM;
         } else if (button == actNoiseLocal) {
-            action = Actions::enumActions::NOISE_LOCAL;
+            action = Actions::enumActions::NOISE;
         }
         if (action != Actions::enumActions::NONE) {
             emit actionClick(action,selected);

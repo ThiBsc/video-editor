@@ -13,7 +13,7 @@ class Actions : public QObject
 public:
     static QString ffmpeg;
     static QString sox;
-    enum enumActions {NONE, DELETE_ZONE, DELETE_BEGIN, DELETE_END, MUT, TRIM, SPLIT, FUSION, NOISE, NOISE_GLOBAL, NOISE_LOCAL};
+    enum enumActions {NONE, DELETE_ZONE, DELETE_BEGIN, DELETE_END, MUT, TRIM, SPLIT, FUSION, NOISE};
 
     Actions();
     static QString getCommandOnVideo(Actions::enumActions action, QString nameVideo, QTime start, QTime end=QTime());
