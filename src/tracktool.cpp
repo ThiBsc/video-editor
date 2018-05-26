@@ -64,9 +64,9 @@ TrackTool::~TrackTool()
     delete actTrashArea;
     delete actTrashEnd;
     delete toolBtnTrash;
-    delete toolBtnNoise;
     delete actNoiseLocal;
     delete actNoiseGlobal;
+    delete toolBtnNoise;
     delete actMute;
     delete actCut;
     delete actTrim;
