@@ -33,7 +33,8 @@ class Media : public QObject
         void updateDuration();
         void addAction(QPair<int,QString> command);
         QMap<int,QString> getActions() const;
-        QSet<qint64> getMarkers();
+        QSet<qint64> getMarkers() const;
+        void setMarkers(QSet<qint64> markers);
         int getNbMarkers() const;
 
     private:

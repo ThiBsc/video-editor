@@ -22,5 +22,6 @@
         <file>icon/toggle-off.svg</file>
         <file>icon/toggle-on.svg</file>
         <file>icon/play-circle.svg</file>
+        <file>icon/map-marker-alt.svg</file>
     </qresource>
 </RCC>

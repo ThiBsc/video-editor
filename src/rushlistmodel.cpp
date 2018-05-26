@@ -392,6 +392,14 @@ void RushListModel::currentSelectionChanged(const QItemSelection &selected, cons
     }
 }
 
+void RushListModel::changeCurrentMediaMarkers(QSet<qint64> markers)
+{
+    Media m = rushItems.at(curentIndex.row());
+    m.setMarkers(markers);
+    rushItems.replace(curentIndex.row(), m);
+    emit dataChanged(curentIndex, curentIndex);
+}
+
 /**
  * @brief RushListModel::getTrackDuration
  * @return The total duration of the track in ms

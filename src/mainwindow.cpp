@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(rushListModel, SIGNAL(emitSelection(int,Media&)), videoPlayer, SLOT(setCurrentMedia(int,Media&)));
     connect(rushListModel, SIGNAL(selectionTypeChange(RushListModel::SelectionType)), this, SLOT(selectionActionChanged(RushListModel::SelectionType)));
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));
+    connect(trackTool, SIGNAL(markerChanged(QSet<qint64>)), rushListModel, SLOT(changeCurrentMediaMarkers(QSet<qint64>)));
     connect(trackTool, SIGNAL(actionNoiseGlobal(QVector<QTime>)), rushListModel, SLOT(updateNoiseAllMedia(QVector<QTime>)));
     connect(trackTool->getTrack(), SIGNAL(requestTimeFromPlayerAfterError()), videoPlayer, SLOT(timeAsked()));
     connect(videoPlayer, SIGNAL(sendDuration(qint64)), trackTool->getTrack(), SLOT(setTimeAfterDecoderError(qint64)));
