@@ -186,9 +186,9 @@ QString Actions::fusionVideos(QString finalName, QStringList nameOfVideos)
     QString str;
     for (QString name : nameOfVideos) {
         QFileInfo info(name);
-        str += "&& file "+info.absoluteFilePath()+" >> "+infoOutput.absoluteFilePath();
+        str += " && file "+info.absoluteFilePath()+" >> "+infoOutput.absoluteFilePath()+" ";
     }
-    str += "&& "+Actions::ffmpeg+" -y -f concat -safe 0 -i "+infoOutput.absoluteFilePath()+" -c copy "+finalName;
+    str += " && "+Actions::ffmpeg+" -y -f concat -safe 0 -i "+infoOutput.absoluteFilePath()+" -c copy "+finalName+" && ";
     return str;
 }
 
@@ -262,6 +262,8 @@ bool Actions::executeCommand(QString command)
         index = command.indexOf(">>");
         if (index != -1) {
             nameFile = command.mid(index+3);
+            std::cout << " --- --- " << std::endl;
+            std::cout << nameFile.toStdString().c_str() << std::endl;
             QFile file(nameFile.toStdString().c_str());
             if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
                 nameVideosDelete.append(nameFile);
@@ -284,6 +286,6 @@ bool Actions::executeCommand(QString command)
         }
     }
     // Suppression des fichiers
-    Actions::removeFile(nameVideosDelete);
+    //Actions::removeFile(nameVideosDelete);
     return success;
 }

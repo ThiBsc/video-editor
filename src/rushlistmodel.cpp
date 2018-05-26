@@ -301,6 +301,7 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
         // Création de la commande
         QString command = Actions::getCommandOnVideo(action, m.getName(), selected.value(0), selected.value(1));
         std::cout << "Commande : " << command.toStdString() << std::endl;
+        std::cout << " " << std::endl;
         if (command.size() != 0) {
             // Ajout de la commande
             QPair<int,QString> actionCommand(static_cast<int>(action),command);
