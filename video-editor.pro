@@ -34,7 +34,9 @@ SOURCES += src/main.cpp\
     src/tracktool.cpp \
     src/track.cpp \
     src/qcustomplot.cpp \
-    src/axistickertime.cpp
+    src/axistickertime.cpp \
+    src/dialogmarker.cpp \
+    src/settingeditor.cpp
 
 HEADERS  += src/mainwindow.h \
     src/media.h \
@@ -46,7 +48,9 @@ HEADERS  += src/mainwindow.h \
     src/tracktool.h \
     src/track.h \
     src/qcustomplot.h \
-    src/axistickertime.h
+    src/axistickertime.h \
+    src/dialogmarker.h \
+    src/settingeditor.h
 
 TRANSLATIONS = video_editor_fr.ts
 

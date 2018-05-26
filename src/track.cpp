@@ -44,9 +44,15 @@ Track::~Track()
     // QSharedPointer -> delete tickerTime;
 }
 
-void Track::addMarker(qint64 ms)
+QSet<qint64> Track::getMarkers()
 {
-    markers.insert(ms);
+    return markers;
+}
+
+void Track::setMarkers(QSet<qint64> ms_markers)
+{
+    markers = ms_markers;
+    update();
 }
 
 void Track::setSource(Media &media)

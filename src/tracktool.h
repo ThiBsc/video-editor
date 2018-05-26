@@ -25,7 +25,6 @@ class TrackTool : public QWidget
 public:
     TrackTool(QWidget *parent = Q_NULLPTR);
     ~TrackTool();
-    void addMarker(qint64 ms);
     QToolBar *getToolbar();
     Track *getTrack();
 
@@ -33,10 +32,12 @@ public slots:
     void setMedia(int i, Media &media);
     void emitActionClick(QAction *button);
     void activePossibleAction(Track::SelectionType stype);
+    void showDialogMarker();
 
 signals:
     void actionClick(Actions::enumActions action,QVector<QTime> selected);
     void actionNoiseGlobal(QVector<QTime> selected);
+    void markerChanged(QSet<qint64> markers);
 
 private:
     QVBoxLayout *vLayout;
@@ -53,6 +54,7 @@ private:
     QAction *actCut;
     QAction *actTrim;
     QAction *actDefaultTrack;
+    QAction *actSetMarkers;
 
     Track *soundTrack;
 

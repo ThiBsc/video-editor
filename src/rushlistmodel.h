@@ -46,6 +46,7 @@ public slots:
     void saveProject();
     void getFinalVideo();
     void currentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void changeCurrentMediaMarkers(QSet<qint64> markers);
     void updateMedia(Actions::enumActions action, QVector<QTime> selected);
     void updateNoiseAllMedia(QVector<QTime> selected);
     

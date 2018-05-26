@@ -37,6 +37,7 @@ Media::Media(Media const& m): QObject()
     previewPath = m.getPreviewPath();
     originalName = m.getOriginalName();
     name = m.getName();
+    markers = m.getMarkers();
     nMarkers = m.getNbMarkers();
     updateDuration();
 }
@@ -49,6 +50,7 @@ Media Media::operator=(Media const& m)
     name = m.getName();
     updateDuration();
     actions = m.getActions();
+    markers = m.getMarkers();
     nMarkers = m.getNbMarkers();
     return *this;
 }
@@ -136,6 +138,7 @@ QTime Media::getDuration() const
 void Media::findMarkers()
 {
     markers.clear();
+    nMarkers = 0;
     // do something to find audio markers in movie
 }
 
@@ -148,9 +151,15 @@ QMap<int,QString> Media::getActions() const
     return this->actions;
 }
 
-QSet<qint64> Media::getMarkers()
+QSet<qint64> Media::getMarkers() const
 {
     return markers;
+}
+
+void Media::setMarkers(QSet<qint64> markers)
+{
+    this->markers = markers;
+    nMarkers = markers.size();
 }
 
 int Media::getNbMarkers() const

@@ -1,5 +1,6 @@
 #include "tracktool.h"
 #include "track.h"
+#include "dialogmarker.h"
 
 #include <QVBoxLayout>
 #include <QToolBar>
@@ -46,6 +47,8 @@ TrackTool::TrackTool(QWidget *parent)
     // Zoom
     toolbarActions->addSeparator();
     actDefaultTrack = toolbarActions->addAction(QIcon("://icon/default_track.svg"), tr("Default track zoom"));
+    toolbarActions->addSeparator();
+    actSetMarkers = toolbarActions->addAction(QIcon("://icon/map-marker-alt.svg"), tr("Add markers"));
 
     soundTrack = new Track(this);
 
@@ -53,6 +56,7 @@ TrackTool::TrackTool(QWidget *parent)
     vLayout->addWidget(soundTrack);
 
     connect(actDefaultTrack, SIGNAL(triggered(bool)), soundTrack, SLOT(defaultScale()));
+    connect(actSetMarkers, SIGNAL(triggered(bool)), this, SLOT(showDialogMarker()));
     connect(toolBtnTrash, SIGNAL(triggered(QAction*)), this, SLOT(emitActionClick(QAction*)));
     connect(toolBtnNoise, SIGNAL(triggered(QAction*)), this, SLOT(emitActionClick(QAction*)));
     connect(toolbarActions, SIGNAL(actionTriggered(QAction*)), this, SLOT(emitActionClick(QAction*)));
@@ -65,28 +69,19 @@ TrackTool::~TrackTool()
     delete actTrashArea;
     delete actTrashEnd;
     delete toolBtnTrash;
-    delete toolBtnNoise;
     delete actNoiseLocal;
     delete actNoiseGlobal;
+    delete toolBtnNoise;
     delete actMute;
     delete actCut;
     delete actTrim;
     delete actDefaultTrack;
+    delete actSetMarkers;
     delete toolbarActions;
 
     delete soundTrack;
 
     delete vLayout;
-}
-
-/**
- * @brief Track::addMarker
- * @param ms
- * Add a time marker at ms on the track
- */
-void TrackTool::addMarker(qint64 ms)
-{
-    soundTrack->addMarker(ms);
 }
 
 QToolBar *TrackTool::getToolbar()
@@ -172,5 +167,16 @@ void TrackTool::activePossibleAction(Track::SelectionType stype)
         default:
             break;
     }
+}
+
+void TrackTool::showDialogMarker()
+{
+    DialogMarker *dial_marker = new DialogMarker(soundTrack->getMarkers(), this);
+    if (dial_marker->exec() == QMessageBox::Accepted){
+        auto markers = dial_marker->getMarkers();
+        soundTrack->setMarkers(markers);
+        emit markerChanged(markers);
+    }
+    delete dial_marker;
 }
 

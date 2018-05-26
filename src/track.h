@@ -17,7 +17,8 @@ public:
     enum SelectionX { X1=0, X2 };
     Track(QWidget *parent = Q_NULLPTR);
     ~Track();
-    void addMarker(qint64 ms);
+    QSet<qint64> getMarkers();
+    void setMarkers(QSet<qint64> ms_markers);
     void setSource(Media &media);
     QTime getSelectionTime(SelectionX x);
 
