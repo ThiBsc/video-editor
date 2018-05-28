@@ -55,7 +55,13 @@ SettingEditor::~SettingEditor()
 void SettingEditor::saveSettings()
 {
     for (int i=0; i<twSettings->rowCount(); i++){
-        MainWindow::settings->setValue(twSettings->item(i, KEY)->text(), twSettings->item(i, VALUE)->text());
+        const QString key = twSettings->item(i, KEY)->text();
+        const QString value = twSettings->item(i, VALUE)->text();
+        if (key.contains("ffmpeg"))
+            Actions::ffmpeg = value;
+        if (key.contains("sox"))
+            Actions::sox = value;
+        MainWindow::settings->setValue(key, value);
     }
     MainWindow::settings->sync();
 }
