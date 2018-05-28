@@ -1,12 +1,14 @@
 #include "tracktool.h"
 #include "track.h"
 #include "dialogmarker.h"
+#include "mainwindow.h"
 
 #include <QVBoxLayout>
 #include <QToolBar>
 #include <QToolButton>
 #include <QSlider>
 #include <QAction>
+#include <QMessageBox>
 
 TrackTool::TrackTool(QWidget *parent)
     : QWidget(parent)
@@ -107,9 +109,14 @@ void TrackTool::emitActionClick(QAction *button)
     selected.append(soundTrack->getSelectionTime(Track::SelectionX::X1));
     selected.append(soundTrack->getSelectionTime(Track::SelectionX::X2));
 
+    QString sox = MainWindow::settings->value("General/prog_sox").toString();
     if (button == actNoiseGlobal) {
-        // Action globale
-        emit actionNoiseGlobal(selected);
+        if (sox.isEmpty()) {
+            QMessageBox::critical(NULL, tr("Error"), tr("You must have SoX and configure it in setting"), QMessageBox::Ok);
+        } else {
+            // Action globale
+            emit actionNoiseGlobal(selected);
+        }
     } else {
         // Récupération de l'enum correspondant à l'action locale
         Actions::enumActions action = Actions::enumActions::NONE;
@@ -126,7 +133,11 @@ void TrackTool::emitActionClick(QAction *button)
         } else if (button == actTrim) {
             action = Actions::enumActions::TRIM;
         } else if (button == actNoiseLocal) {
-            action = Actions::enumActions::NOISE;
+            if (sox.isEmpty()) {
+                QMessageBox::critical(NULL, tr("Error"), tr("You must have SoX and configure it in setting"), QMessageBox::Ok);
+            } else {
+                action = Actions::enumActions::NOISE;
+            }
         }
         if (action != Actions::enumActions::NONE) {
             emit actionClick(action,selected);

@@ -287,11 +287,9 @@ bool Actions::executeCommand(QString command)
                 } else {
                     returnStat = cmd.execute(command);
                     if (returnStat == -1) {
-
                         success = false;
                     }
-                }
-                
+                }                
             }
         }
     }
