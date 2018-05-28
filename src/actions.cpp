@@ -10,6 +10,7 @@
 #include <QMediaContent>
 #include <iostream>
 #include <fstream>
+#include <QMessageBox>
 
 QString Actions::ffmpeg = "ffmpeg";
 QString Actions::sox = "";
@@ -180,11 +181,11 @@ QString Actions::createProfileNoise(QString videoName, QTime start, QTime end)
             msg = tr("Invalid area");
         } else if (Actions::sox.isEmpty()) {
             msg = tr("You must configure SoX in setting");
-        } else if () {
+        } else if (Actions::ffmpeg.isEmpty()) {
             msg = tr("You must configure ffmpeg in setting");
         }
         // Erreur pas de zone de bruit sélectionnée ou pas sox de paramétré
-        QMessageBox::critical(NULL, tr("Error"), msg, QMessageBox::OK);
+        QMessageBox::critical(NULL, tr("Error"), msg, QMessageBox::Ok);
     }
     return str;
 }

@@ -14,6 +14,8 @@
 #include <QMap>
 #include <iostream>
 #include <QAbstractItemView>
+#include <QProgressDialog>
+#include <QMessageBox>
 
 RushListModel::RushListModel(QAbstractItemView *parent)
     : QAbstractListModel(parent)
@@ -206,7 +208,7 @@ void RushListModel::removeMedia(Media const m)
         removeRush(i);
     } else {
         // Gestion erreur
-        QMessageBox::critical(NULL, tr("Error"), tr("Delete media : "+m.getName()+" impossible"), QMessageBox::OK);
+        QMessageBox::critical(NULL, tr("Error"), tr("Delete media : %1 impossible").arg(m.getName()), QMessageBox::Ok);
     }
 }
 
@@ -278,7 +280,7 @@ void RushListModel::fusionSelectedMedia()
         removeSelectedMedia();
     } else {
         // Gestion des erreurs
-        QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action (fusion)"), QMessageBox::OK);
+        QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action (fusion)"), QMessageBox::Ok);
     }
 }
 
@@ -315,7 +317,7 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
             emit emitSelection(curentIndex.row(), m);
             // Gestion des erreurs et cas particuliers
             if (!cmdSuccess) {
-                QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action"), QMessageBox::OK);
+                QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action"), QMessageBox::Ok);
             } else if (action == Actions::enumActions::SPLIT) {
                 QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
                 manageNewVideo(path+"part_"+m.getName());
@@ -336,7 +338,7 @@ void RushListModel::updateNoiseAllMedia(QVector<QTime> selected)
         bool cmdSuccess = false;
         cmdSuccess = myAction.executeCommand(command);
         if (!cmdSuccess) {
-            QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action (reduce noise). Error in profile of noise"), QMessageBox::OK);
+            QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action (reduce noise). Error in profile of noise"), QMessageBox::Ok);
         } else {
             // Traitement de toutes les vidéos si le profile à bien été créé
             for (Media m : rushItems) {
@@ -355,7 +357,7 @@ void RushListModel::manageNewVideo(QString url)
     // Déplace le fichier dans un dossier
     bool copy = Actions::copyFile(origin.path(), MainWindow::settings->value("General/dir_original").toString());
     if (!copy) {
-        QMessageBox::critical(NULL, tr("Error"), tr("Error during the copy"), QMessageBox::OK);
+        QMessageBox::critical(NULL, tr("Error"), tr("Error during the copy"), QMessageBox::Ok);
 
     }
     // Suppression du fichier de preview
