@@ -289,8 +289,6 @@ void RushListModel::fusionSelectedMedia()
             // Gestion des erreurs
             QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action (fusion)"), QMessageBox::Ok);
         }
-    } else {
-
     }
 }
 
