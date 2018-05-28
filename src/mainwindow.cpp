@@ -20,6 +20,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     setWindowIcon(QIcon("://icon/appli-icon.svg"));
     initSettings();
 
+    // Suppression des aciennes vidéos
+    deleteAllVideos();
+
     // Tool bar
     actSettings = ui->mainToolBar->addAction(QIcon("://icon/cog.svg"), tr("Settings"));
     ui->mainToolBar->addSeparator();
@@ -98,13 +101,19 @@ MainWindow::~MainWindow()
     delete gLayout;
 
     // Suppression des fichiers vidéos des dossiers de gestion (original, preview)
+    deleteAllVideos();
+
+    settings->sync();
+    delete settings;
+}
+
+void MainWindow::deleteAllVideos()
+{
+    // Suppression des fichiers vidéos des dossiers de gestion (original, preview)
     QString nameDir = MainWindow::settings->value("General/dir_original").toString();
     Actions::removeAllFileDir(nameDir);
     nameDir = MainWindow::settings->value("General/dir_preview").toString();
     Actions::removeAllFileDir(nameDir);
-
-    settings->sync();
-    delete settings;
 }
 
 void MainWindow::importFiles()

@@ -35,6 +35,7 @@ public slots:
     void changePlayMode();
     void changeRushListSelection(int i);
     void openSettings();
+    void deleteAllVideos();
 
 private:
     void initSettings();
