@@ -272,8 +272,8 @@ bool Actions::executeCommand(QString command)
         if (!command.trimmed().isEmpty()) {
             index = command.indexOf(">>");
             if (index != -1) {
-                nameFile = command.mid(index+3);
-                QFile file(nameFile.trimmed());
+                nameFile = command.mid(index+3).trimmed();
+                QFile file(nameFile);
                 if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
                     nameVideosDelete.append(nameFile);
                     QTextStream out(&file);
