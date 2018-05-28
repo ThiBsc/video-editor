@@ -252,7 +252,7 @@ bool Actions::copyFile(QString src, QString dest)
         fileDest = dest;
     }
     if (QFile::exists(fileDest)) {
-        QFile::remove(fileDest);
+        QMessageBox::warning(NULL, tr("Error"), tr("File already exist"), QMessageBox::Ok);
     }
     return QFile::copy(src, fileDest);
 }
