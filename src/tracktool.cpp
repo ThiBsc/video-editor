@@ -104,43 +104,48 @@ void TrackTool::setMedia(int i, Media &media)
 
 void TrackTool::emitActionClick(QAction *button)
 {
-    // Récupération de la zone ou marqueur de selection
-    QVector<QTime> selected;
-    selected.append(soundTrack->getSelectionTime(Track::SelectionX::X1));
-    selected.append(soundTrack->getSelectionTime(Track::SelectionX::X2));
-
-    QString sox = MainWindow::settings->value("General/prog_sox").toString();
-    if (button == actNoiseGlobal) {
-        if (sox.isEmpty()) {
-            QMessageBox::critical(NULL, tr("Error"), tr("You must have SoX and configure it in setting"), QMessageBox::Ok);
-        } else {
-            // Action globale
-            emit actionNoiseGlobal(selected);
-        }
+    // Vérification de la présence de ffmpeg dans les paramètres
+    if (MainWindow::settings->value("General/prog_ffmpeg").toString().isEmpty()) {
+        QMessageBox::critical(NULL, tr("Error"), tr("You must have ffmpeg and configure it in setting"), QMessageBox::Ok);
     } else {
-        // Récupération de l'enum correspondant à l'action locale
-        Actions::enumActions action = Actions::enumActions::NONE;
-        if (button == actTrashArea) {
-            action = Actions::enumActions::DELETE_ZONE;
-        } else if (button == actTrashBegin) {
-            action = Actions::enumActions::DELETE_BEGIN;
-        } else if (button == actTrashEnd) {
-            action = Actions::enumActions::DELETE_END;
-        } else if (button == actMute) {
-            action = Actions::enumActions::MUT;
-        } else if (button == actCut) {
-            action = Actions::enumActions::SPLIT;
-        } else if (button == actTrim) {
-            action = Actions::enumActions::TRIM;
-        } else if (button == actNoiseLocal) {
+        // Récupération de la zone ou marqueur de selection
+        QVector<QTime> selected;
+        selected.append(soundTrack->getSelectionTime(Track::SelectionX::X1));
+        selected.append(soundTrack->getSelectionTime(Track::SelectionX::X2));
+
+        QString sox = MainWindow::settings->value("General/prog_sox").toString();
+        // Différentiation des actions globales/locales
+        if (button == actNoiseGlobal) {
             if (sox.isEmpty()) {
                 QMessageBox::critical(NULL, tr("Error"), tr("You must have SoX and configure it in setting"), QMessageBox::Ok);
             } else {
-                action = Actions::enumActions::NOISE;
+                emit actionNoiseGlobal(selected);
             }
-        }
-        if (action != Actions::enumActions::NONE) {
-            emit actionClick(action,selected);
+        } else {
+            // Récupération de l'enum correspondant à l'action locale
+            Actions::enumActions action = Actions::enumActions::NONE;
+            if (button == actTrashArea) {
+                action = Actions::enumActions::DELETE_ZONE;
+            } else if (button == actTrashBegin) {
+                action = Actions::enumActions::DELETE_BEGIN;
+            } else if (button == actTrashEnd) {
+                action = Actions::enumActions::DELETE_END;
+            } else if (button == actMute) {
+                action = Actions::enumActions::MUT;
+            } else if (button == actCut) {
+                action = Actions::enumActions::SPLIT;
+            } else if (button == actTrim) {
+                action = Actions::enumActions::TRIM;
+            } else if (button == actNoiseLocal) {
+                if (sox.isEmpty()) {
+                    QMessageBox::critical(NULL, tr("Error"), tr("You must have SoX and configure it in setting"), QMessageBox::Ok);
+                } else {
+                    action = Actions::enumActions::NOISE;
+                }
+            }
+            if (action != Actions::enumActions::NONE) {
+                emit actionClick(action,selected);
+            }
         }
     }
 }
