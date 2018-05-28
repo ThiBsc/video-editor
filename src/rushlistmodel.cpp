@@ -240,47 +240,57 @@ void RushListModel::saveProject()
 
 void RushListModel::getFinalVideo()
 {
-    QString finaleName = QFileDialog::getSaveFileName(parentView, tr("Save File"), "untitled.mkv");
-    if (!finaleName.isEmpty()) {
-        QStringList nameOfVideos;
-        for (Media rush : rushItems) {
-            nameOfVideos.append(rush.currentPath());
-        }
-        QString tmpName = MainWindow::settings->value("General/dir_preview").toString()+"/finalVideo.mkv";
-        QString command = Actions::fusionVideos(tmpName, nameOfVideos);
+    if (MainWindow::settings->value("General/prog_ffmpeg").toString().isEmpty()) {
+        QMessageBox::critical(NULL, tr("Error"), tr("You must have ffmpeg and configure it in setting"), QMessageBox::Ok);
+    } else {
+        QString finaleName = QFileDialog::getSaveFileName(parentView, tr("Save File"), "untitled.mkv");
+        if (!finaleName.isEmpty()) {
+            QStringList nameOfVideos;
+            for (Media rush : rushItems) {
+                nameOfVideos.append(rush.currentPath());
+            }
+            QString tmpName = MainWindow::settings->value("General/dir_preview").toString()+"/finalVideo.mkv";
+            QString command = Actions::fusionVideos(tmpName, nameOfVideos);
 
-        Actions myAction;
-        myAction.executeCommand(command);
-        Actions::copyFile(tmpName, finaleName);
-        QFile::remove(tmpName);
+            Actions myAction;
+            myAction.executeCommand(command);
+            Actions::copyFile(tmpName, finaleName);
+            QFile::remove(tmpName);
+        }
     }
 }
 
 void RushListModel::fusionSelectedMedia()
 {
-    // Récupération des medias valides sélectionnés
-    QModelIndexList indexes = parentView->selectionModel()->selectedIndexes();
-    QStringList listeVideoSelected;
-    QString firstVideoName;
-    for (QModelIndex index : indexes) {
-        if (index.isValid()) {
-            listeVideoSelected.append(rushItems.at(index.row()).currentPath());
-            if (firstVideoName.isNull()) {
-                firstVideoName = rushItems.at(index.row()).getName();
+    if (MainWindow::settings->value("General/prog_ffmpeg").toString().isEmpty()) {
+        QMessageBox::critical(NULL, tr("Error"), tr("You must have ffmpeg and configure it in setting"), QMessageBox::Ok);
+    } else {
+        // Récupération des medias valides sélectionnés
+        QModelIndexList indexes = parentView->selectionModel()->selectedIndexes();
+        QStringList listeVideoSelected;
+        QString firstVideoName;
+        for (QModelIndex index : indexes) {
+            if (index.isValid()) {
+                listeVideoSelected.append(rushItems.at(index.row()).currentPath());
+                if (firstVideoName.isNull()) {
+                    firstVideoName = rushItems.at(index.row()).getName();
+                }
             }
         }
-    }
-    // Gestion de la fusion 
-    QString newName = MainWindow::settings->value("General/dir_preview").toString()+"/fusion_"+firstVideoName;
-    QString command = Actions::fusionVideos(newName, listeVideoSelected);
-    Actions myAction;
-    bool cmdSuccess = myAction.executeCommand(command);
-    if (cmdSuccess) {
-        manageNewVideo(newName);
-        removeSelectedMedia();
+        // Gestion de la fusion 
+        QString newName = MainWindow::settings->value("General/dir_preview").toString()+"/fusion_"+firstVideoName;
+        QString command = Actions::fusionVideos(newName, listeVideoSelected);
+        Actions myAction;
+        bool cmdSuccess = myAction.executeCommand(command);
+        if (cmdSuccess) {
+            manageNewVideo(newName);
+            removeSelectedMedia();
+        } else {
+            // Gestion des erreurs
+            QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action (fusion)"), QMessageBox::Ok);
+        }
     } else {
-        // Gestion des erreurs
-        QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action (fusion)"), QMessageBox::Ok);
+
     }
 }
 
