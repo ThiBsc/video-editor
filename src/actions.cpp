@@ -14,6 +14,7 @@
 
 QString Actions::ffmpeg = "ffmpeg";
 QString Actions::sox = "";
+qint64 Actions::count = 0;
 
 Actions::Actions(){}
 
@@ -120,7 +121,8 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += " -t "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+nameTmp+" && ";
             // Récupération de la deuxième partie
-            nameEnd += path+"part_"+name;
+            nameEnd += path+"part"+QString::number(Actions::count)+"_"+name;
+            std::cout << nameEnd.toStdString() << std::endl;
             str += Actions::ffmpeg+" -y -i "+videoName;
             str += " -ss "+start.toString("hh:mm:ss.zz");
             str += " -c copy "+nameEnd+" && ";
@@ -129,6 +131,7 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += " -c copy "+videoName+" && ";
             // Suppression des vidéos temporaires
             str += "DELETE:"+nameTmp;
+            Actions::count++;
             break;
         case Actions::enumActions::NOISE:
             str += Actions::createProfileNoise(name, start, end);

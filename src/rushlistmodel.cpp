@@ -328,7 +328,9 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
                 QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action"), QMessageBox::Ok);
             } else if (action == Actions::enumActions::SPLIT) {
                 QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
-                manageNewVideo(path+"part_"+m.getName());
+                QString name = path+"part"+QString::number(Actions::count-1)+"_"+m.getName();
+                std::cout << name.toStdString() << std::endl;
+                manageNewVideo(name);
             }
         }
     }    
@@ -365,8 +367,7 @@ void RushListModel::manageNewVideo(QString url)
     // Déplace le fichier dans un dossier
     bool copy = Actions::copyFile(origin.path(), MainWindow::settings->value("General/dir_original").toString());
     if (!copy) {
-        QMessageBox::critical(NULL, tr("Error"), tr("Error during the copy"), QMessageBox::Ok);
-
+        //QMessageBox::critical(NULL, tr("Error"), tr("Error during the copy"), QMessageBox::Ok);
     }
     // Suppression du fichier de preview
     Actions::removeFile({origin.path()});

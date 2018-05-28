@@ -13,6 +13,7 @@ class Actions : public QObject
 public:
     static QString ffmpeg;
     static QString sox;
+    static qint64 count;
     enum enumActions {NONE, DELETE_ZONE, DELETE_BEGIN, DELETE_END, MUT, TRIM, SPLIT, FUSION, NOISE};
 
     Actions();
