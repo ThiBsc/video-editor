@@ -34,6 +34,7 @@ public slots:
     void importFiles();
     void changePlayMode();
     void changeRushListSelection(int i);
+    void openSettings();
 
 private:
     void initSettings();
@@ -46,6 +47,7 @@ private:
 
     VideoPlayer *videoPlayer;
 
+    QAction *actSettings;
     QAction *actAddRushs;
     QAction *actSave;
     QLabel lblPlayAll;

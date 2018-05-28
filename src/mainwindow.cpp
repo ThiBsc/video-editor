@@ -5,6 +5,7 @@
 #include "tracktool.h"
 #include "track.h"
 #include "actions.h"
+#include "settingeditor.h"
 
 #include <QListView>
 #include <QGridLayout>
@@ -20,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initSettings();
 
     // Tool bar
+    actSettings = ui->mainToolBar->addAction(QIcon("://icon/cog.svg"), tr("Settings"));
+    ui->mainToolBar->addSeparator();
     actAddRushs = ui->mainToolBar->addAction(QIcon("://icon/file-plus.svg"), tr("Add rushs"));
     actFinalVideo = ui->mainToolBar->addAction(QIcon("://icon/file-archive.svg"), tr("Generate final video"));
     actSave = ui->mainToolBar->addAction(QIcon("://icon/save.svg"), tr("Save project"));
@@ -65,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(videoPlayer, SIGNAL(sendDuration(qint64)), trackTool->getTrack(), SLOT(setTimeAfterDecoderError(qint64)));
     connect(videoPlayer->getMediaPlayer(), SIGNAL(positionChanged(qint64)), trackTool->getTrack(), SLOT(updateCursorVideo(qint64)));
     connect(videoPlayer, SIGNAL(currentMediaChanged(int)), this, SLOT(changeRushListSelection(int)));
+    connect(actSettings, SIGNAL(triggered(bool)), this, SLOT(openSettings()));
     connect(actAddRushs, SIGNAL(triggered(bool)), this, SLOT(importFiles()));
     connect(actSave, SIGNAL(triggered(bool)), rushListModel, SLOT(saveProject()));
     connect(actFinalVideo, SIGNAL(triggered(bool)), rushListModel, SLOT(getFinalVideo()));
@@ -74,6 +78,33 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(actPlayAll, SIGNAL(triggered(bool)), this, SLOT(changePlayMode()));
     selectionActionChanged(RushListModel::NOTHING);
     resize(600, 500);
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+
+    delete actSettings;
+    delete actAddRushs;
+    delete actSave;
+    delete actRemoveMedia;
+    delete actFusionMedia;
+    delete actRenameMedia;
+    delete actFinalVideo;
+    delete rushListModel;
+    delete listRush;
+    delete videoPlayer;
+    delete trackTool;
+    delete gLayout;
+
+    // Suppression des fichiers vidéos des dossiers de gestion (original, preview)
+    QString nameDir = MainWindow::settings->value("General/dir_original").toString();
+    Actions::removeAllFileDir(nameDir);
+    nameDir = MainWindow::settings->value("General/dir_preview").toString();
+    Actions::removeAllFileDir(nameDir);
+
+    settings->sync();
+    delete settings;
 }
 
 void MainWindow::importFiles()
@@ -100,30 +131,13 @@ void MainWindow::changeRushListSelection(int i)
     listRush->setCurrentIndex(rushListModel->index(i));
 }
 
-MainWindow::~MainWindow()
+void MainWindow::openSettings()
 {
-    delete ui;
-
-    delete actAddRushs;
-    delete actSave;
-    delete actRemoveMedia;
-    delete actFusionMedia;
-    delete actRenameMedia;
-    delete actFinalVideo;
-    delete rushListModel;
-    delete listRush;
-    delete videoPlayer;
-    delete trackTool;
-    delete gLayout;
-
-    // Suppression des fichiers vidéos des dossiers de gestion (original, preview)
-    QString nameDir = MainWindow::settings->value("General/dir_original").toString();
-    Actions::removeAllFileDir(nameDir);
-    nameDir = MainWindow::settings->value("General/dir_preview").toString();
-    Actions::removeAllFileDir(nameDir);
-
-    settings->sync();
-    delete settings;
+    SettingEditor *setting_editor = new SettingEditor(this);
+    if (setting_editor->exec() == QMessageBox::Accepted){
+        setting_editor->saveSettings();
+    }
+    delete setting_editor;
 }
 
 void MainWindow::selectionActionChanged(RushListModel::SelectionType type)
