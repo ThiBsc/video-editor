@@ -206,7 +206,7 @@ void RushListModel::removeMedia(Media const m)
         removeRush(i);
     } else {
         // Gestion erreur
-        std::cout << "Erreur suppression, index inconnu" << std::endl;
+        QMessageBox::critical(NULL, tr("Error"), tr("Delete media : "+m.getName()+" impossible"), QMessageBox::OK);
     }
 }
 
@@ -278,6 +278,7 @@ void RushListModel::fusionSelectedMedia()
         removeSelectedMedia();
     } else {
         // Gestion des erreurs
+        QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action (fusion)"), QMessageBox::OK);
     }
 }
 
@@ -314,8 +315,7 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
             emit emitSelection(curentIndex.row(), m);
             // Gestion des erreurs et cas particuliers
             if (!cmdSuccess) {
-                std::cout << "Erreur dans les commandes" << std::endl;
-                // emit actionError();
+                QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action"), QMessageBox::OK);
             } else if (action == Actions::enumActions::SPLIT) {
                 QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
                 manageNewVideo(path+"part_"+m.getName());
@@ -336,8 +336,7 @@ void RushListModel::updateNoiseAllMedia(QVector<QTime> selected)
         bool cmdSuccess = false;
         cmdSuccess = myAction.executeCommand(command);
         if (!cmdSuccess) {
-            std::cout << "Erreur dans les commandes" << std::endl << std::endl;
-            // emit actionError();
+            QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action (reduce noise). Error in profile of noise"), QMessageBox::OK);
         } else {
             // Traitement de toutes les vidéos si le profile à bien été créé
             for (Media m : rushItems) {
@@ -356,7 +355,7 @@ void RushListModel::manageNewVideo(QString url)
     // Déplace le fichier dans un dossier
     bool copy = Actions::copyFile(origin.path(), MainWindow::settings->value("General/dir_original").toString());
     if (!copy) {
-        // Gestion erreur
+        QMessageBox::critical(NULL, tr("Error"), tr("Error during the copy"), QMessageBox::OK);
 
     }
     // Suppression du fichier de preview
