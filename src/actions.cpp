@@ -12,7 +12,7 @@
 #include <fstream>
 
 QString Actions::ffmpeg = "ffmpeg";
-QString Actions::sox = "sox";
+QString Actions::sox = "";
 
 Actions::Actions(){}
 
@@ -163,7 +163,7 @@ QString Actions::getCommandApplyFilterNoise(QString videoName)
 QString Actions::createProfileNoise(QString videoName, QTime start, QTime end)
 {
     QString str;
-    if (!Actions::ffmpeg.isEmpty() && !start.isNull() && !end.isNull()) {
+    if (!Actions::sox.isEmpty() && !Actions::ffmpeg.isEmpty() && !start.isNull() && !end.isNull()) {
         QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
         QString profileNoise = MainWindow::settings->value("General/dir_preview").toString()+"/noise.prof";
         QString noiseAudio(path+"noise_audio.wav");
@@ -175,7 +175,16 @@ QString Actions::createProfileNoise(QString videoName, QTime start, QTime end)
         str += Actions::sox+" "+noiseAudio+" -n noiseprof "+profileNoise+" && ";
         str += "DELETE:"+noiseAudio+" && ";
     } else {
+        QString msg;
+        if (start.isNull() || end.isNull()) {
+            msg = tr("Invalid area");
+        } else if (Actions::sox.isEmpty()) {
+            msg = tr("You must configure SoX in setting");
+        } else if () {
+            msg = tr("You must configure ffmpeg in setting");
+        }
         // Erreur pas de zone de bruit sélectionnée ou pas sox de paramétré
+        QMessageBox::critical(NULL, tr("Error"), msg, QMessageBox::OK);
     }
     return str;
 }
@@ -186,7 +195,7 @@ QString Actions::fusionVideos(QString finalName, QStringList nameOfVideos)
     QString str;
     for (QString name : nameOfVideos) {
         QFileInfo info(name);
-        str += " && file "+info.absoluteFilePath()+" >> "+infoOutput.absoluteFilePath()+" ";
+        str += " && file "+info.absoluteFilePath()+" >> "+infoOutput.absoluteFilePath();
     }
     str += " && "+Actions::ffmpeg+" -y -f concat -safe 0 -i "+infoOutput.absoluteFilePath()+" -c copy "+finalName+" && ";
     return str;
@@ -259,33 +268,33 @@ bool Actions::executeCommand(QString command)
     QString nameFile;
     QStringList allCommand = command.split("&&");
     for (auto command : allCommand) {
-        index = command.indexOf(">>");
-        if (index != -1) {
-            nameFile = command.mid(index+3);
-            std::cout << " --- --- " << std::endl;
-            std::cout << nameFile.toStdString().c_str() << std::endl;
-            QFile file(nameFile.toStdString().c_str());
-            if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
-                nameVideosDelete.append(nameFile);
-                QTextStream out(&file);
-                out << command.left(index) << "\n";
-                file.close();
-            }
-        } else {
-            index = command.indexOf("DELETE:");
+        if (!command.trimmed().isEmpty()) {
+            index = command.indexOf(">>");
             if (index != -1) {
-                nameVideosDelete.append(command.mid(index+7).split("|"));
-            } else {
-                returnStat = cmd.execute(command);
-                if (returnStat == -1) {
-                    std::cout << "RETOUR STAT " << returnStat << std::endl;
-                    success = false;
+                nameFile = command.mid(index+3);
+                QFile file(nameFile.trimmed());
+                if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+                    nameVideosDelete.append(nameFile);
+                    QTextStream out(&file);
+                    out << command.left(index) << "\n";
+                    file.close();
                 }
+            } else {
+                index = command.indexOf("DELETE:");
+                if (index != -1) {
+                    nameVideosDelete.append(command.mid(index+7).split("|"));
+                } else {
+                    returnStat = cmd.execute(command);
+                    if (returnStat == -1) {
+
+                        success = false;
+                    }
+                }
+                
             }
-            
         }
     }
     // Suppression des fichiers
-    //Actions::removeFile(nameVideosDelete);
+    Actions::removeFile(nameVideosDelete);
     return success;
 }

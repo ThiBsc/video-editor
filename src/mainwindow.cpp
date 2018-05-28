@@ -186,11 +186,11 @@ void MainWindow::initSettings()
         settings->setValue("dir_original", original_path);
         settings->setValue("sensibility", "0.21");
 #ifdef Q_OS_WIN
-        settings->setValue("prog_ffmpeg", "ffmpeg");
-        settings->setValue("prog_sox", "sox");
+        settings->setValue("prog_ffmpeg", "");
+        settings->setValue("prog_sox", "");
 #else
         settings->setValue("prog_ffmpeg", "ffmpeg");
-        settings->setValue("prog_sox", "sox");
+        settings->setValue("prog_sox", "");
 #endif
         settings->endGroup();
         settings->sync();
