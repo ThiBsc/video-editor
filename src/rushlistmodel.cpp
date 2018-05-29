@@ -291,7 +291,7 @@ void RushListModel::fusionSelectedMedia()
     }
 }
 
-void RushListModel::canFinishFusion(QString newName)
+void RushListModel::finishFusion(QString newName)
 {
     manageNewVideo(newName);
     removeSelectedMedia();
@@ -338,14 +338,14 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
     }
 }
 
-void RushListModel::canUpdateMedia()
+void RushListModel::finishUpdateMedia()
 {
     Media m = rushItems.at(curentIndex.row());
     m.updateDuration();
     emit emitSelection(curentIndex.row(), m);
 }
 
-void RushListModel::canUpdateSplitMedia(QString newName)
+void RushListModel::finishUpdateSplitMedia(QString newName)
 {
     manageNewVideo(newName);
 }

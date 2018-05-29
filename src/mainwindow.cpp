@@ -93,10 +93,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(actions, SIGNAL(workFinished(bool)), pgrBar, SLOT(hide()));
     connect(actions, SIGNAL(workFinished(bool)), ui->centralWidget, SLOT(setEnabled(bool)));
     connect(actions, SIGNAL(workFinished(bool)), ui->mainToolBar, SLOT(setEnabled(bool)));
-    connect(actions, SIGNAL(fusionSuccess(QString)), rushListModel, SLOT(canFinishFusion(QString)));
+    connect(actions, SIGNAL(fusionSuccess(QString)), rushListModel, SLOT(finishFusion(QString)));
     connect(actions, SIGNAL(canApplyNoiseProfile()), rushListModel, SLOT(applyNoiseProfile()));
-    connect(actions, SIGNAL(canUpdateCurrentMedia()), rushListModel, SLOT(canUpdateMedia()));
-    connect(actions, SIGNAL(canUpdateSplitMedia(QString)), rushListModel, SLOT(canUpdateSplitMedia(QString)));
+    connect(actions, SIGNAL(canUpdateCurrentMedia()), rushListModel, SLOT(finishUpdateMedia()));
+    connect(actions, SIGNAL(canUpdateSplitMedia(QString)), rushListModel, SLOT(finishUpdateSplitMedia(QString)));
     selectionActionChanged(RushListModel::NOTHING);
     resize(600, 500);
 }

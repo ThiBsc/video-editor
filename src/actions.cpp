@@ -116,17 +116,15 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += "DELETE:"+nameTmp;
             break;
         case Actions::enumActions::DELETE_END:
-            if (!end.isNull()) {
-                nameTmp += path+"tmp_"+name;
-                str += Actions::ffmpeg+" -y -i "+videoName;
-                str += " -t "+end.toString("hh:mm:ss.zz");
-                str += " -c copy "+nameTmp+" && ";
-                // Renommage
-                str += Actions::ffmpeg+" -y -i "+nameTmp;
-                str += " -c copy "+videoName+" && ";
-                // Suppression des vidéos temporaires
-                str += "DELETE:"+nameTmp;
-            }
+            nameTmp += path+"tmp_"+name;
+            str += Actions::ffmpeg+" -y -i "+videoName;
+            str += " -t "+end.toString("hh:mm:ss.zz");
+            str += " -c copy "+nameTmp+" && ";
+            // Renommage
+            str += Actions::ffmpeg+" -y -i "+nameTmp;
+            str += " -c copy "+videoName+" && ";
+            // Suppression des vidéos temporaires
+            str += "DELETE:"+nameTmp;
             break;
         case Actions::enumActions::TRIM:
             nameTmp += path+"tmp_"+name;
