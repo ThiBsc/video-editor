@@ -210,7 +210,7 @@ QString Actions::getCommandApplyFilterNoise(QString videoName)
     // Création de l'audio sans bruit ambiant avec SoXs
     str += Actions::sox+" "+audiFile+" "+audioCleanFile+" noisered "+profileNoise+" "+MainWindow::settings->value("General/sensibility").toString()+" && ";
     // Assemblage de l'audio avec la vidéo sans son
-    str += Actions::ffmpeg+" -y -i "+audioCleanFile+" -i "+videoTmp+" -c copy "+path+videoName+" && ";
+    str += Actions::ffmpeg+" -y -i "+audioCleanFile+" -i "+videoTmp+" -c:a aac -strict -2 -c:v copy "+path+videoName+" && ";
     // Suppression des vidéos temporaires
     str += "DELETE:"+videoTmp+"|"+audiFile+"|"+audioCleanFile+" && ";
     return str;
