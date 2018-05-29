@@ -42,13 +42,17 @@ public slots:
     void removeRush(int i);
     void removeSelectedMedia();
     void fusionSelectedMedia();
+    void canFinishFusion(QString newName);
     void renameSelectedMedia();
     void saveProject();
     void getFinalVideo();
     void currentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void changeCurrentMediaMarkers(QSet<qint64> markers);
     void updateMedia(Actions::enumActions action, QVector<QTime> selected);
+    void canUpdateMedia();
+    void canUpdateSplitMedia(QString newName);
     void updateNoiseAllMedia(QVector<QTime> selected);
+    void applyNoiseProfile();
     
 signals:
     void totalDurationChanged(qint64 duration);

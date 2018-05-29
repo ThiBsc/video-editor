@@ -20,6 +20,61 @@ Actions::Actions(){}
 
 Actions::~Actions(){}
 
+void Actions::start(const QString &cmd, const QString &if_error, QVector<QPair<Actions::AfterAction, QStringList> > &if_success, QVector<QPair<Actions::AfterAction, QStringList> > &after)
+{
+    command = cmd;
+    error_msg = if_error;
+    after_exec = after;
+    after_success = if_success;
+    QThread::start();
+}
+
+void Actions::run()
+{
+    emit workInProgress(true);
+    bool ret = executeCommand(command);
+    if (!ret && !error_msg.isEmpty()){
+        QMessageBox::critical(NULL, tr("Error"), error_msg, QMessageBox::Ok);
+    }
+    if (ret){
+        for (QPair<AfterAction, QStringList> ae : after_success){
+            switch (ae.first) {
+                case UPDATE_SUCCESS:
+                    emit canUpdateCurrentMedia();
+                    break;
+                case SPLIT_SUCCESS:
+                    emit canUpdateSplitMedia(ae.second.at(0));
+                    break;
+                case FUSION_SUCCESS:
+                    emit fusionSuccess(ae.second.at(0));
+                    break;
+                case CREATE_NOISE_PROFILE:
+                    emit canApplyNoiseProfile();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    for (QPair<AfterAction, QStringList> ae : after_exec){
+        switch (ae.first) {
+            case COPY:
+                copyFile(ae.second.at(0), ae.second.at(1));
+                break;
+            case REMOVE:
+                QFile::remove(ae.second.at(0));
+                break;
+            default:
+                break;
+        }
+    }
+    command.clear();
+    error_msg.clear();
+    after_exec.clear();
+    after_success.clear();
+    emit workFinished(true);
+}
+
 QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QTime start, QTime end)
 {
     if (start.isNull()) {

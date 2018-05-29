@@ -10,8 +10,10 @@
 #include <QListView>
 #include <QGridLayout>
 #include <QMediaPlayer>
+#include <QProgressBar>
 
 QSettings* MainWindow::settings = new QSettings(QSettings::NativeFormat, QSettings::UserScope, "ua-bbm", "video-editor");
+Actions* MainWindow::actions = new Actions();
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -22,6 +24,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // Suppression des aciennes vidéos
     deleteAllVideos();
+
+    pgrBar = new QProgressBar(this);
+    pgrBar->setRange(0, 0);
+    pgrBar->hide();
+    ui->statusBar->addPermanentWidget(pgrBar);
 
     // Tool bar
     actSettings = ui->mainToolBar->addAction(QIcon("://icon/cog.svg"), tr("Settings"));
@@ -79,6 +86,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(actRenameMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(renameSelectedMedia()));
     connect(actFusionMedia, SIGNAL(triggered(bool)), rushListModel, SLOT(fusionSelectedMedia()));
     connect(actPlayAll, SIGNAL(triggered(bool)), this, SLOT(changePlayMode()));
+    // Connect pour la gestion de l'attente
+    connect(actions, SIGNAL(workInProgress(bool)), pgrBar, SLOT(show()));
+    connect(actions, SIGNAL(workInProgress(bool)), this, SLOT(setDisabled(bool)));
+    connect(actions, SIGNAL(workFinished(bool)), pgrBar, SLOT(hide()));
+    connect(actions, SIGNAL(workFinished(bool)), this, SLOT(setEnabled(bool)));
+    connect(actions, SIGNAL(fusionSuccess(QString)), rushListModel, SLOT(canFinishFusion(QString)));
+    connect(actions, SIGNAL(canApplyNoiseProfile()), rushListModel, SLOT(applyNoiseProfile()));
+    connect(actions, SIGNAL(canUpdateCurrentMedia()), rushListModel, SLOT(canUpdateMedia()));
+    connect(actions, SIGNAL(canUpdateSplitMedia(QString)), rushListModel, SLOT(canUpdateSplitMedia(QString)));
     selectionActionChanged(RushListModel::NOTHING);
     resize(600, 500);
 }
@@ -86,6 +102,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow()
 {
     delete ui;
+
+    delete pgrBar;
 
     delete actSettings;
     delete actAddRushs;
@@ -105,6 +123,7 @@ MainWindow::~MainWindow()
 
     settings->sync();
     delete settings;
+    delete actions;
 }
 
 void MainWindow::deleteAllVideos()

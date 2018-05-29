@@ -251,11 +251,13 @@ void RushListModel::getFinalVideo()
             }
             QString tmpName = MainWindow::settings->value("General/dir_preview").toString()+"/finalVideo.mkv";
             QString command = Actions::fusionVideos(tmpName, nameOfVideos);
-
-            Actions myAction;
-            myAction.executeCommand(command);
-            Actions::copyFile(tmpName, finaleName);
-            QFile::remove(tmpName);
+            QVector<QPair<Actions::AfterAction, QStringList> > if_success;
+            QVector<QPair<Actions::AfterAction, QStringList> > after_exec =
+            {
+                {Actions::COPY, {tmpName, finaleName}},
+                {Actions::REMOVE, {tmpName}}
+            };
+            MainWindow::actions->start(command, "", if_success, after_exec);
         }
     }
 }
@@ -280,16 +282,19 @@ void RushListModel::fusionSelectedMedia()
         // Gestion de la fusion 
         QString newName = MainWindow::settings->value("General/dir_preview").toString()+"/fusion_"+firstVideoName;
         QString command = Actions::fusionVideos(newName, listeVideoSelected);
-        Actions myAction;
-        bool cmdSuccess = myAction.executeCommand(command);
-        if (cmdSuccess) {
-            manageNewVideo(newName);
-            removeSelectedMedia();
-        } else {
-            // Gestion des erreurs
-            QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action (fusion)"), QMessageBox::Ok);
-        }
+        QVector<QPair<Actions::AfterAction, QStringList> > if_success =
+        {
+            {Actions::FUSION_SUCCESS, {newName}}
+        };
+        QVector<QPair<Actions::AfterAction, QStringList> > after_exec;
+        MainWindow::actions->start(command, tr("Impossible to execute this action (fusion)"), if_success, after_exec);
     }
+}
+
+void RushListModel::canFinishFusion(QString newName)
+{
+    manageNewVideo(newName);
+    removeSelectedMedia();
 }
 
 void RushListModel::renameSelectedMedia()
@@ -318,22 +323,31 @@ void RushListModel::updateMedia(Actions::enumActions action, QVector<QTime> sele
             QPair<int,QString> actionCommand(static_cast<int>(action),command);
             m.addAction(actionCommand);
             // Exécution de l'action
-            Actions myAction;
-            bool cmdSuccess = false;
-            cmdSuccess = myAction.executeCommand(command);
-            m.updateDuration();
-            emit emitSelection(curentIndex.row(), m);
-            // Gestion des erreurs et cas particuliers
-            if (!cmdSuccess) {
-                QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action"), QMessageBox::Ok);
-            } else if (action == Actions::enumActions::SPLIT) {
+            QVector<QPair<Actions::AfterAction, QStringList> > if_success =
+            {
+                {Actions::UPDATE_SUCCESS, {}}
+            };
+            QVector<QPair<Actions::AfterAction, QStringList> > after_exec;
+            if (action == Actions::enumActions::SPLIT){
                 QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
                 QString name = path+"part"+QString::number(Actions::count-1)+"_"+m.getName();
-                std::cout << name.toStdString() << std::endl;
-                manageNewVideo(name);
+                if_success.append({Actions::SPLIT_SUCCESS, {name}});
             }
+            MainWindow::actions->start(command, tr("Impossible to execute this action"), if_success, after_exec);
         }
-    }    
+    }
+}
+
+void RushListModel::canUpdateMedia()
+{
+    Media m = rushItems.at(curentIndex.row());
+    m.updateDuration();
+    emit emitSelection(curentIndex.row(), m);
+}
+
+void RushListModel::canUpdateSplitMedia(QString newName)
+{
+    manageNewVideo(newName);
 }
 
 void RushListModel::updateNoiseAllMedia(QVector<QTime> selected)
@@ -344,21 +358,27 @@ void RushListModel::updateNoiseAllMedia(QVector<QTime> selected)
         // Création du profile de bruit ambiant avec le media courant et la zone
         QString command = Actions::createProfileNoise(mediaSelected.getName(), selected.value(0), selected.value(1));
         std::cout << "profile : " << command.toStdString() << std::endl;
-        Actions myAction;
-        bool cmdSuccess = false;
-        cmdSuccess = myAction.executeCommand(command);
-        if (!cmdSuccess) {
-            QMessageBox::critical(NULL, tr("Error"), tr("Impossible to execute this action (reduce noise). Error in profile of noise"), QMessageBox::Ok);
-        } else {
-            // Traitement de toutes les vidéos si le profile à bien été créé
-            for (Media m : rushItems) {
-                command = Actions::getCommandApplyFilterNoise(m.getName());
-                cmdSuccess = myAction.executeCommand(command);
-                QPair<int,QString> actionCommand(static_cast<int>(Actions::enumActions::NOISE),command);
-                m.addAction(actionCommand);
-            }
-        }        
-    }    
+        QVector<QPair<Actions::AfterAction, QStringList> > if_success =
+        {
+            {Actions::CREATE_NOISE_PROFILE, {}}
+        };
+        QVector<QPair<Actions::AfterAction, QStringList> > after_exec;
+        MainWindow::actions->start(command, tr("Impossible to execute this action (reduce noise). Error in profile of noise"), if_success, after_exec);
+    }
+}
+
+void RushListModel::applyNoiseProfile()
+{
+    QString commands;
+    for (Media m : rushItems) {
+        const QString command = Actions::getCommandApplyFilterNoise(m.getName());
+        commands += command+" && ";
+        QPair<int,QString> actionCommand(static_cast<int>(Actions::enumActions::NOISE),command);
+        m.addAction(actionCommand);
+    }
+    QVector<QPair<Actions::AfterAction, QStringList> > if_success;
+    QVector<QPair<Actions::AfterAction, QStringList> > after_exec;
+    MainWindow::actions->start(commands, tr("Fail to apply noise profile"), if_success, after_exec);
 }
 
 void RushListModel::manageNewVideo(QString url)

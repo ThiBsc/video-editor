@@ -12,6 +12,7 @@ namespace Ui {
 
 class QListView;
 class QGridLayout;
+class QProgressBar;
 class MenuFile;
 class VideoPlayer;
 class TrackTool;
@@ -28,6 +29,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     static QSettings *settings;
+    static Actions *actions;
 
 public slots:
     void selectionActionChanged(RushListModel::SelectionType type);
@@ -42,6 +44,7 @@ private:
     Ui::MainWindow *ui;
 
     QGridLayout *gLayout;
+    QProgressBar *pgrBar;
     TrackTool *trackTool;
     QListView *listRush;
     RushListModel *rushListModel;
