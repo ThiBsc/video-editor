@@ -39,7 +39,7 @@ Media::Media(Media const& m): QObject()
     name = m.getName();
     markers = m.getMarkers();
     nMarkers = m.getNbMarkers();
-    updateDuration();
+    duration = m.getDuration();
 }
 
 Media Media::operator=(Media const& m)
@@ -48,10 +48,10 @@ Media Media::operator=(Media const& m)
     previewPath = m.getPreviewPath();
     originalName = m.getOriginalName();
     name = m.getName();
-    updateDuration();
     actions = m.getActions();
     markers = m.getMarkers();
     nMarkers = m.getNbMarkers();
+    duration = m.getDuration();
     return *this;
 }
 

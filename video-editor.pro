@@ -15,7 +15,7 @@ TEMPLATE = app
 
 unix {
     # sudo apt install libavformat-dev
-    LIBS += -lavformat
+    LIBS += -lavcodec -lavformat
 }
 win32 {
     # https://ffmpeg.zeranoe.com/builds/

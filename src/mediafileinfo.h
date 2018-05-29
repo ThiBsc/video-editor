@@ -5,6 +5,7 @@
 #include <QObject>
 
 extern "C" {
+#include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 }
 
@@ -24,11 +25,15 @@ public:
     int getSecond();
     int getMinute();
     int getHour();
+    std::string getAudioCodec();
+    std::string getVideoCodec();
 
 private:
     std::string filename;
     AVFormatContext *pFormatCtx;
     qint64 duration;
+    std::string audio_codec;
+    std::string video_codec;
 
 };
 
