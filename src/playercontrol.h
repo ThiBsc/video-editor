@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QEvent>
+#include <QMediaPlayer>
 
 class QSlider;
 class QToolButton;
@@ -34,6 +35,7 @@ signals:
     void pauseClicked();
 
 public slots:
+    void playerStateChanged(QMediaPlayer::State state);
     void updateDuration(qint64 duration);
     void updateCursorPosition(qint64 position);
     void emitVolumeChanged(int vol);

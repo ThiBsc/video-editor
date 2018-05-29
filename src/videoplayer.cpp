@@ -46,6 +46,7 @@ VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags f)
     connect(playerControl, SIGNAL(positionChanged(qint64)), mediaPlayer, SLOT(setPosition(qint64)));
     connect(mediaPlayer, SIGNAL(positionChanged(qint64)), playerControl, SLOT(updateCursorPosition(qint64)));
     connect(mediaPlayer, SIGNAL(durationChanged(qint64)), playerControl, SLOT(updateDuration(qint64)));
+    connect(mediaPlayer, SIGNAL(stateChanged(QMediaPlayer::State)), playerControl, SLOT(playerStateChanged(QMediaPlayer::State)));
     connect(mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(playerReady()));
     connect(mediaPlaylist, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCurrentMediaChanged(int)));
 

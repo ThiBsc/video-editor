@@ -100,6 +100,16 @@ void PlayerControl::enablePlayerControl(bool enabled)
     btnStop->setEnabled(enabled);
 }
 
+void PlayerControl::playerStateChanged(QMediaPlayer::State state)
+{
+    if (state == QMediaPlayer::StoppedState){
+        if (btnPlayPause->isChecked()){
+            btnPlayPause->setChecked(false);
+            btnPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));;
+        }
+    }
+}
+
 /**
  * @brief PlayerControl::updateDuration
  * @param duration
@@ -182,7 +192,7 @@ void PlayerControl::emitStopClicked()
 {
     btnPlayPause->setChecked(false);
     btnPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-    positionSlider->setValue(0);
+    emit positionChanged(0);
     emit stopClicked();
 }
 
