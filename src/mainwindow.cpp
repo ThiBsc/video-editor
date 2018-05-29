@@ -88,9 +88,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(actPlayAll, SIGNAL(triggered(bool)), this, SLOT(changePlayMode()));
     // Connect pour la gestion de l'attente
     connect(actions, SIGNAL(workInProgress(bool)), pgrBar, SLOT(show()));
-    connect(actions, SIGNAL(workInProgress(bool)), this, SLOT(setDisabled(bool)));
+    connect(actions, SIGNAL(workInProgress(bool)), ui->centralWidget, SLOT(setDisabled(bool)));
+    connect(actions, SIGNAL(workInProgress(bool)), ui->mainToolBar, SLOT(setDisabled(bool)));
     connect(actions, SIGNAL(workFinished(bool)), pgrBar, SLOT(hide()));
-    connect(actions, SIGNAL(workFinished(bool)), this, SLOT(setEnabled(bool)));
+    connect(actions, SIGNAL(workFinished(bool)), ui->centralWidget, SLOT(setEnabled(bool)));
+    connect(actions, SIGNAL(workFinished(bool)), ui->mainToolBar, SLOT(setEnabled(bool)));
     connect(actions, SIGNAL(fusionSuccess(QString)), rushListModel, SLOT(finishFusion(QString)));
     connect(actions, SIGNAL(canApplyNoiseProfile()), rushListModel, SLOT(applyNoiseProfile()));
     connect(actions, SIGNAL(canUpdateCurrentMedia()), rushListModel, SLOT(finishUpdateMedia()));
