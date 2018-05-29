@@ -197,6 +197,9 @@ void RushListModel::removeRush(int i)
     beginRemoveRows(QModelIndex(), i, i);
     Media media = rushItems.takeAt(i);
     Actions::removeFile({media.currentPath()});
+    if (media.getPath().endsWith("original/"+media.getOriginalName())) {
+        Actions::removeFile({media.getPath()});
+    }
     endRemoveRows();
     emit rushRemoved(i);
 }

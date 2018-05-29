@@ -160,7 +160,10 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
                 str += " -ss "+end.toString("hh:mm:ss.zz");
                 str += " -c copy "+nameEnd+" && ";
                 // Concaténation des parties
-                nameVideos += nameStart+"|"+nameMid+"|"+nameEnd;
+                if (!start.toString("hh:mm:ss.zz").endsWith("00:00:00.00")) {
+                    nameVideos += nameStart+"|";
+                }
+                nameVideos += nameMid+"|"+nameEnd;
                 str += Actions::fusionVideos(videoName,nameVideos.split("|"));
                 // Suppression des vidéos temporaires
                 str += "DELETE:"+nameStart+"|"+nameMid+"|"+nameEnd+"|"+nameTmp;
