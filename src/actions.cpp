@@ -257,7 +257,7 @@ QString Actions::fusionVideos(QString finalName, QStringList nameOfVideos)
     QString str;
     for (QString name : nameOfVideos) {
         QFileInfo info(name);
-        str += " && file "+info.absoluteFilePath()+" >> "+infoOutput.absoluteFilePath();
+        str += " && file '"+info.absoluteFilePath()+"' >> "+infoOutput.absoluteFilePath();
     }
     str += " && "+Actions::ffmpeg+" -y -f concat -safe 0 -i \""+infoOutput.absoluteFilePath()+"\" -c copy \""+finalName+"\" && ";
     return str;
