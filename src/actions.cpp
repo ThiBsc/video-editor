@@ -355,6 +355,6 @@ bool Actions::executeCommand(QString command)
         }
     }
     // Suppression des fichiers
-    //Actions::removeFile(nameVideosDelete);
+    Actions::removeFile(nameVideosDelete);
     return success;
 }
