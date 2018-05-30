@@ -88,14 +88,14 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             if (!end.isNull()) {
                 // Récupération du début
                 nameStart += path+"start_"+name;
-                str += Actions::ffmpeg+" -y -i "+videoName;
+                str += Actions::ffmpeg+" -y -i \""+videoName+"\"";
                 str += " -t "+start.toString("hh:mm:ss.zz");
-                str += " -c copy "+nameStart+" && ";
+                str += " -c copy \""+nameStart+"\" && ";
                 // Récupération de la fin
                 nameEnd += path+"end_"+name;
-                str += Actions::ffmpeg+" -y -i "+videoName;
+                str += Actions::ffmpeg+" -y -i \""+videoName+"\"";
                 str += " -ss "+end.toString("hh:mm:ss.zz");
-                str += " -c copy "+nameEnd+" && ";
+                str += " -c copy \""+nameEnd+"\" && ";
                 // Concaténation des deux parties
                 nameVideos += nameStart+"|"+nameEnd;
                 str += Actions::fusionVideos(videoName,nameVideos.split("|"));
@@ -105,12 +105,12 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             break;
         case Actions::enumActions::DELETE_BEGIN:
             nameTmp += path+"tmp_"+name;
-            str += Actions::ffmpeg+" -y -i "+videoName;
+            str += Actions::ffmpeg+" -y -i \""+videoName+"\"";
             str += " -ss "+start.toString("hh:mm:ss.zz");
-            str += " -c copy "+nameTmp+" && ";
+            str += " -c copy \""+nameTmp+"\" && ";
             // Renommage
-            str += Actions::ffmpeg+" -y -i "+nameTmp;
-            str += " -c copy "+videoName+" && ";
+            str += Actions::ffmpeg+" -y -i \""+nameTmp+"\"";
+            str += " -c copy \""+videoName+"\" && ";
             // Suppression des vidéos temporaires
             str += "DELETE:"+nameTmp;
             break;
@@ -119,23 +119,23 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
                 end = start;
             }
             nameTmp += path+"tmp_"+name;
-            str += Actions::ffmpeg+" -y -i "+videoName;
+            str += Actions::ffmpeg+" -y -i \""+videoName+"\"";
             str += " -t "+end.toString("hh:mm:ss.zz");
-            str += " -c copy "+nameTmp+" && ";
+            str += " -c copy \""+nameTmp+"\" && ";
             // Renommage
-            str += Actions::ffmpeg+" -y -i "+nameTmp;
-            str += " -c copy "+videoName+" && ";
+            str += Actions::ffmpeg+" -y -i \""+nameTmp+"\"";
+            str += " -c copy \""+videoName+"\" && ";
             // Suppression des vidéos temporaires
             str += "DELETE:"+nameTmp;
             break;
         case Actions::enumActions::TRIM:
             nameTmp += path+"tmp_"+name;
-            str += Actions::ffmpeg+" -y -i "+videoName;
+            str += Actions::ffmpeg+" -y -i \""+videoName+"\"";
             str += " -ss "+start.toString("hh:mm:ss.zz");
             str += " -to "+end.toString("hh:mm:ss.zz");
-            str += " -c copy "+nameTmp+" && ";
-            str += Actions::ffmpeg+" -y -i "+nameTmp;
-            str += " -c copy "+videoName+" && ";
+            str += " -c copy \""+nameTmp+"\" && ";
+            str += Actions::ffmpeg+" -y -i \""+nameTmp+"\"";
+            str += " -c copy \""+videoName+"\" && ";
             // Suppression des vidéos temporaires
             str += "DELETE:"+nameTmp;
             break;
@@ -143,25 +143,25 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             if (!end.isNull()) {
                 // Récupération du début
                 nameStart += path+"start_"+name;
-                str += Actions::ffmpeg+" -y -i "+videoName;
+                str += Actions::ffmpeg+" -y -i \""+videoName+"\"";
                 str += " -t "+start.toString("hh:mm:ss.zz");
-                str += " -c copy "+nameStart+" && ";
+                str += " -c copy \""+nameStart+"\" && ";
                 // Récupération de la zone sans son
                 nameMid += path+"mid_"+name;
-                str += Actions::ffmpeg+" -y -i "+videoName;
+                str += Actions::ffmpeg+" -y -i \""+videoName+"\"";
                 str += " -ss "+start.toString("hh:mm:ss.zz");
                 str += " -to "+end.toString("hh:mm:ss.zz");
-                str += " -c copy "+nameMid+" && ";
+                str += " -c copy \""+nameMid+"\" && ";
                 nameTmp += path+"tmp_"+name;
-                str += Actions::ffmpeg+" -y -i "+nameMid;
-                str += " -filter:a \"volume=0\" -c:a aac -strict -2 "+nameTmp+" && ";
-                str += Actions::ffmpeg+" -y -i "+nameTmp;
-                str += " -c copy "+nameMid+" && ";
+                str += Actions::ffmpeg+" -y -i \""+nameMid+"\"";
+                str += " -filter:a \"volume=0\" -c:a aac -strict -2 \""+nameTmp+"\" && ";
+                str += Actions::ffmpeg+" -y -i \""+nameTmp+"\"";
+                str += " -c copy \""+nameMid+"\" && ";
                 // Récupération de la fin
                 nameEnd += path+"end_"+name;
-                str += Actions::ffmpeg+" -y -i "+videoName;
+                str += Actions::ffmpeg+" -y -i \""+videoName+"\"";
                 str += " -ss "+end.toString("hh:mm:ss.zz");
-                str += " -c copy "+nameEnd+" && ";
+                str += " -c copy \""+nameEnd+"\" && ";
                 // Concaténation des parties
                 if (!start.toString("hh:mm:ss.zz").endsWith("00:00:00.00")) {
                     nameVideos += nameStart+"|";
@@ -175,18 +175,17 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
         case Actions::enumActions::SPLIT:
             // Récupération du la première partie
             nameTmp += path+"tmp_"+name;
-            str += Actions::ffmpeg+" -y -i "+videoName;
+            str += Actions::ffmpeg+" -y -i \""+videoName+"\"";
             str += " -t "+start.toString("hh:mm:ss.zz");
-            str += " -c copy "+nameTmp+" && ";
+            str += " -c copy \""+nameTmp+"\" && ";
             // Récupération de la deuxième partie
             nameEnd += path+"part"+QString::number(Actions::count)+"_"+name;
-            std::cout << nameEnd.toStdString() << std::endl;
-            str += Actions::ffmpeg+" -y -i "+videoName;
+            str += Actions::ffmpeg+" -y -i \""+videoName+"\"";
             str += " -ss "+start.toString("hh:mm:ss.zz");
-            str += " -c copy "+nameEnd+" && ";
+            str += " -c copy \""+nameEnd+"\" && ";
             // Renommage
-            str += Actions::ffmpeg+" -y -i "+nameTmp;
-            str += " -c copy "+videoName+" && ";
+            str += Actions::ffmpeg+" -y -i \""+nameTmp+"\"";
+            str += " -c copy \""+videoName+"\" && ";
             // Suppression des vidéos temporaires
             str += "DELETE:"+nameTmp;
             Actions::count++;
@@ -211,12 +210,12 @@ QString Actions::getCommandApplyFilterNoise(QString videoName)
     QString videoTmp(path+"tmp_"+videoName);
     QString str;
     // Séparation de l'audio de la vidéo
-    str += Actions::ffmpeg+" -y -i "+path+videoName+" -c copy -an "+videoTmp+" && ";
-    str += Actions::ffmpeg+" -y -i "+path+videoName+" -vn "+audiFile+" && ";
-    // Création de l'audio sans bruit ambiant avec SoXs
-    str += Actions::sox+" "+audiFile+" "+audioCleanFile+" noisered "+profileNoise+" "+MainWindow::settings->value("General/sensibility").toString()+" && ";
+    str += Actions::ffmpeg+" -y -i \""+path+videoName+"\" -c copy -an \""+videoTmp+"\" && ";
+    str += Actions::ffmpeg+" -y -i \""+path+videoName+"\" -vn \""+audiFile+"\" && ";
+    // Création de l'audio sans bruit ambiant avec SoX
+    str += Actions::sox+" \""+audiFile+"\" \""+audioCleanFile+"\" noisered "+profileNoise+" "+MainWindow::settings->value("General/sensibility").toString()+" && ";
     // Assemblage de l'audio avec la vidéo sans son
-    str += Actions::ffmpeg+" -y -i "+audioCleanFile+" -i "+videoTmp+" -c:a aac -strict -2 -c:v copy "+path+videoName+" && ";
+    str += Actions::ffmpeg+" -y -i \""+audioCleanFile+"\" -i \""+videoTmp+"\" -c:a aac -strict -2 -c:v copy \""+path+videoName+"\" && ";
     // Suppression des vidéos temporaires
     str += "DELETE:"+videoTmp+"|"+audiFile+"|"+audioCleanFile+" && ";
     return str;
@@ -229,7 +228,8 @@ QString Actions::createProfileNoise(QString videoName, QTime start, QTime end)
         QString path = MainWindow::settings->value("General/dir_preview").toString()+"/";
         QString profileNoise = MainWindow::settings->value("General/dir_preview").toString()+"/noise.prof";
         QString noiseAudio(path+"noise_audio.wav");
-        str += Actions::ffmpeg+" -y -i "+path+videoName+" -vn ";
+        // Récupération de la zone témoin
+        str += Actions::ffmpeg+" -y -i \""+path+videoName+"\" -vn ";
         str += " -ss "+start.toString("hh:mm:ss.zz");
         str += " -to "+end.toString("hh:mm:ss.zz");
         str += " "+path+"noise_audio.wav && ";
@@ -259,7 +259,7 @@ QString Actions::fusionVideos(QString finalName, QStringList nameOfVideos)
         QFileInfo info(name);
         str += " && file "+info.absoluteFilePath()+" >> "+infoOutput.absoluteFilePath();
     }
-    str += " && "+Actions::ffmpeg+" -y -f concat -safe 0 -i "+infoOutput.absoluteFilePath()+" -c copy "+finalName+" && ";
+    str += " && "+Actions::ffmpeg+" -y -f concat -safe 0 -i \""+infoOutput.absoluteFilePath()+"\" -c copy \""+finalName+"\" && ";
     return str;
 }
 
@@ -355,6 +355,6 @@ bool Actions::executeCommand(QString command)
         }
     }
     // Suppression des fichiers
-    Actions::removeFile(nameVideosDelete);
+    //Actions::removeFile(nameVideosDelete);
     return success;
 }
