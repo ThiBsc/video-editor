@@ -139,7 +139,7 @@ void MainWindow::deleteAllVideos()
 
 void MainWindow::importFiles()
 {
-    QStringList files = QFileDialog::getOpenFileNames(this, tr("Select files"), QDir::home().canonicalPath(), "Movies (*.mkv *.avi *.mp4);;Audio (*.mp3 *.wav *.ogg);;All files (*.*)");
+    QStringList files = QFileDialog::getOpenFileNames(this, tr("Select files"), QDir::home().canonicalPath(), "Movies (*.mkv *.avi *.mp4)");
     if (!files.isEmpty()) {
         rushListModel->addRushs(files);
     }

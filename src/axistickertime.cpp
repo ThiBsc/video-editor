@@ -26,9 +26,9 @@ QString AxisTickerTime::getTickLabel(double tick, const QLocale &locale, QChar f
         long min  = (((((long) (us / 1000) - ms)/1000) - sec)/60) %60 ;
         long hour = ((((((long) (us / 1000) - ms)/1000) - sec)/60) - min)/60;
         if (hour == 0){
-            ret = QTime(hour, min, sec, ms).toString("mm:ss");
+            ret = QTime(hour, min, sec, ms).toString("mm:ss.zz");
         } else {
-            ret = QTime(hour, min, sec, ms).toString("hh:mm:ss");
+            ret = QTime(hour, min, sec, ms).toString("hh:mm:ss.zz");
         }
     } else {
         ret = QCPAxisTicker::getTickLabel(tick, locale, formatChar, precision);
