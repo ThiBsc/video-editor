@@ -115,6 +115,9 @@ QString Actions::getCommandOnVideo(Actions::enumActions action, QString name, QT
             str += "DELETE:"+nameTmp;
             break;
         case Actions::enumActions::DELETE_END:
+            if (end.isNull()) {
+                end = start;
+            }
             nameTmp += path+"tmp_"+name;
             str += Actions::ffmpeg+" -y -i "+videoName;
             str += " -t "+end.toString("hh:mm:ss.zz");
