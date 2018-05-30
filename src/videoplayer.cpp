@@ -98,6 +98,12 @@ void VideoPlayer::moveMediaInPlaylist(int a, int b)
     mediaPlaylist->removeMedia(a < b ? a : a+1);
 }
 
+void VideoPlayer::renameMedia(int i, Media &media)
+{
+    mediaPlaylist->removeMedia(i);
+    mediaPlaylist->insertMedia(i, QMediaContent(QUrl::fromLocalFile(media.currentPath())));
+}
+
 void VideoPlayer::setCurrentMedia(int i, Media &media)
 {
     Q_UNUSED(media);

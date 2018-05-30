@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(rushListModel, SIGNAL(rushAdded(Media&)), videoPlayer, SLOT(addMediaToPlaylist(Media&)));
     connect(rushListModel, SIGNAL(rushRemoved(int)), videoPlayer, SLOT(removeMediaToPlaylist(int)));
     connect(rushListModel, SIGNAL(rushMoved(int,int)), videoPlayer, SLOT(moveMediaInPlaylist(int,int)));
+    connect(rushListModel, SIGNAL(rushRenamed(int,Media&)), videoPlayer, SLOT(renameMedia(int,Media&)));
     connect(rushListModel, SIGNAL(emitSelection(int,Media&)), videoPlayer, SLOT(setCurrentMedia(int,Media&)));
     connect(rushListModel, SIGNAL(selectionTypeChange(RushListModel::SelectionType)), this, SLOT(selectionActionChanged(RushListModel::SelectionType)));
     connect(trackTool, SIGNAL(actionClick(Actions::enumActions,QVector<QTime>)), rushListModel, SLOT(updateMedia(Actions::enumActions, QVector<QTime>)));

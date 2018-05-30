@@ -30,6 +30,7 @@ public slots:
     void addMediaToPlaylist(Media& media);
     void removeMediaToPlaylist(int i);
     void moveMediaInPlaylist(int a, int b);
+    void renameMedia(int i, Media& media);
     void setCurrentMedia(int i, Media& media);
     void emitCurrentMediaChanged(int i);
     void timeAsked();

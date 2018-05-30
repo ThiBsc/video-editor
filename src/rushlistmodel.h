@@ -59,6 +59,7 @@ signals:
     void rushAdded(Media& rush);
     void rushRemoved(int i);
     void rushMoved(int a, int b);
+    void rushRenamed(int i, Media& rush);
     void emitSelection(int i, Media& media);
     void selectionTypeChange(RushListModel::SelectionType type);
 

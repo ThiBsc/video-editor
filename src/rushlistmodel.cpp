@@ -66,6 +66,7 @@ bool RushListModel::setData(const QModelIndex &index, const QVariant &value, int
             media.setName(value.toString());
             rushItems.replace(index.row(), media);
             emit dataChanged(index, index);
+            emit rushRenamed(index.row(), media);
         }
     }
     return ret;
@@ -182,7 +183,7 @@ void RushListModel::addRushs(QStringList files)
         Media m(monurl);
         bool copy = Actions::copyFile(m.getPath(), MainWindow::settings->value("General/dir_preview").toString());
         if (copy) {
-            beginInsertRows(index, rushItems.size(), rushItems.size()+files.size());
+            beginInsertRows(index, rushItems.size(), rushItems.size());
             rushItems.append(m);
             endInsertRows();
             emit rushAdded(m);
