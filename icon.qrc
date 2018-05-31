@@ -24,5 +24,6 @@
         <file>icon/play-circle.svg</file>
         <file>icon/map-marker-alt.svg</file>
         <file>icon/cog.svg</file>
+        <file>icon/creative-commons-sampling.svg</file>
     </qresource>
 </RCC>

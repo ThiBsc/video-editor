@@ -39,7 +39,7 @@ TrackTool::TrackTool(QWidget *parent)
     toolbarActions->addSeparator(); 
     toolBtnNoise = new QToolButton(this);
     toolBtnNoise->setText(tr("Reduice Noise"));
-    toolBtnNoise->setIcon(QIcon("://icon/link.svg"));
+    toolBtnNoise->setIcon(QIcon("://icon/creative-commons-sampling.svg"));
     toolBtnNoise->setPopupMode(QToolButton::InstantPopup);
     actNoiseLocal = new QAction(tr("Remove noise localy"), toolBtnNoise);
     actNoiseGlobal= new QAction(tr("Remove noise globaly"), toolBtnNoise);
