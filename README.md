@@ -1,5 +1,19 @@
 # video-editor
-Projet annuel d'édition de video linéaire
+Projet annuel d'édition de video linéaire.
+
+## Fonctionnalités:
+
+- Ajout de fichiers
+- Récupération de la vidéo finale
+- Sauvegarde du projet (des vidéos dans leur état courant)
+- Renommer une vidéo
+- Supprimer des vidéos
+- Fusionner des vidéos
+- Supprimer des parties de la vidéo sélectionnée
+- Mettre sous silence une zone de la vidéo sélectionnée
+- Réduire le bruit ambiant grâce à une zone témoin (application globale ou locale)
+- Scinder en deux une vidéo
+- Ajout de marqueurs manuellement
 
 ## Requirements
 
@@ -12,6 +26,10 @@ Projet annuel d'édition de video linéaire
 
 ### Used libraries
 [![QCustomPlot](http://www.qcustomplot.com/qcp-logo.png)](http://www.qcustomplot.com/)
+
+### Optional
+
+- SoX
 
 ## Compile
 
