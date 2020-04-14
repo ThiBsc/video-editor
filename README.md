@@ -34,7 +34,7 @@ Projet annuel d'édition de video linéaire.
 ## Compile
 
 ```shell
-git clone https://github.com/thibDev/video-editor.git
+git clone https://github.com/thibsc/video-editor.git
 cd video-editor
 mkdir build
 cd build
